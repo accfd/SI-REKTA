@@ -143,18 +143,36 @@ Studi yang mengimplementasikan sistem nyata (*Rismanto et al., 2020; Aprianto, 2
 2. **Application / Service Layer (Backend API):** Framework berkinerja tinggi seperti FastAPI (Python) yang mengisolasi logika bisnis, melakukan normalisasi teks secara otomatis, dan memanggil model inferensi Scikit-Learn yang dimuat *in-memory*.
 3. **Data Layer (Database):** Basis data relasional (SQLite/PostgreSQL) yang mencatat histori input, profil dosen, kamus alias normalisasi gelar dosen, dan log evaluasi rekomendasi untuk keperluan audit akademik.
 
+### 3.2.5 Pembahasan Tambahan: Rekomendasi Berjenjang (Hierarchical Recommendation) & Penanganan Cold-Start Dosen Baru
+Selain empat pertanyaan penelitian utama, literatur mutakhir (*Bagheri et al., 2026; Zheng et al., 2025*) menyoroti dinamika penting pada tataran implementasi nyata di perguruan tinggi:
+1. **Sistem Rekomendasi Berjenjang (*Hierarchical Recommender System*):**  
+   Di lingkungan departemen, penentuan pembimbing tugas akhir tidak dilakukan secara acak ke individu dosen, melainkan melalui pemetaan ke **Kelompok Keahlian (KK)** atau **Laboratorium Riset** terlebih dahulu. Rekomendasi berjenjang terbukti mempersempit ruang pencarian leksikal, mencegah kesalahan klasifikasi lintas rumpun ilmu, dan mempermudah proses verifikasi akademik oleh komisi tugas akhir.
+2. **Penanganan Masalah Dosen Baru (*Cold-Start Problem*) Berbasis Prinsip Kejujuran Data:**  
+   Dalam data historis jangka panjang (misalnya 10 tahun), sering kali terdapat dosen baru yang belum memiliki riwayat bimbingan, atau dosen lama yang sudah tidak aktif. Literatur menegaskan bahwa pengembang tidak boleh merekayasa kata kunci fiktif. Solusi ilmiah yang terbukti efektif adalah mengaitkan dosen baru dengan **Kelompok Keahlian (KK)** resminya. Ketika judul mahasiswa cocok dengan data riil topik suatu KK, seluruh dosen aktif di dalam KK tersebut otomatis dapat disajikan sebagai opsi pembimbing yang sah.
+
 ## 3.3 Implikasi Praktis & Rekomendasi untuk Proyek SI-REKTA
-Berdasarkan seluruh temuan SLR, ditetapkan keputusan metodologis final bagi pengembangan proyek SI-REKTA pada 625 dataset judul tugas akhir:
-1. **Data Preprocessing:** Membangun modul *entity canonicalization* untuk menyeragamkan variasi penulisan gelar dosen (seperti *Prof. Surya Afnarius, Ph.D*), pembersihan tanda baca, penghapusan stopword formal akademik, dan stemming Nazief-Adriani.
-2. **Model Engine:** Mengombinasikan TF-IDF n-gram leksikal dengan Linear SVM berbobot seimbang (`class_weight='balanced'`) sebagai model utama, serta Naive Bayes sebagai model pembanding (*baseline*).
-3. **Reranking & Explainability:** Menerapkan *Cosine Similarity Gate* ke dokumen riset dosen dan mengekstrak bobot fitur TF-IDF tertinggi sebagai penjelasan alasan rekomendasi (*explainable AI*) pada kartu dosen di antarmuka web.
+Berdasarkan seluruh temuan tinjauan pustaka, ditetapkan keputusan metodologis final bagi pengembangan proyek SI-REKTA di Departemen Sistem Informasi Universitas Andalas:
+1. **Data Preprocessing & Entity Canonicalization:**  
+   Menyeragamkan variasi penulisan nama dan gelar dosen, membersihkan tanda baca, menghapus stopword formal akademik, dan menerapkan stemming bahasa Indonesia.
+2. **Penyaringan Berbasis Keaktifan Departemen (*Active Faculty Whitelist*):**  
+   Menetapkan batasan resmi pada **17 Dosen Tetap Aktif** Departemen Sistem Informasi FTI Unand. Dosen luar fakultas (seperti dosen Teknik Industri atau Teknik Elektro pada riwayat lama) serta dosen yang sudah tidak bertugas di DSI (seperti *Ibu Meza Silvana, M.T.*) difilter keluar dari target rekomendasi dosen aktif.
+3. **Penyelarasan dengan 4 Kelompok Keahlian (KK):**  
+   Memetakan rekomendasi ke dalam 4 rumpun keahlian resmi departemen:
+   * **KK Rekayasa Data & Business Intelligence (RD-BI)**: Prof. Surya Afnarius, Ph.D.; Febby Apri Wenando, M.Eng., Ph.D.; Rahmatika Pratama Santi, M.T.; Aina Hubby Aziira, M.Eng.
+   * **KK System Development (SD)**: Nisa Dwi Angresti, M.Kom.; Husnil Kamil, M.T.; Afriyanti Dwi Kartika, S.Pd., M.T.; Dwi Welly Sukma Nirad, M.T.; Hafzatin Nurlatifa, M.Eng.
+   * **KK System Enterprise (SE)**: Hafizah Hanim, M.Kom.; Haris Suryamen, M.Sc.; Ricky Akbar, M.Kom.; Jefril Rahmadoni, M.Kom.; Ullya Mega Wahyuni, M.Kom.
+   * **KK Tata Kelola & Infrastruktur TI (TK-ITI)**: Adi Arga Arifnur, M.Kom.; Fajril Akbar, M.Sc.; Hasdi Putra, M.T.
+4. **Model Engine & Two-Tier Inference:**  
+   Mengombinasikan TF-IDF n-gram leksikal dengan Linear SVM berbobot seimbang (`class_weight='balanced'`) dan *Cosine Similarity Gate*. Sistem menghasilkan rekomendasi berjenjang: (1) Prediksi Kelompok Keahlian (KK) yang paling cocok, dan (2) Rekomendasi Top-3 Dosen Pembimbing Aktif di dalam KK tersebut.
+5. **Transparansi & Explainability:**  
+   Mengekstrak bobot fitur TF-IDF tertinggi sebagai kata kunci penentu (*explainable keywords*) serta menampilkan contoh judul historis bimbingan terdahulu bagi dosen yang memiliki rekam jejak pada dataset.
 
 ---
 
 # BAB 4: KESIMPULAN
 
 ## 4.1 Kesimpulan Utama Review
-Tinjauan literatur sistematis berbasis PRISMA ini telah berhasil menyintesis 13 artikel empiris bereputasi mutakhir (2019–2026) mengenai sistem rekomendasi pembimbing tugas akhir dan pencocokan kepakaran. Temuan review menegaskan bahwa pendekatan hibrida yang memadukan ekstraksi fitur TF-IDF n-gram, *Cost-Sensitive Linear SVM*, dan *Cosine Similarity Reranking* merupakan konfigurasi terbaik untuk menangani tantangan teks judul yang ringkas dan distribusi bimbingan dosen yang sangat timpang. Evaluasi sistem rekomendasi akademik terbukti paling representatif diukur menggunakan *Top-3 Accuracy* dan *Macro-F1 Score*, sementara implementasi antarmuka web tiga tingkat menjamin kesiapan adopsi sistem secara nyata di perguruan tinggi.
+Tinjauan literatur sistematis berbasis PRISMA ini telah berhasil menyintesis 13 artikel empiris bereputasi mutakhir (2019–2026) mengenai sistem rekomendasi pembimbing tugas akhir dan pencocokan kepakaran. Temuan review menegaskan bahwa pendekatan hibrida yang memadukan ekstraksi fitur TF-IDF n-gram, *Cost-Sensitive Linear SVM*, dan *Cosine Similarity Reranking* merupakan konfigurasi terbaik untuk menangani teks judul yang ringkas dan distribusi bimbingan yang timpang. Lebih jauh, integrasi struktur **Kelompok Keahlian (KK)** ke dalam sistem rekomendasi berjenjang (*Hierarchical Recommender System*) terbukti menjadi solusi ilmiah paling elegan dalam menyelesaikan masalah rotasi dosen dan *cold-start* dosen baru tanpa perlu merekayasa data fiktif.
 
 ## 4.2 Keterbatasan Tinjauan (Threats to Validity)
 Keterbatasan dalam pelaksanaan SLR ini mencakup:
