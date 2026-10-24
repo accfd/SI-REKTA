@@ -5,12 +5,13 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-teal.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/Frontend-React%20%2F%20Vite-61dafb.svg)](https://react.dev/)
 [![PRISMA SLR](https://img.shields.io/badge/Review-PRISMA%20SLR-success.svg)](docs/SI-REKTA_SLR.md)
+[![CRISP-DM](https://img.shields.io/badge/Methodology-CRISP--DM-purple.svg)](docs/SI-REKTA_CRISP_DM.md)
 
 **SI-REKTA** (*Sistem Informasi Rekomendasi Dosen Pembimbing Tugas Akhir*) adalah proyek tugas besar terintegrasi pada mata kuliah Machine Learning (Semester 5), Departemen Sistem Informasi. Sistem ini dirancang untuk memecahkan permasalahan nyata di perguruan tinggi, yaitu ketidakcocokan antara rencana topik tugas akhir mahasiswa dengan kepakaran riset dosen serta proses penentuan (*plotting*) pembimbing yang sering kali memakan waktu lama dan menimbulkan ketimpangan beban bimbingan.
 
 Sistem bekerja dengan memanfaatkan pendekatan *Natural Language Processing* (NLP) dan *Supervised Machine Learning*. Ketika mahasiswa memasukkan usulan draf judul tugas akhir berbahasa Indonesia, sistem melakukan prapengolahan teks, ekstraksi fitur leksikal berbasis TF-IDF (*word & character n-gram*), dan klasifikasi menggunakan model *Linear Support Vector Machine* (Linear SVM) dengan pembobotan kelas seimbang (*balanced class weighting*). Hasil prediksi kemudian diperhalus melalui *hybrid cosine similarity gate* terhadap dokumen rekam jejak riset dosen untuk menghasilkan rekomendasi **Top-3 Dosen Pembimbing** yang paling relevan secara semantik, objektif, dan transparan.
 
-Implementasi proyek mengusung arsitektur web modern tiga tingkat (*Three-Tier Architecture*), terdiri atas antarmuka interaktif berbasis React/Vite, layanan RESTful API cepat berbasis FastAPI (Python), dan basis data terstruktur. Laporan metodologi lengkap, sintesis 12 artikel ilmiah bereputasi (Scopus Q1/Q2 dan Sinta), serta rencana pengujian model disajikan secara terperinci pada dokumen [**`docs/SI-REKTA_SLR.md`**](docs/SI-REKTA_SLR.md).
+Implementasi proyek mengusung arsitektur web modern tiga tingkat (*Three-Tier Architecture*), terdiri atas antarmuka interaktif berbasis React/Vite, layanan RESTful API cepat berbasis FastAPI (Python), dan basis data terstruktur. Seluruh rancangan metodologi tinjauan literatur dapat ditinjau pada dokumen [**`docs/SI-REKTA_SLR.md`**](docs/SI-REKTA_SLR.md), sedangkan panduan operasional teknis pengembangan model mengacu pada [**`docs/SI-REKTA_CRISP_DM.md`**](docs/SI-REKTA_CRISP_DM.md).
 
 ---
 
@@ -20,7 +21,8 @@ Implementasi proyek mengusung arsitektur web modern tiga tingkat (*Three-Tier Ar
 SI-REKTA/
 ├── docs/
 │   ├── Judul_TA.csv              # Dataset arsip 625 judul tugas akhir (2014-2026)
-│   ├── SI-REKTA_SLR.md           # Laporan lengkap Tinjauan Pustaka PRISMA (Bab 1 - Bab 5)
+│   ├── SI-REKTA_SLR.md           # Laporan Tinjauan Pustaka PRISMA (Bab 1 - Bab 4)
+│   ├── SI-REKTA_CRISP_DM.md      # Panduan Metodologi & Roadmap Teknis CRISP-DM
 │   ├── [FIKS] HASIL SLR 1.pdf    # Sumber ekstraksi literatur empiris (Part 1)
 │   └── [FIKS] HASIL SLR 2.pdf    # Sumber ekstraksi literatur empiris & keputusan RQ (Part 2)
 ├── README.md                     # Ringkasan proyek dan arsitektur sistem
