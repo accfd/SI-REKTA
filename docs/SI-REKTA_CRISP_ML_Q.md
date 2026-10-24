@@ -96,7 +96,7 @@ $$w_j = rac{N}{K 	imes n_j}$$
 *(di mana $N$ adalah total data, $K$ jumlah kelas dosen, dan $n_j$ jumlah bimbingan dosen ke-$j$)*. Melalui rumus ini, kesalahan salah memprediksi dosen minoritas berbobot belasan kali lebih berat daripada dosen mayoritas, sehingga model terbebas dari bias kelas populer.
 
 ### 3.4 Hybrid Cosine Similarity Profiling
-Membangun dokumen profil riset untuk setiap dosen (gabungan seluruh judul yang pernah dibimbingnya). Sistem menghitung derajat kemiripan kosinus (*Cosine Similarity*) antara judul baru mahasiswa dengan vektor profil dosen sebagai penyaring peringkat (*similarity gate*) sebelum rekomendasi Top-3 disajikan.
+Membangun kumpulan seluruh judul tugas akhir yang pernah dibimbing oleh masing-masing dosen. Sistem menghitung derajat kemiripan kosinus (*Cosine Similarity*) antara judul baru mahasiswa dengan vektor profil dosen sebagai penyaring peringkat (*similarity gate*) sebelum rekomendasi Top-3 disajikan.
 
 ---
 
