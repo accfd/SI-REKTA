@@ -31,7 +31,7 @@ Tinjauan literatur sistematis ini disusun untuk meletakkan landasan teoretis dan
 2. Mengidentifikasi strategi integrasi (*fusion*) dua sumber data (riwayat skripsi dan publikasi riset dosen) yang paling tepat untuk mengatasi masalah ketimpangan kelas dan *cold-start* dosen baru (*Bruch et al., 2022; Fitri et al., 2025; Maurya et al., 2025*).
 3. Menetapkan metrik evaluasi peringkat (*ranking metrics*) yang relevan untuk rekomendasi Top-3 dosen serta merumuskan standar nilai ambang batas (*benchmark*) kelayakan model (*Sun et al., 2022; Xiao et al., 2023; Sajid et al., 2026*).
 4. Merumuskan alur proses bisnis rekomendasi cerdas yang transparan (*Explainable AI*) agar hasil inferensi model dapat dipertanggungjawabkan pada pengisian Formulir TA-01 dan TA-02 (*de Campos et al., 2024b; Wang et al., 2024*).
-5. Merancang arsitektur perangkat lunak berbasis web tiga tingkat (*Three-Tier Architecture*) yang modular, berlatensi rendah ($<1$ detik), dan siap dioperasikan di perguruan tinggi (*Damayanti et al., 2025; Wang et al., 2024*).
+5. Merancang arsitektur perangkat lunak berbasis web tiga tingkat (*Three-Tier Architecture*) yang modular, berlatensi rendah (di bawah 1 detik), dan siap dioperasikan di perguruan tinggi (*Damayanti et al., 2025; Wang et al., 2024*).
 
 ## 1.3 Perumusan Pertanyaan Penelitian (Research Questions)
 Guna memandu analisis secara mendalam dan terarah, ditetapkan lima pertanyaan penelitian (*Research Questions* / RQ) sebagai berikut:
