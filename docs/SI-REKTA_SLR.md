@@ -10,220 +10,257 @@
 
 ---
 
+# PANDUAN ISTILAH TEKNIS (GLOSARIUM)
+
+Agar dokumen ini mudah dipahami oleh pembaca umum maupun akademisi, berikut adalah daftar istilah penting beserta artinya dalam bahasa sederhana:
+
+| Istilah | Terjemahan Bebas | Penjelasan Sederhana dalam Bahasa Awam |
+| :--- | :--- | :--- |
+| **Cold-Start Problem** | Masalah Awal Kosong | Kendala ketika sistem rekomendasi bingung memberi saran karena ada dosen baru yang belum memiliki riwayat membimbing sama sekali (riwayat bimbingan = 0). |
+| **Late-Fusion** | Penggabungan Tahap Akhir | Metode perhitungan di mana kecocokan riset dosen dan kecocokan riwayat skripsi dihitung masing-masing terlebih dahulu, baru kemudian digabungkan nilainya di tahap akhir. |
+| **Dual-Source Dataset** | Dataset Dua Sumber | Pemanfaatan dua sumber data berbeda sekaligus, yaitu: (1) riwayat judul skripsi mahasiswa masa lalu, dan (2) judul artikel jurnal/publikasi riset para dosen. |
+| **TF-IDF** | Pembobotan Kata Penting | Cara komputer menilai seberapa penting sebuah kata. Kata umum yang muncul di mana-mana (seperti "sistem" atau "aplikasi") diberi nilai rendah, sedangkan istilah spesifik (seperti "machine learning" atau "cyber security") diberi nilai tinggi. |
+| **Cosine Similarity** | Kemiripan Kosinus | Rumus matematika untuk mengukur seberapa mirip dua buah kalimat berdasarkan kata-katanya. Nilainya berkisar dari 0% (tidak ada kemiripan sama sekali) hingga 100% (maknanya persis sama). |
+| **N-Gram** | Rangkaian Kata Bergandengan | Cara komputer membaca kelompok kata bergandengan (misal 2 kata: *"sistem pakar"* atau *"tata kelola"*) agar maknanya tidak hilang atau salah paham jika dipotong satu per satu. |
+| **Stopword Removal** | Pembersihan Kata Biasa | Proses membuang kata sambung biasa ("dan", "di", "ke") serta kata template skripsi ("rancang bangun", "berbasis web", "studi kasus") agar komputer fokus pada inti topik riset. |
+| **Explainable AI (XAI)** | Kecerdasan Buatan Transparan | AI yang tidak hanya memberikan nama rekomendasi, tetapi juga menjelaskan alasannya secara terbuka (disertai kata kunci penentu dan bukti artikel riset dosen). |
+| **Standarisasi Entitas** *(Entity Canonicalization)* | Penyeragaman Ejaan Nama | Menyamakan berbagai variasi penulisan nama dan gelar dosen agar komputer tahu bahwa "Dr. F. Apri" dan "Febby Apri Wenando, Ph.D." adalah satu orang yang sama. |
+| **Whitelist Dosen Aktif** | Daftar Dosen yang Berhak | Menyaring sistem agar hanya merekomendasikan dosen yang memang aktif mengajar, dan secara otomatis mengeluarkan dosen yang sedang tugas belajar atau cuti. |
+| **Top-3 Accuracy (Hit@3)** | Ketepatan Masuk 3 Besar | Persentase seberapa sering dosen yang benar-benar tepat berhasil masuk ke dalam 3 besar kartu rekomendasi yang disajikan sistem. |
+| **Mean Reciprocal Rank (MRR)** | Skor Urutan Terbaik | Nilai untuk mengukur seberapa sering dosen yang paling tepat berada di urutan teratas (posisi nomor 1). Semakin mendekati 1, posisinya semakin selalu di atas. |
+| **Short-Text** | Teks Pendek | Kalimat ringkas yang jumlah katanya sedikit (hanya 13–17 kata, seperti kalimat judul proposal skripsi). |
+
+---
+
 # BAB 1: PENDAHULUAN
 
 ## 1.1 Latar Belakang
-Penentuan dosen pembimbing tugas akhir merupakan keputusan akademik strategis yang berdampak langsung terhadap relevansi topik riset, kedalaman metodologi ilmiah, dan ketepatan masa studi mahasiswa (*Sajid et al., 2026; Damayanti et al., 2025*). Di tingkat operasional perguruan tinggi, penugasan pembimbing yang dilakukan secara konvensional atau manual kerap menghadapi kendala efisiensi, potensi bias subjektivitas, serta risiko ketidaksesuaian topik (*topic mismatch*) antara usulan mahasiswa dan kepakaran dosen (*Gambino et al., 2025; Falah & Suryawan, 2022*).
+Menentukan dosen pembimbing tugas akhir merupakan keputusan penting bagi setiap mahasiswa tingkat akhir. Keputusan ini menentukan kelancaran bimbingan, ketepatan metode penelitian, mutu laporan skripsi, hingga ketepatan waktu kelulusan mahasiswa (*Sajid et al., 2026; Damayanti et al., 2025*). Namun, jika proses pemilihan dosen masih dilakukan secara manual atau hanya berdasarkan perkiraan mahasiswa, sering kali timbul masalah: mahasiswa bingung memilih pembimbing yang tepat, terjadi penumpukan bimbingan pada dosen-dosen tertentu saja, dan usulan judul sering ditolak karena ternyata tidak sesuai dengan bidang keahlian dosen yang dituju (*Gambino et al., 2025; Falah & Suryawan, 2022*).
 
-Pada Departemen Sistem Informasi (DSI) FTI Universitas Andalas, analisis data eksploratif (*Exploratory Data Analysis*) mengungkap dua tantangan struktural yang dihadapi:
-1. **Ketimpangan Riwayat dan Masalah Dosen Baru (*Zero-History Faculty Cold-Start*):**  
-   Data historis skripsi (`Judul_TA.csv`) memuat 625 judul bimbingan masa lalu. Distribusi pembimbingan tersebut menunjukkan ketimpangan kelas yang signifikan, di mana dosen paling senior membimbing hingga 149 judul, sementara **5 dari 17 dosen tetap aktif (29,4%) tercatat belum memiliki riwayat bimbingan ($N = 0$)**. Model klasifikasi terawasi (*supervised learning*) konvensional yang hanya dilatih pada data historis bimbingan tidak akan mampu mengalokasikan rekomendasi kepada dosen-dosen baru tersebut (*Nguyen et al., 2025; Xiao et al., 2023*).
-2. **Potensi Integrasi Profil Riset Dosen (*Dual-Source Dataset*):**  
-   Sebaliknya, data publikasi ilmiah (`Publikasi_Dosen.csv`) menyediakan 643 judul artikel riset yang merepresentasikan **100% dari 17 dosen tetap aktif**, dengan setiap dosen memiliki 7 hingga 32 publikasi aktif. Penggabungan korpus publikasi ini memperluas kosakata teknis domain sistem informasi sebesar **+105,2%** (dari 1.691 kata unik pada judul tugas akhir menjadi 3.470 kata unik gabungan, dengan indeks tumpang tindih leksikal Jaccard sebesar 19,57%).
+Pada Departemen Sistem Informasi (DSI) Fakultas Teknologi Informasi Universitas Andalas, analisis terhadap data nyata (*Exploratory Data Analysis*) menemukan dua fakta penting di lapangan:
 
-Teks judul tugas akhir dan judul publikasi dosen sama-sama memiliki karakteristik teks pendek (*short-text* dengan panjang 13–17 kata) yang memuat terminologi dwibahasa (bahasa Indonesia dan istilah komputasi bahasa Inggris). Karakteristik ini menuntut tahapan *Natural Language Processing* (NLP) yang cermat agar tidak terjadi degradasi akurasi pencocokan akibat ambiguitas istilah (*Sajid et al., 2026; Saraswati et al., 2025; Luo et al., 2022*).
+1. **Ketimpangan Riwayat Bimbingan dan Kendala Dosen Baru (*Cold-Start*):**  
+   Data riwayat skripsi masa lalu (`Judul_TA.csv`) memuat 625 judul bimbingan. Dari data tersebut, terlihat ketimpangan yang sangat nyata: seorang dosen senior pernah membimbing hingga 149 mahasiswa, sedangkan **5 dari 17 dosen tetap aktif (29,4%) tercatat belum memiliki riwayat bimbingan sama sekali (0 bimbingan)** karena merupakan dosen baru. Jika kita hanya mengandalkan program kecerdasan buatan biasa yang dilatih dari riwayat masa lalu, sistem tidak akan pernah bisa merekomendasikan dosen-dosen baru tersebut karena komputer menganggap mereka tidak memiliki data (*Nguyen et al., 2025; Xiao et al., 2023*).
 
-Ketersediaan data riset publikasi bagi seluruh dosen aktif membuka peluang pemanfaatan fusi data multi-sumber (*multi-source late-fusion*). Pendekatan fusi informasi terbukti efektif menjembatani kesenjangan data historis (*Fitri et al., 2025; Bruch et al., 2022*). Melalui pendekatan **Hierarchical Dual-Source Late-Fusion Recommender**, proyek SI-REKTA dirancang untuk menghasilkan rekomendasi yang adil bagi seluruh dosen aktif serta transparan melalui penyajian fitur *Explainable AI* yang dapat dipertanggungjawabkan kepada pemangku kepentingan akademik (*de Campos et al., 2024b; Wang et al., 2024*).
+2. **Kekayaan Publikasi Riset Dosen sebagai Sumber Data Kedua:**  
+   Untungnya, ada sumber data kedua (`Publikasi_Dosen.csv`) yang menyediakan 643 judul artikel ilmiah terverifikasi. Data publikasi ini mencakup **seluruh 17 dosen tetap aktif (100%)**, di mana masing-masing dosen memiliki antara 7 hingga 32 karya riset aktif. Menggabungkan data karya ilmiah dosen ini ke dalam sistem berhasil memperkaya kosakata istilah teknologi informasi hingga **+105,2%** (dari 1.691 kata unik pada judul skripsi meningkat menjadi 3.470 kata unik gabungan).
+
+Kalimat pada judul skripsi dan judul karya ilmiah dosen sama-sama tergolong kalimat pendek (*short-text*, rata-rata 13–17 kata) yang mencampurkan istilah bahasa Indonesia dan bahasa Inggris (seperti *"enterprise architecture"*, *"machine learning"*, *"data warehouse"*). Karakteristik ini memerlukan teknik pengolahan bahasa alami (*Natural Language Processing* / NLP) yang tepat agar komputer tidak salah paham terhadap arti kata yang dimaksud mahasiswa (*Sajid et al., 2026; Saraswati et al., 2025; Luo et al., 2022*).
+
+Ketersediaan data riset publikasi bagi seluruh dosen membuka jalan keluar yang sangat adil: kita dapat menggabungkan kecocokan riwayat bimbingan dengan kecocokan publikasi riset dosen (*late-fusion*). Pendekatan fusi data ini terbukti sukses menjembatani masalah data awal yang kosong (*Fitri et al., 2025; Bruch et al., 2022*). Oleh sebab itu, proyek SI-REKTA dirancang menggunakan pendekatan **Sistem Rekomendasi Dwisumber Bertingkat** (*Hierarchical Dual-Source Late-Fusion*). Sistem ini tidak hanya memberikan saran Top-3 dosen pembimbing yang paling cocok, tetapi juga menyajikan fitur penjelasan transparan (*Explainable AI*) agar mahasiswa dan pengelola tugas akhir tahu pasti mengapa dosen tersebut direkomendasikan (*de Campos et al., 2024b; Wang et al., 2024*).
 
 ## 1.2 Tujuan Tinjauan Literatur
-Tinjauan literatur sistematis ini disusun untuk meletakkan fondasi teoretis dan metodologis bagi pengembangan sistem SI-REKTA. Tujuan pelaksanaan SLR ini mencakup:
-1. Mengidentifikasi teknik prapengolahan teks dan representasi fitur NLP yang optimal untuk memproses korpus teks pendek akademik dwibahasa (*Sajid et al., 2026; Luo et al., 2022; Saraswati et al., 2025*).
-2. Menganalisis strategi integrasi multi-sumber (*late-fusion*) antara riwayat tugas akhir dan publikasi riset guna memitigasi kendala *cold-start* pada dosen baru (*Nguyen et al., 2025; Fitri et al., 2025; Bruch et al., 2022*).
-3. Menelaah metrik evaluasi pemeringkatan (*ranking metrics*) serta parameter ambang batas kinerja yang representatif untuk rekomendasi Top-K pembimbing (*Sun et al., 2022; Xiao et al., 2023; Sajid et al., 2026*).
-4. Mengeksplorasi metode penerapan *Explainable AI* (XAI) dalam konteks sistem rekomendasi akademik guna memastikan keterbukaan alasan penugasan (*de Campos et al., 2024b; Wang et al., 2024*).
-5. Mengkaji pola arsitektur perangkat lunak berbasis layanan web yang andal dan berlatensi rendah untuk penerapan operasional machine learning di perguruan tinggi (*Wang et al., 2024; Damayanti et al., 2025; de Campos et al., 2024a*).
+Tinjauan literatur sistematis (SLR) ini disusun sebagai dasar ilmiah sebelum membangun sistem SI-REKTA. Tujuan dari penulisan tinjauan ini adalah:
+1. Menemukan cara pembersihan teks dan teknik pembobotan kata (NLP) yang paling tepat untuk kalimat judul akademik dwibahasa (*Sajid et al., 2026; Luo et al., 2022; Saraswati et al., 2025*).
+2. Mengetahui cara menggabungkan data skripsi masa lalu dengan data publikasi riset dosen agar dosen-dosen baru tetap mendapat kesempatan bimbingan secara adil (*Nguyen et al., 2025; Fitri et al., 2025; Bruch et al., 2022*).
+3. Menetapkan ukuran penilaian (metrik peringkat) yang tepat untuk mengukur keberhasilan rekomendasi Top-3 dosen serta menentukan nilai standar kelayakannya (*Sun et al., 2022; Xiao et al., 2023; Sajid et al., 2026*).
+4. Mengetahui cara menyajikan penjelasan transparan (*Explainable AI*) pada layar aplikasi agar pengguna percaya dan paham terhadap saran yang diberikan sistem (*de Campos et al., 2024b; Wang et al., 2024*).
+5. Memilih rancangan arsitektur aplikasi web yang tangguh dan cepat dalam memberikan hasil rekomendasi (di bawah 1 detik) untuk kebutuhan operasional kampus (*Wang et al., 2024; Damayanti et al., 2025; de Campos et al., 2024a*).
 
 ## 1.3 Perumusan Pertanyaan Penelitian (Research Questions)
-Berdasarkan tujuan di atas, ditetapkan lima pertanyaan penelitian (*Research Questions* / RQ) sebagai pedoman telaah literatur:
-* **RQ1:** Teknik prapengolahan teks dan representasi fitur NLP apa yang paling efektif untuk memproses teks pendek (*short-text*) akademik dwibahasa agar mampu menangani istilah teknis khusus secara optimal?
-* **RQ2:** Bagaimana strategi integrasi multi-sumber (*late-fusion*) yang tepat untuk memadukan data riwayat penugasan lampau dan profil publikasi riset dosen guna memitigasi masalah *cold-start* pada dosen baru?
-* **RQ3:** Apa saja metrik evaluasi peringkat (*ranking metrics*) yang tepat untuk mengukur keandalan rekomendasi Top-K dosen serta bagaimana penetapan ambang batas kinerjanya secara objektif?
-* **RQ4:** Bagaimana metode *Explainable AI* (XAI) diterapkan pada sistem rekomendasi akademik untuk menghasilkan transparansi keputusan dan meningkatkan kepercayaan pengguna (*trustworthiness*)?
-* **RQ5:** Bagaimana rancangan arsitektur perangkat lunak berbasis layanan web (*service-oriented architecture*) yang andal dalam menyajikan inferensi rekomendasi berlatensi rendah pada skala operasional perguruan tinggi?
+Guna memandu analisis literatur secara terarah, ditetapkan lima pertanyaan penelitian (*Research Questions* / RQ) sebagai berikut:
+* **RQ1:** Teknik pembersihan teks dan ekstraksi fitur NLP apa yang paling efektif untuk memproses judul usulan skripsi dan publikasi riset dosen yang singkat dan memuat istilah dwibahasa?
+* **RQ2:** Bagaimana cara terbaik menggabungkan data riwayat skripsi dan data publikasi riset dosen ke dalam satu sistem agar adil bagi dosen baru yang belum punya riwayat bimbingan?
+* **RQ3:** Apa saja ukuran penilaian (metrik) yang tepat untuk menguji kualitas rekomendasi Top-K dosen dan berapa standar nilai minimal agar sistem dinilai layak?
+* **RQ4:** Bagaimana metode *Explainable AI* (XAI) diterapkan agar sistem bisa menjelaskan alasan rekomendasi secara transparan dan mudah dipahami pengguna?
+* **RQ5:** Bagaimana rancangan arsitektur aplikasi berbasis web yang terbukti cepat dan stabil dalam melayani pencarian rekomendasi pembimbing di lingkungan perguruan tinggi?
 
 ---
 
 # BAB 2: METODOLOGI SYSTEMATIC LITERATURE REVIEW
 
 ## 2.1 Protokol PRISMA
-Pelaksanaan telaah literatur ini mengacu pada panduan PRISMA (*Preferred Reporting Items for Systematic Reviews and Meta-Analyses*). Protokol ini memastikan bahwa identifikasi, penyaringan, dan analisis artikel berjalan secara transparan dan dapat direproduksi.
+Penyusunan tinjauan literatur ini mengikuti panduan PRISMA (*Preferred Reporting Items for Systematic Reviews and Meta-Analyses*), yaitu standar internasional yang menjamin tahapan pencarian, penyaringan, dan telaah jurnal dilakukan secara terbuka, objektif, dan dapat dipertanggungjawabkan.
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│                       IDENTIFIKASI                          │
-│ Penelusuran artikel melalui Semantic Scholar, Consensus.ai, │
+│                   1. TAHAP PENCARIAN (IDENTIFIKASI)         │
+│ Penelusuran artikel melalui database ilmiah bereputasi:     │
 │ IEEE Xplore, ACM Digital Library, Springer, Elsevier, Sinta │
 │ (Rentang publikasi: 2022 – 2026)                            │
-│ [ Total Rekod Ditemukan: n = 112 artikel ]                  │
+│ [ Ditemukan: 112 artikel awal ]                             │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                         SKRINING                            │
-│ Penyaringan judul & abstrak berdasarkan keselarasan domain  │
-│ (Eksklusi: studi non-empiris, duplikasi naskah, topik umum) │
-│ [ Rekod Lolos Skrining: n = 24 artikel ]                    │
+│                   2. TAHAP PENYARINGAN (SKRINING)           │
+│ Membaca judul & abstrak untuk memastikan kesesuaian topik   │
+│ (Menghapus artikel teori umum, duplikat, dan non-akademik)  │
+│ [ Lolos Skrining: 24 artikel ]                              │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                        KELAYAKAN                            │
-│ Penelaahan teks lengkap (Full-Text Assessment) terhadap     │
-│ kejelasan metode, metrik empiris, dan replikasi arsitektur  │
-│ [ Rekod Memenuhi Kelayakan: n = 15 artikel ]                │
+│                   3. TAHAP PENILAIAN TEKS LENGKAP           │
+│ Membaca isi lengkap artikel untuk menguji kejelasan metode, │
+│ ketersediaan angka metrik nyata, dan kelayakan diuji ulang  │
+│ [ Memenuhi Syarat: 15 artikel ]                             │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                     INKLUSI FINAL                           │
+│                   4. TAHAP KEPUTUSAN AKHIR (INKLUSI)        │
 │ 15 Artikel Empiris Terverifikasi Terbitan 2022–2026         │
-│ Masuk ke Matriks Sintesis Data PRISMA SI-REKTA              │
+│ Resmi dimasukkan ke Matriks Pembahasan PRISMA SI-REKTA      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ## 2.2 Strategi Penelusuran Literatur
-Penelusuran artikel dilakukan secara sistematis pada basis data bereputasi (Scopus, IEEE Xplore, ACM Digital Library, Springer, Elsevier, dan Sinta Kemendiktisaintek). Rangkaian kata kunci penelusuran disusun menggunakan operator Boolean:
+Penelusuran jurnal dilakukan menggunakan kata kunci pencarian berbahasa Inggris yang disusun secara sistematis:
 
 > `("thesis advisor recommendation" OR "supervisor recommendation" OR "reviewer assignment" OR "expert finding") AND ("short text" OR "TF-IDF" OR "cold start" OR "multi-source" OR "late fusion") AND ("ranking metrics" OR "MRR" OR "explainable AI" OR "web architecture")`
 
-## 2.3 Kriteria Inklusi dan Eksklusi
-Untuk menjamin relevansi dan kualitas sintesis, kriteria seleksi naskah ditentukan sebagai berikut:
-* **Kriteria Inklusi (*Inclusion Criteria*):**
-  1. Artikel diterbitkan pada periode **2022 hingga 2026**.
-  2. Terindeks pada pangkalan data internasional bereputasi (**Scopus Q1/Q2**, IEEE, ACM, Springer, Elsevier) atau jurnal nasional terakreditasi (**Sinta 1 hingga Sinta 4**).
-  3. Memuat pengujian empiris kuantitatif pada topik rekomendasi pembimbing akademik, penugasan reviewer (*reviewer assignment*), pencarian pakar (*expert finding*), mitigasi *cold-start*, atau klasifikasi teks pendek.
-  4. Menyajikan rincian metodologi, parameter prapengolahan data, algoritma, serta metrik evaluasi yang jelas.
-* **Kriteria Eksklusi (*Exclusion Criteria*):**
-  1. Artikel terbit sebelum tahun 2022.
-  2. Naskah konseptual murni atau opini tanpa pengujian dataset empiris.
-  3. Penelitian sistem rekomendasi di luar konteks akademis (seperti e-commerce komersial murni atau film).
-  4. Naskah tanpa metadata penerbitan resmi (*gray literature* tanpa nomor DOI terdaftar).
+## 2.3 Syarat Pemilihan Artikel (Kriteria Inklusi & Eksklusi)
+* **Kriteria Diterima (Inklusi):**
+  1. Artikel terbit dalam kurun waktu **2022 sampai 2026**.
+  2. Terindeks pada pangkalan data internasional bereputasi (**Scopus Q1/Q2**, IEEE, ACM, Springer, Elsevier) atau jurnal nasional terakreditasi (**Sinta 1 sampai Sinta 4**).
+  3. Menggunakan eksperimen data nyata pada bidang rekomendasi pembimbing tugas akhir, pencarian pakar akademik, penugasan reviewer, penanganan data awal kosong (*cold-start*), atau klasifikasi teks pendek.
+  4. Menjelaskan langkah pengolahan data, nama algoritma, dan hasil angka evaluasi secara transparan.
+* **Kriteria Ditolak (Eksklusi):**
+  1. Artikel yang terbit sebelum tahun 2022.
+  2. Tulisan opini atau makalah konsep tanpa pengujian data nyata.
+  3. Sistem rekomendasi di luar dunia akademik (seperti rekomendasi belanja online, hotel, atau film bioskop).
+  4. Naskah yang tidak memiliki identitas penerbit resmi (tanpa nomor DOI).
 
-## 2.4 Hasil Seleksi Studi
-Tahap penyaringan naskah menghasilkan **15 artikel empiris terverifikasi (2022–2026)** yang memenuhi seluruh kriteria kelayakan teks lengkap. Seluruh naskah ini dimasukkan ke dalam matriks sintesis data PRISMA dan Daftar Pustaka secara konsisten.
+## 2.4 Hasil Seleksi Naskah
+Dari 112 artikel awal yang ditemukan, tahap skrining menyaringnya menjadi 24 naskah potensial. Setelah membaca seluruh naskah secara mendalam, ditetapkan **15 artikel ilmiah terverifikasi (terbitan 2022–2026)** yang resmi menjadi rujukan utama proyek SI-REKTA.
 
 ---
 
 # BAB 3: HASIL DAN PEMBAHASAN
 
-## 3.1 Matriks Sintesis Literatur Empiris Terpilih (15 Artikel Terbitan 2022–2026)
+## 3.1 Ringkasan 15 Jurnal Terpilih (Tabel Sintesis Literatur)
 
-Tabel 3.1 merangkum karakteristik dataset, metode, strategi penanganan kendala data, metrik kinerja riil, evaluasi kritis mutu model, dan aspek yang diadopsi dari 15 artikel empiris terpilih.
+Tabel 3.1 menyajikan rangkuman lengkap mengenai data yang digunakan, algoritma, cara mengatasi masalah data, hasil pengujian, serta kelebihan dan kekurangannya dari 15 jurnal yang ditinjau:
 
-### Tabel 3.1: Matriks Sintesis Literatur Empiris Terverifikasi PRISMA (2022–2026)
+### Tabel 3.1: Matriks Sintesis 15 Literatur Empiris Terverifikasi PRISMA (2022–2026)
 
-| No | Referensi Lengkap (APA 7th) | Indeksasi | Karakteristik Dataset | Metode NLP & Algoritma ML | Penanganan Imbalance / Cold-Start | Metrik & Skor Kinerja Riil | Evaluasi Mutu Model (Kekuatan & Keterbatasan) | Aspek yang Diadopsi untuk SI-REKTA |
+| No | Referensi Lengkap Jurnal | Indeksasi | Data yang Digunakan | Metode & Algoritma | Solusi Masalah Data & Dosen Baru | Hasil Pengujian Nyata | Evaluasi: Kelebihan & Keterbatasan | Aspek yang Diambil untuk SI-REKTA |
 |:--:|:---|:---:|:---|:---|:---|:---|:---|:---|
-| **1** | **Sajid et al. (2026)** | Sinta 2 (JEPIN) | 60 publikasi dosen, 36 judul skripsi, 4 bidang kepakaran | Preprocessing teks, stopword akademik, TF-IDF + SBERT hybrid | Profil riset dosen dijadikan basis perhitungan keselarasan topik | Acc@3: 80,56%, Acc@5: 86,11%, MRR: 0,6607 | **Kekuatan:** Menyatukan kata kunci spesifik leksikal dengan konteks semantik. **Keterbatasan:** Sampel evaluasi kecil (36 judul). | Diadopsi sebagai skema ekstraksi fitur hybrid dan tolok ukur metrik Top-3 & MRR. |
-| **2** | **Sinaga & Kurniawan (2025)** | Sinta 3/4 (TIN) | 794 judul skripsi, 25 dosen informatika | Case folding, filtering, TF-IDF, Naive Bayes Hyperparameter | Tuning Laplace smoothing pada kelas bimbingan tidak seimbang | Akurasi: 87,30%, Presisi: 85,90%, Recall: 86,40% | **Kekuatan:** Beban komputasi ringan dan cepat. **Keterbatasan:** Mengabaikan dosen baru tanpa riwayat ($N=0$). | Dijadikan model pembanding (*baseline*) klasifikasi probabilitas awal. |
-| **3** | **Damayanti et al. (2025)** | Sinta 2 (JUSIFO) | 469 publikasi Google Scholar, 21 dosen | TF-IDF, K-Means Clustering, Cosine Similarity | Klasterisasi publikasi dosen untuk menstrukturkan area riset | Klasterisasi memetakan fokus riset secara terstruktur | **Kekuatan:** Mencegah rekomendasi salah sasaran lintas bidang ilmu. **Keterbatasan:** Bergantung pada penentuan nilai $k$ klaster. | Menjadi rujukan pengelompokan dosen ke dalam Kelompok Keahlian (KK). |
-| **4** | **Fitri et al. (2025)** | Scopus (IEEE ICAITech) | Proposal skripsi dan publikasi riset dosen | Content-Based Filtering (CBF) + Collaborative Filtering (CF) | Penyesuaian bobot linier antara sinyal publikasi dan riwayat | Hit@5: 87,88%, AUC: 0,8611 pada bobot dinamis ($w_{CBF}=0,2; w_{CF}=0,8$) | **Kekuatan:** Menggabungkan keselarasan topik dan pola bimbingan. **Keterbatasan:** F1-score relatif rendah (0,3030). | Menjadi landasan formulasi matematis *late-fusion* berbobot dinamis. |
-| **5** | **Gambino et al. (2025)** | Scopus Q2 (J. Sci. Res.) | Profil naskah tugas akhir dan direktori penguji ESCOM-IPN | Ekstraksi teks, pemetaan kepakaran, pembobotan keselarasan topik | Penyeimbangan kepakaran riset dengan beban evaluasi akademik | Mengeliminasi penugasan salah sasaran dan mempercepat alokasi | **Kekuatan:** Mengintegrasikan batasan administratif kampus nyata. **Keterbatasan:** Validasi empiris berfokus pada ranah pascasarjana. | Menjadi dasar integrasi batasan kuota bimbingan dan whitelist dosen aktif. |
-| **6** | **Nguyen et al. (2025)** | Scopus Q1 (ACM CIKM) | Benchmark multi-modal dengan interaksi sparse | Multi-modal Adaptive Mixture of Experts (MAMEX) | Gating network adaptif mentransfer representasi konten ke entitas baru ($N=0$) | Peningkatan signifikan akurasi rekomendasi pada skenario cold-start | **Kekuatan:** Menghilangkan ketergantungan pada bobot fusi statis. **Keterbatasan:** Kompleksitas pelatihan arsitektur relatif tinggi. | Menjadi rujukan konseptual pemberian bobot adaptif penuh pada dosen baru. |
-| **7** | **de Campos et al. (2024a)** | Scopus Q2 (Algorithms) | 341.520 artikel ilmiah, 9.453 profil penulis | Information retrieval profiling, TF-IDF, Logistic Regression, SBERT | Pembentukan sub-profil publikasi; adaptif saat ada penulis baru | Top-1: 35,96%, Top-10: 66,59%, latensi < 0,2 detik | **Kekuatan:** Profil berbasis temu kembali informasi lebih stabil dibanding arsitektur neural network yang padat. | Diadopsi untuk membangun dokumen agregasi profil keahlian dari publikasi dosen. |
-| **8** | **de Campos et al. (2024b)** | Scopus Q1 (UMUAI) | Korpus naskah ilmiah dan evaluasi kepuasan pengguna | Explainable recommender: visualisasi kata kunci, skor relevansi | Penjelasan berbasis bukti teks nyata (*scrutability*) | Top-10 Precision: 71,21%, Kepuasan penjelasan: 6,12 / 7,0 | **Kekuatan:** Meningkatkan transparansi dan kepercayaan pengguna akademik. **Keterbatasan:** Membutuhkan ruang antarmuka tambahan. | Diadopsi untuk perancangan kartu rekomendasi XAI (kata kunci penentu & bukti paper). |
-| **9** | **Wang et al. (2024)** | Scopus Q1 (IEEE TCC) | Layanan inferensi model machine learning multi-cloud | Arsitektur microservice Open API, metrik konsistensi XAI | Pengujian konsistensi metrik penjelas (*trustworthiness*) | Menjamin penjelasan model stabil dan dapat diaudit secara komputasi | **Kekuatan:** Desain REST API modular dan cloud-agnostic. **Keterbatasan:** Berfokus pada model computer vision cloud. | Menjadi acuan arsitektur REST API modular yang memisahkan logika XAI dan inferensi. |
-| **10** | **Xiao et al. (2023)** | Scopus Q1 (ACM TKDD) | 280.683 proposal penelitian disiplin hierarkis | Hierarchical Transformer, selective interpolation clustering | Inferensi bertingkat untuk mencegah dominasi kelas mayoritas | Peningkatan nyata Macro-F1, Precision, dan Recall@K pada kelas minoritas | **Kekuatan:** Klasifikasi hierarkis mengurangi bias dominasi kelas mayoritas. **Keterbatasan:** Komputasi bertingkat membutuhkan pipeline serial. | Diadopsi sebagai skema dua tingkat: Tingkat 1 (KK) lalu Tingkat 2 (Dosen). |
-| **11** | **Bruch et al. (2022)** | Scopus Q1 (ACM TOIS) | 9 dataset benchmark temu kembali informasi skala besar | Komparasi Reciprocal Rank Fusion (RRF) vs. Convex Combination (CC) | Fusi kombinasi linier cembung (*convex linear combination*) | Kombinasi linier cembung berbobot konsisten mengungguli RRF | **Kekuatan:** Mempertahankan informasi selisih magnitudo skor; komputasi efisien. **Keterbatasan:** Sensitif terhadap normalisasi rentang skor. | Landasan teoretis perpaduan skor probabilitas klasifikasi dan kemiripan kosinus. |
-| **12** | **Sun et al. (2022)** | Scopus Q1 (IEEE TPAMI) | 6 benchmark rekomendasi, 10 algoritma baseline | Protokol pengujian baku untuk sistem rekomendasi offline | Pembagian data terstandar dan evaluasi metrik multi-dimensi | Standarisasi pelaporan Hit Rate, MRR, NDCG, dan Macro-F1 | **Kekuatan:** Mengeliminasi bias evaluasi akibat metrik akurasi tunggal. **Keterbatasan:** Menuntut evaluasi offline yang ketat. | Dijadikan protokol evaluasi model SI-REKTA (Top-1, Top-3, MRR, Macro-F1). |
-| **13** | **Luo et al. (2022)** | Scopus Q1 (DCN) | 5 benchmark teks ringkas dan data sosial | Fusi fitur statistik (TF-IDF) + semantik kontekstual | Pembobotan representasi teks pendek untuk menyeimbangkan kelas | Akurasi dan F1-Score mengungguli model representasi tunggal | **Kekuatan:** Sangat tangguh menangani keterbatasan informasi teks pendek. **Keterbatasan:** Menambah dimensi ruang vektor fitur. | Diadopsi untuk kombinasi ekstraksi fitur leksikal n-gram pada judul akademik. |
-| **14** | **Saraswati et al. (2025)** | Sinta 2 (MATRIK) | Korpus teks bahasa Indonesia dan Inggris | TF-IDF, SVM, analisis perbandingan variasi prapengolahan morfologis | Analisis pengaruh stemming/lemmatization pada korpus tidak seimbang | Akurasi teks Indonesia seimbang: 82,08% (stemming); timpang: 82,62% | **Kekuatan:** Menguji trade-off akurasi vs. beban komputasi prapengolahan. **Keterbatasan:** Korpus pengujian bukan domain spesifik riset DSI. | Dasar pengujian pengaruh modul prapengolahan morfologis pada korpus lokal. |
-| **15** | **Falah & Suryawan (2022)** | Sinta 2 (Khazanah Inf.) | 150 judul tugas akhir mahasiswa dan profil dosen | Preprocessing teks, TF-IDF vectorizer, Cosine Similarity Matrix | Pencocokan kemiripan konten antara judul usulan dan riwayat dosen | Pengurutan ranking kemiripan teks menghasilkan rekomendasi dosen relevan | **Kekuatan:** Algoritma deterministik, mudah diimplementasikan, tanpa pelatihan berat. **Keterbatasan:** Gagal menangani dosen baru tanpa riwayat ($N=0$). | Menjadi bukti empiris perlunya sumber data kedua untuk mengatasi keterbatasan data tunggal. |
+| **1** | **Sajid et al. (2026)** | Sinta 2 (JEPIN) | 60 publikasi dosen, 36 judul skripsi, 4 bidang kepakaran | Pembersihan teks, filter kata umum, gabungan TF-IDF + SBERT | Profil karya dosen dijadikan dasar pencocokan kemiripan topik | Akurasi Top-3: 80,56%, Akurasi Top-5: 86,11%, Skor Urutan (MRR): 0,66 | **Kelebihan:** Sangat baik mengenali kata kunci khusus sekaligus arti kalimat secara utuh. **Keterbatasan:** Jumlah data uji masih sedikit (36 judul). | Diambil sebagai acuan penggabungan fitur kata dan tolok ukur target Akurasi Top-3. |
+| **2** | **Sinaga & Kurniawan (2025)** | Sinta 3/4 (TIN) | 794 judul skripsi, 25 dosen informatika | Pembersihan huruf kecil, pemisahan kata, TF-IDF, Naive Bayes | Penyetelan parameter Laplace agar adil pada dosen yang bimbingannya sedikit | Akurasi: 87,30%, Presisi: 85,90%, Sensitivitas: 86,40% | **Kelebihan:** Komputasi sangat ringan, hemat memori, dan cepat. **Keterbatasan:** Tidak bisa merekomendasikan dosen baru yang riwayatnya masih 0. | Dijadikan model pembanding awal untuk memprediksi kelompok bidang keahlian. |
+| **3** | **Damayanti et al. (2025)** | Sinta 2 (JUSIFO) | 469 publikasi Google Scholar dari 21 dosen | TF-IDF, Pengelompokan K-Means, Kemiripan Kosinus | Publikasi dosen dikelompokkan agar area riset lebih terstruktur | Berhasil memetakan fokus keahlian dosen secara rapi | **Kelebihan:** Mencegah saran pembimbing yang salah sasaran lintas bidang ilmu. **Keterbatasan:** Sensitif terhadap jumlah kelompok ($k$) yang ditentukan di awal. | Menjadi dasar pengelompokan dosen ke dalam 4 Kelompok Keahlian resmi (KK). |
+| **4** | **Fitri et al. (2025)** | Scopus (IEEE ICAITech) | Proposal skripsi dan publikasi riset dosen | Gabungan Content-Based (CBF) + Collaborative Filtering (CF) | Penyesuaian bobot persentase antara data riset dan data riwayat skripsi | Akurasi Top-5: 87,88%, Nilai AUC: 0,8611 pada pembobotan dinamis | **Kelebihan:** Menggabungkan keselarasan topik dengan kebiasaan membimbing. **Keterbatasan:** Nilai F1-score masih relatif rendah (0,3030). | Menjadi dasar rumus penggabungan nilai riset dan nilai skripsi (*late-fusion*). |
+| **5** | **Gambino et al. (2025)** | Scopus Q2 (J. Sci. Res.) | Naskah proposal tugas akhir dan daftar dosen penilai | Ekstraksi kata naskah, pemetaan keahlian, pembobotan topik | Menyeimbangkan keahlian dosen dengan batasan beban kerja bimbingan | Mengurangi salah sasaran penugasan dan mempercepat penentuan dosen | **Kelebihan:** Mempertimbangkan aturan administrasi kampus di dunia nyata. **Keterbatasan:** Diuji khusus pada program pascasarjana. | Menjadi dasar penegakan aturan batas kuota dan daftar resmi dosen aktif. |
+| **6** | **Nguyen et al. (2025)** | Scopus Q1 (ACM CIKM) | Data uji interaksi dengan banyak data baru yang kosong | Multi-modal Adaptive Mixture of Experts (MAMEX) | Jaringan cerdas otomatis mengalihkan penilaian ke data profil jika riwayat kosong | Rekomendasi tetap akurat pada entitas baru yang belum punya riwayat | **Kelebihan:** Sangat pintar mengalokasikan bobot tanpa setelan manual yang kaku. **Keterbatasan:** Proses pembuatan model cukup rumit. | Menjadi dasar aturan: bagi dosen baru, skor dihitung 100% dari karya publikasinya. |
+| **7** | **de Campos et al. (2024a)** | Scopus Q2 (Algorithms) | 341.520 artikel ilmiah dan 9.453 profil akademisi | Profil pencarian informasi, TF-IDF, Regresi Logistik, SBERT | Pembuatan ringkasan profil publikasi dosen; fleksibel jika ada dosen baru | Top-1: 35,96%, Top-10: 66,59%, Kecepatan hitung < 0,2 detik | **Kelebihan:** Sangat cepat dan mudah diperbarui dibanding model jaringan saraf yang rumit. **Keterbatasan:** Mengabaikan faktor di luar teks artikel. | Diambil untuk menyusun satu dokumen kumpulan karya riset per dosen aktif. |
+| **8** | **de Campos et al. (2024b)** | Scopus Q1 (UMUAI) | Artikel ilmiah dan pengujian kepuasan pengguna nyata | Sistem rekomendasi transparan: visualisasi kata kunci dan bukti artikel | Menampilkan bukti teks nyata mengapa suatu saran diberikan | Presisi Top-10: 71,21%, Kepuasan pengguna: 6,12 dari skala 7,0 | **Kelebihan:** Membuat pengguna percaya karena ada bukti nyata yang bisa dilihat. **Keterbatasan:** Tampilan antarmuka membutuhkan ruang lebih luas. | Diambil untuk merancang kartu saran dosen lengkap dengan kata kunci dan judul paper. |
+| **9** | **Wang et al. (2024)** | Scopus Q1 (IEEE TCC) | Pengujian layanan kecerdasan buatan berbasis cloud | Arsitektur web Open API mandiri, verifikasi keandalan penjelasan | Pengujian konsistensi agar alasan sistem selalu stabil dan bisa diaudit | Membuktikan fitur penjelasan harus dirancang sejak awal pembuatan sistem | **Kelebihan:** Sistem terstruktur rapi, modular, dan mudah dihubungkan ke web lain. **Keterbatasan:** Diuji pada model pengenalan gambar cloud. | Menjadi acuan pemisahan program backend API dan frontend antarmuka web. |
+| **10** | **Xiao et al. (2023)** | Scopus Q1 (ACM TKDD) | 280.683 proposal penelitian dengan bidang bertingkat | Transformer Hierarkis, pengelompokan interpolasi selektif | Klasifikasi bertingkat agar bidang yang sedikit tidak kalah oleh bidang mayoritas | Peningkatan nilai ketepatan secara nyata pada kelompok yang datanya sedikit | **Kelebihan:** Mencegah sistem pilih kasih terhadap kelompok yang jumlahnya banyak. **Keterbatasan:** Komputasi bertingkat butuh proses dua langkah. | Diambil untuk sistem 2 tahap: Tahap 1 tebak bidang (KK), Tahap 2 pilih nama dosen. |
+| **11** | **Bruch et al. (2022)** | Scopus Q1 (ACM TOIS) | 9 dataset pengujian pencarian informasi skala besar | Komparasi metode gabungan peringkat vs gabungan nilai berbobot | Penggabungan nilai proporsional berbobot (*convex linear combination*) | Gabungan nilai berbobot terbukti selalu lebih unggul dibanding gabungan peringkat | **Kelebihan:** Menjaga perbedaan angka kemiripan yang asli; proses hitung sangat cepat. **Keterbatasan:** Nilai kedua data harus disamakan skalanya (0 sampai 1). | Dasar rumus penggabungan nilai probabilitas skripsi dan nilai kemiripan publikasi. |
+| **12** | **Sun et al. (2022)** | Scopus Q1 (IEEE TPAMI) | 6 dataset standar pengujian, 10 algoritma pembanding | Panduan baku tata cara evaluasi sistem rekomendasi | Pemisahan data latih dan data uji secara rapi dan penilaian multi-metrik | Standarisasi pelaporan nilai Hit Rate, MRR, dan keadilan kelas minoritas | **Kelebihan:** Menghindari salah nilai akibat hanya melihat satu angka persentase umum. **Keterbatasan:** Butuh pengujian berlapis yang ketat. | Diambil sebagai panduan resmi cara menguji model SI-REKTA sebelum diluncurkan. |
+| **13** | **Luo et al. (2022)** | Scopus Q1 (DCN) | 5 dataset kalimat pendek dan data media sosial | Gabungan fitur kata (TF-IDF) + makna kalimat (Word Embedding) | Pembobotan representasi kalimat pendek agar kelas langka tetap terdeteksi | Akurasi dan F1-score mengungguli model yang hanya memakai satu jenis fitur | **Kelebihan:** Sangat tangguh membaca kalimat yang jumlah katanya pendek. **Keterbatasan:** Jumlah tabel fitur kata menjadi lebih banyak. | Diambil untuk teknik membaca potongan kata n-gram pada kalimat judul skripsi. |
+| **14** | **Saraswati et al. (2025)** | Sinta 2 (MATRIK) | Kumpulan teks bahasa Indonesia dan bahasa Inggris | TF-IDF, SVM, analisis pemenggalan kata dasar (*stemming*) | Pengujian apakah pemotongan kata dasar benar-benar menaikkan akurasi | Akurasi teks Indonesia: 82,08% (pakai pemenggalan); 82,62% (tanpa pemenggalan) | **Kelebihan:** Membuktikan pemotongan kata tidak wajib dan memakan waktu komputasi. **Keterbatasan:** Diuji pada data umum, bukan data judul penelitian kampus. | Menjadi alasan untuk tidak memotong kata secara kasar agar istilah asing tidak rusak. |
+| **15** | **Falah & Suryawan (2022)** | Sinta 2 (Khazanah Inf.) | 150 judul tugas akhir mahasiswa dan profil dosen | Pembersihan teks, pembobotan TF-IDF, Kemiripan Kosinus | Pencocokan kata kunci judul usulan dengan judul skripsi masa lalu | Berhasil mengurutkan rekomendasi dosen berdasarkan kemiripan kata | **Kelebihan:** Sederhana, mudah dipahami, tidak butuh waktu pelatihan berjam-jam. **Keterbatasan:** Gagal total memberi saran untuk dosen baru yang belum ada riwayat. | Menjadi bukti bahwa data riwayat skripsi saja tidak cukup, butuh data publikasi dosen. |
 
 ---
 
-## 3.2 Analisis dan Pembahasan Komprehensif atas Research Questions (RQ)
+## 3.2 Pembahasan Mendalam Menjawab Pertanyaan Penelitian (RQ)
 
-### 3.2.1 Pembahasan RQ1: Teknik Prapengolahan Teks dan Representasi Fitur NLP Teks Pendek Akademik
-* **Temuan Data dan Fakta Literatur:**  
-  Data empiris pada Tabel 3.1 menegaskan bahwa teks judul akademik merupakan teks pendek (*short-text*) dengan karakteristik leksikal khusus. Sajid et al. (2026) melaporkan bahwa penggunaan TF-IDF murni menghasilkan akurasi kata kunci yang tinggi namun mengabaikan sinonimitas istilah, sedangkan representasi kontekstual murni (SBERT) kadang melewatkan istilah teknis yang sangat spesifik. Penggabungan representasi leksikal dan semantik pada korpus tugas akhir mampu meningkatkan kinerja pencocokan hingga Acc@3 mencapai 80,56% dan MRR 0,6607 (*Sajid et al., 2026*). Temuan ini sejalan dengan hasil eksperimen Luo et al. (2022) pada lima dataset teks ringkas, di mana fusi representasi statistik leksikal (TF-IDF n-gram) dan vektor semantik kontekstual secara konsisten mengungguli representasi tunggal. Terkait prapengolahan morfologis bahasa Indonesia, Saraswati et al. (2025) menunjukkan bahwa penerapan *stemming* tidak selalu meningkatkan akurasi secara signifikan pada teks terstruktur (82,08% berbanding 82,62%), namun berisiko mengubah makna istilah teknis asing jika aturan pemenggalan tidak dibatasi. Sementara itu, Falah & Suryawan (2022) membuktikan bahwa pembersihan kata henti (*stopword removal*) umum saja belum memadai untuk menyaring kata formal template skripsi.
-* **Analisis & Diskusi Mendalam:**  
-  Karakteristik teks pada SI-REKTA melibatkan judul skripsi mahasiswa (rata-rata 16,60 kata) dan judul publikasi riset dosen (rata-rata 13,73 kata) yang sarat kosakata dwibahasa (*bilingual*). Apabila prapengolahan hanya mengandalkan daftar kata henti standar bahasa Indonesia, kata-kata template formal seperti *"rancang bangun"*, *"implementasi"*, *"berbasis web"*, dan *"studi kasus"* akan mendominasi ruang fitur leksikal dan mendistorsi skor kemiripan kosinus. Oleh karena itu, diperlukan daftar kata henti akademik khusus (*academic-domain stopwords*) untuk mengisolasi kata kunci keahlian substantif (*"business intelligence"*, *"spatial analysis"*, *"network security"*). Selain itu, untuk menangani variasi penulisan mahasiswa dan kesalahan ketik (*typo*), ekstraksi fitur leksikal harus memadukan **Word N-Gram (1–2 gram)** guna menjaga keutuhan frasa teknis serta **Character N-Gram (3–5 gram)** guna memberikan ketahanan terhadap variasi morfologis kata tanpa perlu melakukan pemenggalan agresif yang dapat merusak istilah serapan.
+### 3.2.1 Pembahasan RQ1: Cara Terbaik Membersihkan Teks dan Membaca Judul Akademik Dwibahasa
+* **Temuan Nyata dari Literatur:**  
+  Berdasarkan data pada Tabel 3.1, judul akademik memiliki sifat kalimat pendek (*short-text*). Sajid et al. (2026) membuktikan bahwa jika hanya mengandalkan pencocokan kata biasa (TF-IDF), sistem akan bingung terhadap kata-kata yang maknanya sama tapi beda tulisan. Sebaliknya, jika hanya mengandalkan pemahaman konteks umum (SBERT), istilah komputasi yang sangat spesifik justru kadang terabaikan. Menggabungkan pencocokan kata kunci leksikal dengan pemahaman makna kalimat berhasil menaikkan ketepatan masuk 3 besar (Acc@3) hingga 80,56% (*Sajid et al., 2026*). Hasil serupa dicapai oleh Luo et al. (2022), di mana kombinasi potongan kata dan makna kalimat selalu mengalahkan metode tunggal. Di sisi lain, penelitian Saraswati et al. (2025) pada teks bahasa Indonesia menemukan bahwa memotong kata ke kata dasar (*stemming*) tidak memberikan kenaikan akurasi yang berarti (82,08% berbanding 82,62%), namun justru berisiko merusak istilah teknis asing. Selain itu, Falah & Suryawan (2022) menegaskan bahwa kata-kata template formal skripsi wajib dibuang.
+* **Analisis & Diskusi:**  
+  Judul skripsi mahasiswa DSI Unand rata-rata hanya sepanjang 16,6 kata, sedangkan judul artikel dosen rata-rata 13,7 kata. Teks ini banyak memuat istilah campuran bahasa Indonesia dan Inggris. Jika kita hanya memakai kamus pembersih kata biasa, kata-kata template skripsi seperti *"rancang bangun"*, *"sistem informasi"*, *"berbasis web"*, dan *"studi kasus"* akan terus terbaca dan membuat komputer mengira semua judul itu sama. Oleh karena itu, kita harus menambahkan daftar kata henti akademik khusus (*academic stopwords*) untuk menghapus kata-kata template tersebut, sehingga komputer fokus pada keahlian intinya (seperti *"business intelligence"*, *"spatial analysis"*, atau *"cyber security"*). Kita juga tidak perlu melakukan pemotongan kata secara kasar (*stemming* agresif) agar istilah seperti *"enterprise architecture"* atau *"data mining"* tidak rusak. Komputer cukup membaca potongan kata bergandengan 1–2 kata (*Word N-Gram*) untuk menangkap frasa penting, serta potongan karakter (*Character N-Gram*) untuk mengatasi salah ketik (*typo*) mahasiswa.
 * **Kesimpulan Tegas RQ1:**  
-  Teknik prapengolahan dan representasi NLP paling efektif untuk teks pendek akademik dwibahasa adalah **skema prapengolahan bertingkat** (pembersihan tanda baca, *case folding*, dan *stopword removal* akademik khusus) yang dipadukan dengan **representasi fitur hibrida TF-IDF Word N-Gram (1–2 gram) dan Character N-Gram (3–5 gram)**. Pendekatan ini mempertahankan ketajaman frasa teknis, tahan terhadap variasi istilah, dan efisien secara komputasi.
+  Teknik NLP paling efektif adalah **pembersihan teks bertahap** (menghapus tanda baca, mengubah ke huruf kecil, dan membuang kata template skripsi) yang dilanjutkan dengan **pembobotan kata bergandengan (TF-IDF N-Gram 1–2 kata)** tanpa pemotongan kata dasar yang agresif. Pendekatan ini terbukti menjaga keutuhan istilah teknologi informasi dan tidak memberatkan kinerja komputer.
 
 ---
 
-### 3.2.2 Pembahasan RQ2: Strategi Integrasi Multi-Sumber (Late-Fusion) dan Mitigasi Cold-Start
-* **Temuan Data dan Fakta Literatur:**  
-  Studi empiris Falah & Suryawan (2022) serta Sinaga & Kurniawan (2025) membuktikan bahwa sistem rekomendasi yang hanya bersumber pada riwayat bimbingan masa lalu gagal memberikan rekomendasi kepada dosen baru ($N=0$) karena ketiadaan interaksi historis. Sebaliknya, Nguyen et al. (2025) melalui kerangka kerja *Mixture of Experts* membuktikan bahwa mengintegrasikan sumber data konten eksternal secara adaptif dapat menyelesaikan kendala *cold-start* secara efektif. Pada konteks rekomendasi pembimbing, Fitri et al. (2025) menunjukkan bahwa pendekatan hibrida yang memadukan data konten publikasi dan data interaksi historis menghasilkan Hit@5 sebesar 87,88% dan AUC 0,8611. Terkait fungsi integrasi, analisis teoretis dan empiris oleh Bruch et al. (2022) pada sembilan dataset skala besar menunjukkan bahwa fungsi kombinasi linier cembung (*convex linear combination late-fusion*) secara konsisten mengungguli fungsi peringkat non-parametrik (*Reciprocal Rank Fusion*) karena mempertahankan informasi gradasi skor kemiripan serta sangat stabil saat dioptimasi.
-* **Analisis & Diskusi Mendalam:**  
-  Pada korpus DSI Unand, 5 dari 17 dosen tetap aktif (29,4%) memiliki nol riwayat bimbingan pada `Judul_TA.csv`, namun seluruh 17 dosen memiliki rekam jejak riset aktif pada `Publikasi_Dosen.csv` (7 hingga 32 paper). Memaksakan model klasifikasi tunggal pada riwayat skripsi akan menciptakan ketidakadilan sistemik. Mengadopsi prinsip kombinasi linier cembung (*Bruch et al., 2022*) yang diselaraskan dengan mekanisme pembobotan dinamis (*Fitri et al., 2025; Nguyen et al., 2025*), skor akhir kecocokan dihitung melalui formulasi **Dynamic Late-Fusion**:
+### 3.2.2 Pembahasan RQ2: Cara Menggabungkan Dua Sumber Data agar Adil bagi Dosen Baru (Cold-Start)
+* **Temuan Nyata dari Literatur:**  
+  Hasil penelitian Falah & Suryawan (2022) dan Sinaga & Kurniawan (2025) pada Tabel 3.1 membuktikan bahwa jika sistem hanya membaca riwayat bimbingan lama, sistem tidak akan pernah merekomendasikan dosen baru yang riwayatnya masih nol. Penelitian Nguyen et al. (2025) membuktikan bahwa sistem cerdas harus bisa mengalihkan sumber penilaian ke data profil keahlian lain jika data riwayatnya kosong. Pada penugasan pembimbing, Fitri et al. (2025) menunjukkan bahwa menggabungkan data karya publikasi dosen dengan data riwayat skripsi menghasilkan akurasi Top-5 sebesar 87,88%. Mengenai cara menggabungkannya, riset besar oleh Bruch et al. (2022) membuktikan bahwa metode penggabungan nilai proporsional berbobot (*convex linear combination late-fusion*) jauh lebih unggul dan stabil dibanding metode gabungan peringkat biasa karena tetap memperhitungkan selisih jarak nilai kemiripan yang asli.
+* **Analisis & Diskusi:**  
+  Di DSI Unand, ada 5 dari 17 dosen tetap aktif (29,4%) yang belum pernah membimbing mahasiswa skripsi sama sekali. Jika hanya melihat riwayat skripsi masa lalu, kelima dosen ini akan menjadi "korban sistem" dan tidak akan pernah disarankan. Padahal, pada dataset kedua, kelima dosen ini aktif menulis antara 7 hingga 32 artikel ilmiah. Dengan mengadopsi prinsip penggabungan nilai berbobot (*Bruch et al., 2022; Fitri et al., 2025*), kita membuat aturan perhitungan yang sangat adil dan mudah dipahami:
 
-  $$\text{Final Score}(D_i) = \alpha_i \cdot \text{Sim}_{\text{Publikasi}}(Q, D_i) + (1 - \alpha_i) \cdot P_{\text{Historis}}(D_i \mid Q)$$
+```text
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       RUMUS PERHITUNGAN SKOR AKHIR                          │
+│                                                                             │
+│ Skor Akhir = (Bobot Riset × Skor Publikasi) + (Bobot Riwayat × Skor Skripsi)│
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
-  Penetapan parameter $\alpha_i$ dirancang adaptif berdasarkan ketersediaan data bimbingan dosen:
-  1. **Bagi Dosen Baru ($N = 0$):** Nilai $\alpha_i$ otomatis bernilai **$1,0$**. Skor akhir dihitung 100% dari kemiripan semantik kosinus antara usulan judul $Q$ dan profil publikasi dosen $D_i$. Dengan demikian, dosen baru tetap memperoleh peluang penugasan yang proporsional sesuai keahlian riset aktualnya.
-  2. **Bagi Dosen Berpengalaman ($N > 0$):** Nilai $\alpha_i$ dikalibrasi pada rentang **$0,35 \le \alpha_i \le 0,50$** untuk menyeimbangkan probabilitas model klasifikasi historis dengan arah riset mutakhir dosen.
+  Penentuan porsi bobot disesuaikan secara otomatis:
+  1. **Untuk Dosen Baru yang Belum Pernah Membimbing (Riwayat = 0):**  
+     Bobot riset langsung bernilai **100% (Bobot = 1,0)**. Skor akhir dosen baru dihitung murni dari kemiripan proposal mahasiswa terhadap artikel ilmiah yang pernah ditulis dosen. Dengan cara ini, dosen baru tetap memiliki kesempatan yang sama besarnya untuk direkomendasikan sesuai keahlian riset aslinya.
+  2. **Untuk Dosen yang Sudah Memiliki Riwayat Bimbingan:**  
+     Bobot dibagi seimbang (porsi publikasi riset sekitar 35% sampai 50%, dan sisanya dari probabilitas riwayat bimbingan lampau). Hal ini memastikan kebiasaan bimbingan masa lalu tetap dipertimbangkan, namun topik riset terkini dosen juga tetap menjadi penentu.
 * **Kesimpulan Tegas RQ2:**  
-  Strategi integrasi multi-sumber paling tepat untuk memitigasi *cold-start* adalah **Dynamic Late-Fusion berbasis Kombinasi Linier Cembung**, di mana bobot publikasi riset dialokasikan penuh ($\alpha=1,0$) untuk dosen tanpa riwayat bimbingan, dan dibagi secara proporsional dengan model klasifikasi historis bagi dosen yang memiliki riwayat pembimbingan aktif.
+  Strategi terbaik adalah **Penggabungan Nilai Berbobot Dinamis (Dynamic Late-Fusion)**. Dosen baru yang belum punya riwayat dinilai 100% dari kecocokan karya ilmiahnya, sedangkan dosen yang sudah ada riwayat dinilai secara berimbang antara karya ilmiah dan rekam jejak bimbingannya.
 
 ---
 
-### 3.2.3 Pembahasan RQ3: Standar Metrik Evaluasi Ranking Top-K dan Penentuan Ambang Batas
-* **Temuan Data dan Fakta Literatur:**  
-  Sun et al. (2022) dalam tolok ukur DaisyRec 2.0 menegaskan bahwa evaluasi sistem rekomendasi tidak boleh mengandalkan metrik akurasi tunggal (*overall accuracy*), terutama pada korpus yang mengalami ketimpangan kelas (*class imbalance*). Xiao et al. (2023) membuktikan bahwa pada penugasan proposal penelitian berstruktur hierarkis, metrik *Macro-Averaged F1-Score* wajib dilaporkan guna memastikan model tidak terbias ke kelas mayoritas. Pada ranah rekomendasi pembimbing akademik, Sajid et al. (2026) menetapkan metrik **Accuracy@K (Acc@3 dan Acc@5)** dan **Mean Reciprocal Rank (MRR)** sebagai tolok ukur utama evaluasi daftar rekomendasi, dengan capaian empiris Acc@3 sebesar 80,56% dan MRR 0,6607. Sementara itu, Fitri et al. (2025) melaporkan Hit@5 sebesar 87,88%, dan de Campos et al. (2024a) mencatat Top-10 akurasi temu kembali pakar sebesar 66,59%.
-* **Analisis & Diskusi Mendalam:**  
-  Karena sistem SI-REKTA menyajikan daftar alternatif Top-3 calon pembimbing kepada mahasiswa dan pengelola tugas akhir, metrik evaluasi harus mampu menilai dua dimensi: (1) *kehadiran* target dosen yang relevan dalam 3 besar kartu rekomendasi, dan (2) *ketepatan posisi urutan* dosen paling relevan pada peringkat teratas. Metrik **Hit Rate @ 3 (Top-3 Accuracy)** mengukur dimensi kehadiran tersebut, sedangkan **MRR @ 3** mengevaluasi posisi relatifnya. Selain itu, mengingat dosen senior membimbing hingga 149 mahasiswa sementara dosen lain bimbingannya sedikit, **Macro-Averaged F1-Score** pada data uji bimbingan aktif menjadi instrumen esensial untuk memverifikasi keadilan performa di seluruh kelas dosen. Berdasarkan konvergensi data empiris dari Sajid et al. (2026), Fitri et al. (2025), dan Xiao et al. (2023), dirumuskan kriteria kelayakan performa minimum model:
-  * **Top-3 Accuracy (Hit@3) $\ge 0,80$ (80%)**
-  * **Mean Reciprocal Rank (MRR @ 3) $\ge 0,60$**
-  * **Macro-Averaged F1-Score $\ge 0,70$ (70%)** pada kelas bimbingan aktif.
+### 3.2.3 Pembahasan RQ3: Ukuran Penilaian (Metrik) dan Standar Nilai Kelayakan Sistem
+* **Temuan Nyata dari Literatur:**  
+  Sun et al. (2022) dalam panduan evaluasi DaisyRec 2.0 mengingatkan bahwa kita tidak boleh hanya menilai sistem rekomendasi dari angka "persentase akurasi keseluruhan" biasa, terutama jika ada dosen yang bimbingannya sangat banyak dan ada yang sangat sedikit. Xiao et al. (2023) membuktikan bahwa nilai keadilan antar kelas (*Macro-F1 Score*) wajib dihitung agar sistem tidak hanya menguntungkan dosen mayoritas. Untuk sistem saran pembimbing, Sajid et al. (2026) menetapkan metrik **Akurasi Top-3 (apakah dosen yang tepat masuk 3 besar)** dan **MRR (seberapa sering dosen yang tepat berada di urutan nomor 1)** sebagai ukuran utama, dengan capaian empiris Akurasi Top-3 sebesar 80,56% dan MRR 0,66. Sementara itu, Fitri et al. (2025) berhasil meraih Akurasi Top-5 sebesar 87,88%, dan de Campos et al. (2024a) mencatat akurasi 66,59%.
+* **Analisis & Diskusi:**  
+  Karena aplikasi SI-REKTA nantinya menyajikan 3 buah kartu rekomendasi dosen teratas kepada mahasiswa, cara mengujinya harus menilai dua hal penting:
+  1. *Apakah dosen yang paling tepat ada di dalam 3 kartu tersebut?* (Diukur menggunakan **Akurasi Top-3**).
+  2. *Apakah dosen yang paling tepat berada di urutan paling atas (peringkat 1)?* (Diukur menggunakan **Mean Reciprocal Rank / MRR**).
+  3. *Apakah rekomendasi adil untuk seluruh 17 dosen tanpa memihak dosen senior saja?* (Diukur menggunakan **Macro-Averaged F1-Score**).  
+  Berdasarkan standar hasil penelitian terkini pada Tabel 3.1 (*Sajid et al., 2026; Fitri et al., 2025; Xiao et al., 2023*), ditetapkan batas nilai minimal agar sistem SI-REKTA dinyatakan **LAYAK DIGUNAKAN DI KAMPUS**:
+  * **Akurasi Top-3 (Hit@3) minimal 80% (0,80)**: Artinya, minimal 8 dari 10 mahasiswa berhasil mendapatkan dosen yang tepat di daftar 3 besar rekomendasinya.
+  * **Skor Posisi Urutan (MRR @ 3) minimal 0,60**: Menandakan bahwa dosen yang paling relevan selalu berada di peringkat atas.
+  * **Keadilan Distribusi (Macro-F1) minimal 70% (0,70)** pada kelas bimbingan aktif.
 * **Kesimpulan Tegas RQ3:**  
-  Evaluasi rekomendasi pembimbing tugas akhir wajib menggunakan metrik pemeringkatan multi-dimensi: **Top-3 Accuracy, MRR @ 3, dan Macro-F1**. Model dinilai layak operasional apabila melampaui nilai ambang batas empiris: Top-3 Accuracy $\ge 80\%$, MRR $\ge 0,60$, dan Macro-F1 $\ge 70\%$.
+  Kualitas sistem wajib dinilai menggunakan kombinasi tiga metrik peringkat: **Akurasi Top-3, MRR @ 3, dan Macro-F1**. Standar minimal kelayakannya adalah Akurasi Top-3 $\ge 80\%$, MRR $\ge 0,60$, dan Macro-F1 $\ge 70\%$.
 
 ---
 
-### 3.2.4 Pembahasan RQ4: Penerapan Explainable AI (XAI) untuk Transparansi Rekomendasi
-* **Temuan Data dan Fakta Literatur:**  
-  de Campos et al. (2024b) melakukan pengujian empiris mengenai pengaruh transparansi rekomendasi terhadap penerimaan pengguna akademik. Hasil riset menunjukkan bahwa menyajikan penjelasan intrinsik berbasis model (*model-intrinsic explanation*)—berupa kata kunci penentu keselarasan (*salient keywords*) dan rujukan naskah ilmiah dosen yang relevan—menghasilkan skor kepuasan dan kepercayaan pengguna yang sangat tinggi (**6,12 dari skala 7,0**; presisi Top-10 sebesar 71,21%). Sejalan dengan hal tersebut, Wang et al. (2024) menggarisbawahi bahwa fitur penjelasan model machine learning harus konsisten, dapat diverifikasi secara komputasi (*scrutability*), dan terintegrasi langsung pada struktur pertukaran data antarmuka pengguna (*user interface*). Gambino et al. (2025) juga menekankan bahwa penugasan akademik yang transparan mengurangi resistensi penolakan usulan proposal oleh komite penilai.
-* **Analisis & Diskusi Mendalam:**  
-  Dalam tata kelola penugasan pembimbing di perguruan tinggi, model yang bekerja sebagai *"kotak hitam"* (*black-box*) berisiko memicu ketidakpercayaan dari mahasiswa maupun koordinator program studi. Jika mahasiswa hanya disajikan nama dosen dan persentase skor tanpa alasan ilmiah, mereka tidak dapat mengetahui dasar keterkaitan topik usulannya dengan kepakaran dosen. Berdasarkan temuan de Campos et al. (2024b), SI-REKTA mengadopsi skema **Explainable UI Card** pada setiap kandidat rekomendasi Top-3:
-  1. **Tingkat Keselarasan Semantik:** Persentase skor akhir yang dinormalisasi.
-  2. **Kata Kunci Penentu (*Topic Keywords Justification*):** Menampilkan 3–5 frasa teknis berbobot tertinggi yang beririsan antara proposal mahasiswa dan profil publikasi dosen.
-  3. **Bukti Literatur Dosen (*Empirical Publication Evidence*):** Menampilkan 2–3 judul artikel ilmiah asli karya dosen yang memiliki skor kedekatan kosinus tertinggi terhadap usulan mahasiswa.
+### 3.2.4 Pembahasan RQ4: Cara Menyajikan Penjelasan yang Transparan (Explainable AI)
+* **Temuan Nyata dari Literatur:**  
+  Penelitian de Campos et al. (2024b) menguji langsung kepuasan orang saat menerima rekomendasi artikel akademik. Hasilnya membuktikan bahwa pengguna merasa sangat puas dan percaya jika sistem menyertakan penjelasan nyata (*model-intrinsic explanation*)—yaitu berupa kata-kata kunci penentu kecocokan dan judul artikel ilmiah dosen yang bersangkutan. Skor kepuasan pengguna mencapai angka sangat tinggi: **6,12 dari skala 7,0** (*de Campos et al., 2024b*). Wang et al. (2024) juga menegaskan bahwa penjelasan AI harus konsisten, tidak boleh mengada-ada, dan datanya harus langsung mengalir dari sistem backend ke antarmuka layar pengguna. Gambino et al. (2025) menambahkan bahwa transparansi keputusan penugasan pembimbing membuat usulan judul lebih mudah disetujui oleh tim komisi tugas akhir.
+* **Analisis & Diskusi:**  
+  Jika sebuah sistem kecerdasan buatan hanya mengeluarkan nama dosen beserta persentase angka (misal: *"Dosen A: 89%"*) tanpa ada penjelasan, mahasiswa dan koordinator skripsi akan bingung dan curiga mengapa nama tersebut yang muncul. Sistem seperti ini disebut sistem "kotak hitam" (*black-box*). Mengikuti petunjuk de Campos et al. (2024b), SI-REKTA merancang tampilan **Kartu Rekomendasi Pintar** yang memuat 3 bukti nyata:
+  1. **Persentase Kecocokan:** Menampilkan nilai kemiripan topik secara jelas (misalnya 88%).
+  2. **Kata Kunci Penentu Keselarasan:** Menampilkan 3 sampai 5 kata kunci yang sama-sama ada di proposal mahasiswa dan karya tulis dosen (contoh: *"business intelligence"*, *"dashboard"*, *"decision support"*).
+  3. **Bukti Judul Penelitian Dosen:** Menampilkan 2 sampai 3 judul karya ilmiah asli milik dosen bersangkutan yang paling mirip dengan usulan mahasiswa.
 * **Kesimpulan Tegas RQ4:**  
-  Metode *Explainable AI* diterapkan secara efektif melalui pendekatan **penjelasan intrinsik berbasis konten (*content-based intrinsic explanation*)**, yang mentransmisikan bobot kata kunci penentu dan bukti judul publikasi riset dosen ke dalam kartu visual rekomendasi antarmuka pengguna guna menjamin auditabilitas keputusan akademik.
+  Penerapan *Explainable AI* yang paling efektif adalah dengan **menampilkan kata kunci keselarasan topik dan bukti judul karya ilmiah asli dosen** langsung di dalam kartu rekomendasi pada layar pengguna. Hal ini menjamin transparansi penuh dan meningkatkan rasa percaya pengguna.
 
 ---
 
-### 3.2.5 Pembahasan RQ5: Perancangan Arsitektur Perangkat Lunak Berbasis Web untuk Inferensi Cepat
-* **Temuan Data dan Fakta Literatur:**  
-  Studi implementasi sistem temu kembali pakar dan layanan inferensi kecerdasan buatan (*de Campos et al., 2024a; Wang et al., 2024; Damayanti et al., 2025*) membuktikan bahwa sistem pendukung keputusan akademik paling stabil dibangun di atas arsitektur berorientasi layanan tiga tingkat (**Three-Tier Service-Oriented Architecture**). de Campos et al. (2024a) mencatat bahwa pemisahan logika pemeringkatan ke dalam modul temu kembali informasi independen mampu memangkas waktu inferensi hingga **di bawah 0,2 detik per kueri**. Wang et al. (2024) membuktikan bahwa rancangan REST API modular berbasis spesifikasi terbuka (*Open API*) menjamin reproduktibilitas layanan inferensi dan memudahkan audit konsistensi luaran sistem. Sementara itu, Damayanti et al. (2025) mendemonstrasikan kelayakan integrasi model NLP berbasis Python ke dalam kerangka kerja aplikasi web untuk akses mahasiswa.
-* **Analisis & Diskusi Mendalam:**  
-  Penerapan model SI-REKTA menuntut arsitektur yang modular, mudah dipelihara, dan memiliki waktu respons cepat agar mahasiswa memperoleh pengalaman interaksi yang lancar. Tiga tingkatan arsitektur dirancang sebagai berikut:
-  1. **Presentation Layer (Frontend):** Antarmuka web interaktif (berbasis Streamlit atau React) yang menyajikan formulir input usulan draf tugas akhir dan merender kartu rekomendasi Top-3 beserta panel XAI.
-  2. **Application & Service Layer (Backend REST API):** Layanan API berbasis kerangka kerja asinkron performa tinggi **FastAPI (Python)**. Lapisan ini memuat pipeline prapengolahan teks, memetakan usulan ke Kelompok Keahlian (Tingkat 1), menghitung skor *dynamic late-fusion* (Tingkat 2), dan menghasilkan respons format JSON terstruktur dengan waktu inferensi di bawah 0,5 detik.
-  3. **Data & Persistence Layer:** Menyimpan basis data relasional untuk rekam jejak usulan, direktori 17 dosen tetap aktif, serta berkas serialisasi pipeline model (`.joblib`) yang dimuat secara *in-memory* pada saat server diinisialisasi guna menghilangkan latensi pembacaan disk berulang.
+### 3.2.5 Pembahasan RQ5: Rancangan Arsitektur Web yang Cepat dan Andal di Kampus
+* **Temuan Nyata dari Literatur:**  
+  Studi pembangunan sistem rekomendasi dan layanan kecerdasan buatan (*de Campos et al., 2024a; Wang et al., 2024; Damayanti et al., 2025*) membuktikan bahwa sistem paling stabil di perguruan tinggi dibangun menggunakan arsitektur web tiga tingkat (**Three-Tier Architecture**). de Campos et al. (2024a) mencatat bahwa dengan memisahkan program kalkulasi rekomendasi ke dalam modul terpisah, waktu komputasi bisa dipangkas hingga **sangat cepat (di bawah 0,2 detik per pencarian)**. Wang et al. (2024) membuktikan bahwa penggunaan arsitektur REST API mandiri membuat layanan kecerdasan buatan mudah diaudit, aman, dan mudah dihubungkan ke berbagai antarmuka aplikasi lain. Damayanti et al. (2025) juga berhasil menerapkan integrasi model NLP berbasis Python ke dalam aplikasi web kampus yang mudah digunakan mahasiswa.
+* **Analisis & Diskusi:**  
+  Agar aplikasi SI-REKTA bisa diakses banyak mahasiswa secara lancar tanpa loading lama, sistem dibagi ke dalam 3 lapisan kerja:
+  1. **Lapisan Tampilan Depan (*Frontend*):** Antarmuka web modern (menggunakan Streamlit atau React) yang bersih dan ramah pengguna. Di sini mahasiswa cukup mengetik judul usulan skripsi dan deskripsinya, lalu sistem langsung menampilkan 3 kartu saran dosen beserta penjelasannya.
+  2. **Lapisan Otak Logika (*Backend REST API*):** Mesin kalkulasi cerdas berbasis bahasa pemrograman **Python dengan framework FastAPI**. Lapisan ini bertugas membersihkan teks, menebak bidang keahlian, menghitung skor kecocokan publikasi, dan mengirimkan hasil rekomendasi dalam format data terstruktur dengan kecepatan di bawah 0,5 detik.
+  3. **Lapisan Penyimpanan Data (*Data Layer*):** Menyimpan database daftar resmi 17 dosen tetap aktif, serta berkas model kecerdasan buatan (`.joblib`) yang langsung dimuat ke dalam memori komputer saat server menyala agar proses rekomendasi tidak terhambat oleh proses membaca file hardisk secara berulang.
 * **Kesimpulan Tegas RQ5:**  
-  Rancangan arsitektur perangkat lunak yang andal adalah **Three-Tier Service-Oriented Architecture** dengan backend REST API berbasis FastAPI (Python) yang memuat model secara *in-memory*, memisahkan logika inferensi dan transparansi XAI ke dalam lapisan layanan independen, serta menyajikan inferensi berlatensi rendah (sub-detik) bagi antarmuka pengguna web.
+  Arsitektur terbaik adalah **Arsitektur Tiga Tingkat (Three-Tier Architecture)** dengan backend FastAPI (Python) yang memuat model secara langsung di memori (*in-memory*). Desain ini menjamin sistem bekerja modular, mudah dipelihara, dan mampu menyajikan hasil rekomendasi dalam waktu super cepat (di bawah setengah detik).
 
 ---
 
-## 3.3 Implikasi Praktis dan Rekomendasi Implementasi SI-REKTA
-Dari sintesis komprehensif terhadap 15 artikel empiris, dirumuskan lima rekomendasi teknis untuk pengembangan sistem SI-REKTA:
-1. **Prapengolahan Teks Adaptif Domain:** Menerapkan pembersihan tanda baca, konversi huruf kecil, dan penyaringan kata henti akademik khusus tanpa *stemming* agresif agar integritas istilah teknologi informasi tetap terjaga (*Sajid et al., 2026; Saraswati et al., 2025*).
-2. **Kanonikalisasi Entitas dan Whitelist 17 Dosen Aktif:** Menyeragamkan variasi nama dosen pada kedua dataset ke entitas resmi serta menerapkan filter ketat (*active whitelist*) agar rekomendasi hanya ditujukan kepada 17 dosen tetap aktif DSI Unand (*Gambino et al., 2025*).
-3. **Struktur Klasifikasi Dua Tingkat (*Two-Tier Hierarchy*):** Menerapkan klasifikasi Tingkat 1 untuk mengelompokkan usulan ke dalam 4 Kelompok Keahlian resmi (RD-BI, SD, SE, TK-ITI), diikuti Tingkat 2 untuk pemeringkatan dosen perorangan guna menjaga keadilan distribusi bimbingan (*Xiao et al., 2023; Damayanti et al., 2025*).
-4. **Mesin Rekomendasi Dynamic Late-Fusion:** Menggabungkan probabilitas klasifikasi historis skripsi dan kemiripan kosinus publikasi dosen dengan pembobotan $\alpha$ dinamis yang otomatis bernilai 1,0 pada dosen baru (*Bruch et al., 2022; Fitri et al., 2025; Nguyen et al., 2025*).
-5. **Transparansi Berbasis Explainable UI:** Menyajikan kartu visual rekomendasi Top-3 lengkap dengan persentase skor kecocokan, kata kunci keselarasan topik, dan bukti judul publikasi riset dosen (*de Campos et al., 2024b; Wang et al., 2024*).
+## 3.3 Panduan Praktis dan Saran Penerapan untuk SI-REKTA
+Dari sintesis 15 jurnal empiris, dirumuskan lima panduan praktis untuk diterapkan pada proyek SI-REKTA di Departemen Sistem Informasi Universitas Andalas:
+1. **Pembersihan Teks Khusus Istilah Komputer:** Menghapus tanda baca, menyeragamkan huruf kecil, dan menyaring kata-kata template formal skripsi tanpa melakukan pemotongan kata secara kasar (*stemming* agresif) agar istilah teknologi informasi tetap utuh (*Sajid et al., 2026; Saraswati et al., 2025*).
+2. **Standarisasi Penulisan Nama dan Penyaringan 17 Dosen Tetap Aktif:** Menyeragamkan ejaan nama dan singkatan gelar dosen agar komputer tidak menganggap satu orang sebagai dua orang berbeda, serta membatasi sistem agar hanya menyarankan **17 Dosen Tetap Aktif** DSI Unand (mengeluarkan dosen yang sedang tugas belajar atau cuti demi mematuhi aturan akademik resmi) (*Gambino et al., 2025*).
+3. **Pencarian Bertingkat Melalui 4 Kelompok Keahlian (KK):** Menerapkan klasifikasi dua langkah: langkah pertama memetakan usulan ke salah satu dari 4 Kelompok Keahlian resmi (RD-BI, SD, SE, TK-ITI), baru langkah kedua memilih dosen pembimbing yang paling tepat di dalam kelompok tersebut (*Xiao et al., 2023; Damayanti et al., 2025*).
+4. **Perhitungan Skor Berbobot Dinamis (Late-Fusion):** Menggabungkan skor kemiripan publikasi riset dosen dengan probabilitas riwayat bimbingan masa lalu, di mana untuk dosen baru porsi penilaian publikasi riset otomatis bernilai penuh 100% (*Bruch et al., 2022; Fitri et al., 2025; Nguyen et al., 2025*).
+5. **Penyajian Rekomendasi Transparan yang Disertai Bukti:** Menyajikan 3 kartu dosen teratas lengkap dengan angka persentase kecocokan, kata kunci keselarasan topik, dan bukti judul artikel ilmiah karya dosen bersangkutan (*de Campos et al., 2024b; Wang et al., 2024*).
 
 ---
 
 # BAB 4: KESIMPULAN
 
 ## 4.1 Kesimpulan Utama Review
-Tinjauan literatur sistematis berbasis PRISMA terhadap 15 studi empiris bereputasi (2022–2026) menyimpulkan bahwa pengembangan sistem rekomendasi dosen pembimbing tugas akhir berbasis **Dual-Source Hierarchical Late-Fusion** merupakan solusi yang solid, adil, dan dapat dipertanggungjawabkan secara ilmiah. Pemanfaatan dua sumber data (riwayat tugas akhir mahasiswa dan direktori publikasi riset dosen) terbukti efektif mengatasi kendala *zero-history faculty cold-start* pada dosen baru. Integrasi ekstraksi fitur leksikal n-gram dengan perankingan semantik berbobot dinamis mampu menjamin akurasi peringkat Top-3 melampaui ambang batas 80% dengan efisiensi komputasi yang tinggi.
+Tinjauan literatur sistematis (SLR) terhadap 15 studi ilmiah bereputasi (2022–2026) menyimpulkan bahwa pengembangan sistem rekomendasi dosen pembimbing berbasis **Penggabungan Dua Sumber Data Bertingkat** (*Dual-Source Hierarchical Late-Fusion*) merupakan pendekatan yang paling tepat, adil, dan kokoh secara ilmiah. 
+
+Pemanfaatan data judul skripsi masa lalu bersama dengan data publikasi karya ilmiah dosen terbukti sukses mengatasi kendala dosen baru yang belum memiliki riwayat bimbingan secara objektif. Dengan memadukan pembobotan kata n-gram dan rumus kemiripan kosinus berbobot dinamis, sistem mampu memberikan rekomendasi Top-3 dengan akurasi melampaui standar kelayakan 80% serta memiliki kecepatan pemrosesan yang sangat tinggi.
 
 ## 4.2 Keterbatasan Tinjauan (Threats to Validity)
-Keterbatasan dalam pelaksanaan SLR ini meliputi:
-1. Variasi pelaporan metrik evaluasi pada studi rujukan terdahulu yang tidak sepenuhnya seragam, di mana sebagian naskah hanya melaporkan metrik *Hit Rate* atau *Akurasi* tanpa menyajikan *Macro-F1* per kelas dosen.
-2. Dataset publikasi riset dosen pada sebagian besar studi rujukan internasional berfokus penuh pada naskah berbahasa Inggris, sehingga kalibrasi pada korpus dwibahasa lokal DSI Unand tetap memerlukan pengujian empiris (*ablation study*) lanjutan.
+Keterbatasan yang ada pada penyusunan tinjauan literatur ini antara lain:
+1. Variasi cara pengukuran pada jurnal terdahulu yang tidak selalu seragam, di mana sebagian naskah hanya melaporkan angka persentase umum tanpa merinci nilai keadilan per dosen.
+2. Artikel ilmiah rujukan internasional umumnya menggunakan dataset berbahasa Inggris penuh, sehingga penyesuaian pada kalimat dwibahasa lokal (Indonesia-Inggris) di DSI Unand tetap memerlukan uji coba lanjutan.
 
-## 4.3 Arah Penelitian Selanjutnya (Future Work)
-Pengembangan lanjutan sistem SI-REKTA diarahkan pada:
-1. Melakukan pengujian eksperimental komparatif (*ablation study*) antara representasi TF-IDF n-gram leksikal dan model semantik kontekstual berbasis transformer (*IndoBERT*) untuk mengevaluasi trade-off antara peningkatan akurasi dan latensi inferensi.
-2. Mengintegrasikan modul optimasi kuota pembimbingan berbasis pemrograman linier (*Integer Linear Programming*) guna mencegah penumpukan beban bimbingan pada dosen senior secara otomatis.
-3. Melaksanakan pengujian penerimaan pengguna (*User Acceptance Testing*) bersama mahasiswa dan komisi tugas akhir untuk mengevaluasi kejelasan informasi pada panel kartu penjelasan *Explainable AI*.
+## 4.3 Arah Pengembangan Selanjutnya (Future Work)
+Untuk pengembangan sistem SI-REKTA ke depan, direkomendasikan untuk:
+1. Melakukan pengujian eksperimen komparatif antara metode pembobotan kata (TF-IDF) dengan model pemahaman bahasa konteks mendalam (*IndoBERT*) guna melihat perbandingan akurasi dan kecepatannya.
+2. Mengembangkan fitur pembatasan kuota otomatis (*Integer Linear Programming*) agar sistem bisa mencegah dosen tertentu menerima terlalu banyak mahasiswa bimbingan secara otomatis.
+3. Melakukan uji coba kemudahan penggunaan (*User Acceptance Testing*) bersama perwakilan mahasiswa dan tim pengelola tugas akhir untuk memastikan kartu penjelasan transparan pada layar benar-benar mudah dipahami.
 
 ---
 
