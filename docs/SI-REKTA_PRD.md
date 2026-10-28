@@ -15,7 +15,7 @@ Dokumen Product Requirements Document (PRD) ini disusun untuk menjelaskan secara
 # 1. Problem & Users
 
 ## 1.1 Problem Statement
-Mahasiswa tingkat akhir di Departemen Sistem Informasi FTI Universitas Andalas kerap mengalami kebingungan besar dalam menentukan calon dosen Pembimbing 1 yang tepat untuk tugas akhir mereka. Ketiadaan informasi kepakaran yang terpusat menyebabkan mahasiswa sering salah sasaran mengajukan topik (*topic mismatch*), cemas judulnya ditolak saat pengajuan, dan hanya berfokus pada dosen-dosen senior tertentu, sementara dosen tetap aktif lainnya yang memiliki karya riset relevan tidak diketahui kepakarannya oleh mahasiswa.
+Mahasiswa tingkat akhir di Departemen Sistem Informasi FTI Universitas Andalas kerap mengalami kebingungan besar dalam menentukan calon dosen Pembimbing 1 yang tepat untuk tugas akhir mereka. Kebingungan ini berpotensi memicu fenomena penolakan proposal berulang kali akibat ketidaksesuaian bidang (*topic mismatch*), memperpanjang masa penyelesaian studi mahasiswa, menimbulkan demotivasi riset, serta mengakibatkan ketimpangan distribusi beban bimbingan tugas akhir yang hanya menumpuk pada segelintir dosen senior populer, padahal seluruh 17 Dosen Tetap Aktif memiliki kepakaran riset yang sah melalui publikasi ilmiah mereka. Ketiadaan media kepakaran yang terpusat dan objektif membuat mahasiswa kesulitan menemukan rujukan ilmiah untuk mendukung usulan topik mereka saat melengkapi Formulir TA-01 dan TA-02.
 
 ## 1.2 Target Users
 Target pengguna aplikasi SI-REKTA adalah:
@@ -107,31 +107,25 @@ Alur interaksi mahasiswa dari awal hingga selesai:
 
 ## 2.6 Data Requirements (Kebutuhan Data Utama & Skema Relasional 3NF)
 
-Untuk menjamin sistem siap diimplementasikan ke dalam basis data relasional (RDBMS) seperti PostgreSQL atau MySQL secara tangguh, kebutuhan data dimodelkan ke dalam 6 entitas yang telah dinormalisasi hingga **Third Normal Form (3NF)**. Standar penamaan entitas dan atribut menggunakan konvensi `snake_case` yang baku, eksplisit, dan siap digunakan langsung untuk *Data Definition Language* (DDL).
+Untuk menjamin integritas data dan kemudahan pemeliharaan sistem, kebutuhan data akademik dimodelkan ke dalam **4 entitas repositori akademik** yang telah dinormalisasi secara ketat hingga **Third Normal Form (3NF)**. Karena SI-REKTA dirancang sebagai utilitas publik terbuka tanpa autentikasi (*public no-auth web utility*) dan proses inferensi rekomendasi dijalankan secara *stateless in-memory*, sistem tidak memerlukan tabel transaksi pengajuan atau akun mahasiswa. Seluruh data di basis data difungsikan sebagai repositori pengetahuan resmi untuk melayani Modul Direktori Dosen, Modul Kelompok Keahlian, serta penyediaan rujukan artikel ilmiah asli pada kartu *Explainable AI*. Standar penamaan entitas dan atribut menggunakan konvensi `snake_case` yang baku, eksplisit, dan siap digunakan langsung untuk *Data Definition Language* (DDL).
 
 ### 2.6.1 Tabel Spesifikasi Entitas dan Atribut Relasional (Database-Ready 3NF)
 
 | Nama Entitas (Tabel) | Kolom Atribut & Tipe Data | Constraint & Kunci | Deskripsi & Peran bagi Sistem |
 | :--- | :--- | :--- | :--- |
-| **`kelompok_keahlian`** | `id_kk` (VARCHAR(10))<br>`nama_kk` (VARCHAR(100))<br>`deskripsi_fokus` (TEXT) | **PK:** `id_kk`<br>**NOT NULL:** semua | Tabel master 4 Kelompok Keahlian resmi DSI Unand (RD-BI, SD, SE, TK-ITI) sebagai kelas target klasifikasi Tingkat 1. |
-| **`dosen`** | `nip` (VARCHAR(18))<br>`nama_lengkap` (VARCHAR(150))<br>`gelar_depan` (VARCHAR(20))<br>`gelar_belakang` (VARCHAR(50))<br>`email` (VARCHAR(100))<br>`jabatan_akademik` (VARCHAR(100))<br>`id_kk` (VARCHAR(10))<br>`status_aktif` (ENUM('aktif','cuti','tugas_belajar'))<br>`is_eligible_p1` (BOOLEAN) | **PK:** `nip`<br>**FK:** `id_kk` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**UNIQUE:** `email`<br>**NOT NULL:** `nip`, `nama_lengkap`, `gelar_belakang`, `id_kk`, `status_aktif`, `is_eligible_p1` | Tabel master 17 Dosen Tetap Aktif DSI Unand yang berfungsi sebagai filter resmi (*whitelist*). Memisahkan status dosen tanpa riwayat P1 secara atomik. |
-| **`publikasi_dosen`** | `id_publikasi` (INT AUTO_INCREMENT)<br>`nip_dosen` (VARCHAR(18))<br>`judul_publikasi` (TEXT)<br>`tahun_terbit` (INT)<br>`nama_sumber_indeks` (VARCHAR(100))<br>`url_dokumen` (VARCHAR(255)) | **PK:** `id_publikasi`<br>**FK:** `nip_dosen` $\rightarrow$ `dosen.nip`<br>**NOT NULL:** `id_publikasi`, `nip_dosen`, `judul_publikasi`, `tahun_terbit` | Korpus Dataset 2 (643 artikel ilmiah terverifikasi) untuk menghitung kemiripan kosinus riset aktual dosen dan mengatasi masalah dosen tanpa riwayat P1 (*cold-start*). |
-| **`riwayat_skripsi`** | `id_skripsi` (INT AUTO_INCREMENT)<br>`judul_skripsi` (TEXT)<br>`tahun_lulus` (INT)<br>`nip_pembimbing_1` (VARCHAR(18))<br>`id_kk` (VARCHAR(10)) | **PK:** `id_skripsi`<br>**FK 1:** `nip_pembimbing_1` $\rightarrow$ `dosen.nip`<br>**FK 2:** `id_kk` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**NOT NULL:** `id_skripsi`, `judul_skripsi`, `tahun_lulus`, `nip_pembimbing_1`, `id_kk` | Korpus Dataset 1 (625 riwayat skripsi masa lalu) untuk melatih model probabilitas Pembimbing 1 (*prior likelihood*) dan pola topik bimbingan lampau. |
-| **`pengajuan_rekomendasi`** | `id_pengajuan` (VARCHAR(36))<br>`nim_mahasiswa` (VARCHAR(15))<br>`nama_mahasiswa` (VARCHAR(100))<br>`judul_usulan` (TEXT)<br>`id_kk_terprediksi` (VARCHAR(10))<br>`waktu_pengajuan` (TIMESTAMP) | **PK:** `id_pengajuan`<br>**FK:** `id_kk_terprediksi` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**NOT NULL:** `id_pengajuan`, `nim_mahasiswa`, `nama_mahasiswa`, `judul_usulan`, `id_kk_terprediksi`, `waktu_pengajuan` | Sesi transaksi pencarian rekomendasi oleh mahasiswa untuk keperluan draf pengisian Formulir TA-01 dan TA-02. |
-| **`detail_rekomendasi_dosen`** | `id_detail` (INT AUTO_INCREMENT)<br>`id_pengajuan` (VARCHAR(36))<br>`ranking` (TINYINT)<br>`nip_dosen` (VARCHAR(18))<br>`skor_kecocokan` (DECIMAL(5,2))<br>`kata_kunci_keselarasan` (TEXT)<br>`id_publikasi_rujukan` (INT)<br>`status_konfirmasi` (ENUM('menunggu','disetujui','ditolak')) | **PK:** `id_detail`<br>**FK 1:** `id_pengajuan` $\rightarrow$ `pengajuan_rekomendasi.id_pengajuan`<br>**FK 2:** `nip_dosen` $\rightarrow$ `dosen.nip`<br>**FK 3:** `id_publikasi_rujukan` $\rightarrow$ `publikasi_dosen.id_publikasi`<br>**NOT NULL:** `id_detail`, `id_pengajuan`, `ranking`, `nip_dosen`, `skor_kecocokan` | Menyimpan 3 kartu rekomendasi dosen teratas (Top-3) per sesi pengajuan secara atomik beserta bukti transparansi *Explainable AI* (skor, kata kunci, artikel rujukan). |
+| **`kelompok_keahlian`** | `id_kk` (VARCHAR(10))<br>`nama_kk` (VARCHAR(100))<br>`deskripsi_fokus` (TEXT) | **PK:** `id_kk`<br>**NOT NULL:** semua | Tabel master 4 Kelompok Keahlian resmi DSI Unand (RD-BI, SD, SE, TK-ITI) sebagai kelas target klasifikasi Tingkat 1 dan informasi Modul 3. |
+| **`dosen`** | `nip` (VARCHAR(18))<br>`nama_lengkap` (VARCHAR(150))<br>`gelar_depan` (VARCHAR(20))<br>`gelar_belakang` (VARCHAR(50))<br>`email` (VARCHAR(100))<br>`jabatan_akademik` (VARCHAR(100))<br>`id_kk` (VARCHAR(10))<br>`status_aktif` (ENUM('aktif','cuti','tugas_belajar'))<br>`is_eligible_p1` (BOOLEAN) | **PK:** `nip`<br>**FK:** `id_kk` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**UNIQUE:** `email`<br>**NOT NULL:** `nip`, `nama_lengkap`, `gelar_belakang`, `id_kk`, `status_aktif`, `is_eligible_p1` | Tabel master 17 Dosen Tetap Aktif DSI Unand yang berfungsi sebagai filter resmi (*whitelist*). Memisahkan status dosen tanpa riwayat P1 secara atomik untuk Modul 2. |
+| **`publikasi_dosen`** | `id_publikasi` (INT AUTO_INCREMENT)<br>`nip_dosen` (VARCHAR(18))<br>`judul_publikasi` (TEXT)<br>`tahun_terbit` (INT)<br>`nama_sumber_indeks` (VARCHAR(100))<br>`url_dokumen` (VARCHAR(255)) | **PK:** `id_publikasi`<br>**FK:** `nip_dosen` $\rightarrow$ `dosen.nip`<br>**NOT NULL:** `id_publikasi`, `nip_dosen`, `judul_publikasi`, `tahun_terbit` | Korpus Dataset 2 (643 artikel ilmiah terverifikasi) untuk menghitung kemiripan riset aktual dosen, mengatasi *cold-start*, dan bukti rujukan XAI di Modul 1 & 2. |
+| **`riwayat_skripsi`** | `id_skripsi` (INT AUTO_INCREMENT)<br>`judul_skripsi` (TEXT)<br>`tahun_lulus` (INT)<br>`nip_pembimbing_1` (VARCHAR(18))<br>`id_kk` (VARCHAR(10)) | **PK:** `id_skripsi`<br>**FK 1:** `nip_pembimbing_1` $\rightarrow$ `dosen.nip`<br>**FK 2:** `id_kk` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**NOT NULL:** `id_skripsi`, `judul_skripsi`, `tahun_lulus`, `nip_pembimbing_1`, `id_kk` | Korpus Dataset 1 (625 riwayat skripsi lampau DSI) untuk melatih model probabilitas Pembimbing 1 (*prior likelihood*) dan eksplorasi bimbingan di Modul 2. |
 
-### 2.5.2 Diagram Relasi Entitas (Entity-Relationship Diagram / ERD)
+### 2.6.2 Diagram Relasi Entitas (Entity-Relationship Diagram / ERD)
 
 ```mermaid
 erDiagram
     kelompok_keahlian ||--o{ dosen : "menaungi"
-    kelompok_keahlian ||--o{ riwayat_skripsi : "diklasifikasikan_ke"
-    kelompok_keahlian ||--o{ pengajuan_rekomendasi : "diprediksi_sebagai"
-    dosen ||--o{ publikasi_dosen : "menulis"
+    kelompok_keahlian ||--o{ riwayat_skripsi : "memayungi_bidang"
+    dosen ||--o{ publikasi_dosen : "menulis_karya"
     dosen ||--o{ riwayat_skripsi : "membimbing_p1"
-    dosen ||--o{ detail_rekomendasi_dosen : "direkomendasikan_sebagai"
-    pengajuan_rekomendasi ||--|{ detail_rekomendasi_dosen : "menghasilkan_top3"
-    publikasi_dosen ||--o{ detail_rekomendasi_dosen : "menjadi_rujukan_xai"
 
     kelompok_keahlian {
         varchar id_kk PK
@@ -167,39 +161,19 @@ erDiagram
         varchar nip_pembimbing_1 FK
         varchar id_kk FK
     }
-
-    pengajuan_rekomendasi {
-        varchar id_pengajuan PK
-        varchar nim_mahasiswa
-        varchar nama_mahasiswa
-        text judul_usulan
-        varchar id_kk_terprediksi FK
-        timestamp waktu_pengajuan
-    }
-
-    detail_rekomendasi_dosen {
-        int id_detail PK
-        varchar id_pengajuan FK
-        tinyint ranking
-        varchar nip_dosen FK
-        decimal skor_kecocokan
-        text kata_kunci_keselarasan
-        int id_publikasi_rujukan FK
-        enum status_konfirmasi
-    }
 ```
 
 ### 2.6.3 Pembuktian Pemenuhan Third Normal Form (3NF)
 
 1. **Pemenuhan 1NF (Bentuk Normal Pertama):**  
-   Seluruh nilai atribut bersifat atomik (tidak ada atribut bernilai jamak / *multivalued attributes* seperti array nama dosen di tabel pengajuan). Hasil rekomendasi Top-3 dipisahkan menjadi entitas mandiri `detail_rekomendasi_dosen` di mana setiap baris mewakili 1 rekomendasi dosen per peringkat.
+   Seluruh nilai atribut bersifat atomik (tidak ada atribut bernilai jamak / *multivalued attributes* maupun kelompok berulang / *repeating groups*). Setiap baris tabel mewakili tepat satu entitas tunggal (satu Kelompok Keahlian, satu Dosen, satu Artikel Publikasi, atau satu Riwayat Judul Skripsi).
 2. **Pemenuhan 2NF (Bentuk Normal Kedua):**  
-   Skema telah memenuhi 1NF dan seluruh Primary Key berupa *single-column key* (misal `nip`, `id_publikasi`, `id_skripsi`, `id_pengajuan`). Hal ini memastikan tidak ada ketergantungan fungsional sebagian (*partial dependency*) dari atribut non-kunci terhadap kunci utama.
+   Skema telah memenuhi 1NF dan seluruh Primary Key berupa *single-column key* (`id_kk`, `nip`, `id_publikasi`, `id_skripsi`). Hal ini memastikan tidak ada ketergantungan fungsional sebagian (*partial functional dependency*) dari atribut non-kunci terhadap kunci utama.
 3. **Pemenuhan 3NF (Bentuk Normal Ketiga):**  
    Skema telah memenuhi 2NF dan tidak memiliki ketergantungan transitif (*transitive dependency*) di antara atribut non-kunci. Seluruh atribut non-kunci hanya bergantung langsung pada Primary Key tabelnya:
-   * Nama dan deskripsi Kelompok Keahlian tidak diduplikasi di tabel `dosen`, `riwayat_skripsi`, maupun `pengajuan_rekomendasi`, melainkan direferensikan melalui *foreign key* `id_kk`.
-   * Data dosen penulis tidak disimpan di tabel `publikasi_dosen`, melainkan ditautkan melalui `nip_dosen`.
-   * Nilai skor dan kata kunci penjelas melekat pada transaksi hasil rekomendasi (`detail_rekomendasi_dosen`), bukan pada profil master dosen.
+   * Nama dan deskripsi Kelompok Keahlian tidak diduplikasi di tabel `dosen` maupun `riwayat_skripsi`, melainkan direferensikan melalui *foreign key* `id_kk`.
+   * Data dosen penulis tidak diduplikasi di tabel `publikasi_dosen` maupun `riwayat_skripsi`, melainkan ditautkan melalui relasi `nip_dosen` dan `nip_pembimbing_1`.
+   * Karena sistem bersifat utilitas terbuka (*stateless*), hasil kalkulasi rekomendasi tidak disimpan sebagai baris transaksi baru, melainkan dirender langsung di antarmuka pengguna sehingga skema database tetap bersih, bebas anomali modifikasi, dan berkinerja tinggi.
 
 ## 2.7 Constraints & Assumptions (Batasan dan Asumsi)
 * **Sistem Publik Tanpa Autentikasi (Public No-Auth Web Application):** Sistem dirancang sebagai utilitas publik terbuka (*open web utility*) bagi sivitas akademika Departemen Sistem Informasi FTI Unand tanpa mewajibkan mekanisme login/registrasi akun, guna memangkas friksi mahasiswa dalam mencari rekomendasi topik skripsi secara instan.
@@ -243,10 +217,10 @@ Sistem Informasi Rekomendasi Dosen Pembimbing Tugas Akhir (SI-REKTA) mengadopsi 
 
 1. **Frontend Layer (UI/Client):** Menggunakan **Next.js 16 (App Router)**, **React 19**, **TypeScript**, dan **Tailwind CSS** untuk antarmuka pengguna yang responsif, modular (komponen kartu rekomendasi di `src/components`), dan *mobile-friendly* (formulir pengajuan judul mahasiswa, pratinjau kartu XAI, dan cetak lampiran Formulir TA-01/TA-02).
 2. **Routing & State Management:** Sistem navigasi berbasis berkas di `src/app` (seperti `/` untuk formulir rekomendasi, `/dosen-aktif` untuk direktori 17 dosen, dan `/kelompok-keahlian` untuk informasi 4 KK), memanfaatkan **Server Components** untuk render cepat dan **Client Components** untuk interaktivitas dinamis (input teks proposal, filter Kelompok Keahlian, modal detail paper dosen).
-3. **Application & API Layer (Backend/Serverless):** **Next.js Server Actions** dan **Route Handlers** yang memproses logika bisnis web (validasi input mahasiswa, pencatatan histori sesi rekomendasi ke database, dan meneruskan kueri inferensi ke service machine learning Python).
+3. **Application & API Layer (Backend/Serverless):** **Next.js Server Actions** dan **Route Handlers** yang memproses logika bisnis web (validasi input judul tugas akhir mahasiswa, query data direktori 17 dosen dan 4 KK via Drizzle ORM, serta meneruskan kueri inferensi judul ke service machine learning Python).
 4. **Machine Learning Service Layer (FastAPI Microservice):** Layanan API independen berbasis **Python FastAPI** yang memuat pipeline model `si_rekta_pipeline.joblib` secara *in-memory* untuk mengeksekusi normalisasi NLP, prediksi 4 Kelompok Keahlian, dan kalkulasi skor *Dynamic Late-Fusion* dengan latensi di bawah 0,5 detik.
 5. **Data Access Layer (ORM):** **Drizzle ORM** (`drizzle-orm` & `drizzle-kit`) sebagai penghubung kode dengan database, mengelola skema relasional di `src/db/schema.ts`, migrasi database aman, serta query bertipe data ketat (*type-safe*).
-6. **Database Layer (Storage):** **Neon Serverless PostgreSQL** (`@neondatabase/serverless`) untuk menyimpan seluruh data operasional (data sesi rekomendasi mahasiswa, direktori 17 Dosen Tetap Aktif, dan rekam jejak audit rekomendasi).
+6. **Database Layer (Storage):** **Neon Serverless PostgreSQL** (`@neondatabase/serverless`) untuk menyimpan repositori akademik terstruktur (master 17 Dosen Tetap Aktif, master 4 Kelompok Keahlian, korpus 643 artikel publikasi riset dosen, dan arsip 625 riwayat skripsi lampau DSI Unand).
 7. **Security & Environment Config:** Mengamankan kredensial (`DATABASE_URL`, API key endpoint ML) melalui berkas `.env.local` saat *development* dan *Environment Variables* terenkripsi saat *production*.
 8. **Build, Testing & Deployment:** Pengujian kode menggunakan `npm run lint` dan `npm run build`. Frontend di-deploy secara otomatis ke **Vercel** via *CI/CD GitHub*, terhubung ke Neon PostgreSQL dan API service model ML.
 9. **Model Lifecycle & Maintenance (Batch Offline Retraining):** Model Machine Learning tidak dilatih ulang secara langsung dari antarmuka web untuk menjaga stabilitas dan kecepatan sistem. Pembaruan model dilakukan secara terjadwal pada akhir semester oleh tim pengembang melalui pipeline offline (Jupyter Notebook / script pelatihan) saat ada lulusan skripsi baru yang telah terverifikasi, lalu berkas `.joblib` baru di-deploy ke service FastAPI.
@@ -264,7 +238,7 @@ graph TD
     end
     
     subgraph Database_Cloud["Neon Serverless PostgreSQL"]
-        DB[(PostgreSQL 3NF Schema<br>17 Dosen, KK, Riwayat TA, Log Pengajuan)]
+        DB[(PostgreSQL 3NF Academic Repository<br>17 Dosen, 4 KK, 643 Publikasi, 625 Skripsi)]
     end
     
     subgraph ML_Microservice["Python FastAPI Microservice"]
