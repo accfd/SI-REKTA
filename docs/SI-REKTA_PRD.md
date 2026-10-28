@@ -33,7 +33,21 @@ Membangun sistem informasi rekomendasi pembimbing tugas akhir berbasis web satu 
 
 # 2. Product Requirements
 
-## 2.1 Functional Requirements (Kebutuhan Fungsional)
+## 2.1 Dekomposisi 3 Modul Utama Sistem (Three Core Modules)
+Untuk menjamin keteraturan arsitektur dan kemudahan penggunaan oleh mahasiswa, sistem SI-REKTA dipecah secara modular menjadi **3 Modul Fungsional Utama**:
+
+1. **Modul 1: Modul Rekomendasi Cerdas & Explainable AI (*Smart Recommendation & XAI Module*)**  
+   Modul inti sistem yang melayani pencarian rekomendasi pembimbing: mahasiswa memasukkan draf kalimat judul skripsi, sistem menjalankan inferensi NLP bertingkat (prediksi Kelompok Keahlian dan perankingan Dynamic Late-Fusion Top-3 dosen), menyajikan kartu penjelasan transparansi (persentase kecocokan, kata kunci, artikel rujukan), serta fasilitas unduh/cetak lampiran resmi Formulir TA-01/TA-02.
+
+2. **Modul 2: Modul Eksplorasi Profil & Direktori Dosen (*Faculty Directory & Research Explorer Module*)**  
+   Modul direktori akademik yang memungkinkan mahasiswa menelusuri profil lengkap ke-17 Dosen Tetap Aktif DSI Unand: menampilkan biodata akademik, jabatan laboratorium, riwayat judul skripsi yang pernah dibimbing sebagai Pembimbing 1 (Dataset 1: 625 skripsi), serta seluruh arsip judul artikel publikasi ilmiah terverifikasi (Dataset 2: 643 paper). Modul ini membantu mahasiswa melakukan *cross-check* topik secara mandiri.
+
+3. **Modul 3: Modul Pengetahuan Kelompok Keahlian (*Knowledge Group / KK Directory Module*)**  
+   Modul informasi struktur keilmuan departemen yang menyajikan profil 4 Kelompok Keahlian resmi (RD-BI, SD, SE, TK-ITI): deskripsi fokus riset laboratorium, cakupan topik tugas akhir yang diwadahi, serta daftar dosen anggota di masing-masing kelompok keahlian.
+
+---
+
+## 2.2 Functional Requirements (Kebutuhan Fungsional)
 Kebutuhan fungsional mendefinisikan apa saja kemampuan dan perilaku yang wajib dijalankan oleh sistem dari sudut pandang mahasiswa:
 
 * **FR-01 (Input Usulan Judul Tugas Akhir):** Mahasiswa memasukkan draf kalimat judul tugas akhir yang diajukan melalui formulir web yang sederhana dan intuitif.
@@ -44,8 +58,12 @@ Kebutuhan fungsional mendefinisikan apa saja kemampuan dan perilaku yang wajib d
 * **FR-06 (Penanganan Dosen Tanpa Riwayat P1 yang Adil):** Sistem secara otomatis menghitung skor kecocokan dosen yang belum memiliki riwayat bimbingan Pembimbing 1 secara murni 100% dari data publikasi karya ilmiahnya, sehingga mereka tetap berpeluang adil masuk rekomendasi Top-3.
 * **FR-07 (Penyaringan Dosen Tetap Aktif / Whitelist):** Sistem membatasi ruang rekomendasi hanya pada 17 Dosen Tetap Aktif DSI Unand dan secara otomatis mengeluarkan dosen yang sedang cuti, tugas belajar, atau berasal dari luar departemen.
 * **FR-08 (Ekspor / Cetak Rekomendasi Mandiri):** Mahasiswa dapat mengunduh atau mencetak ringkasan hasil rekomendasi dalam format dokumen/PDF rapi sebagai lampiran resmi pengajuan Formulir TA-01 dan TA-02.
+* **FR-09 (Eksplorasi Profil & Rekam Jejak Riset Dosen):** Mahasiswa dapat melihat halaman direktori dan profil lengkap setiap dosen tetap aktif yang menyajikan daftar riwayat skripsi yang pernah dibimbing sebagai Pembimbing 1 (Dataset 1) serta daftar artikel publikasi ilmiah terverifikasi dosen (Dataset 2).
+* **FR-10 (Eksplorasi Informasi Kelompok Keahlian):** Mahasiswa dapat mengakses informasi deskripsi 4 Kelompok Keahlian resmi, ruang lingkup topik riset laboratorium, dan daftar dosen anggotanya.
 
-## 2.2 Non-Functional Requirements (Kebutuhan Kualitas & Batasan Sistem)
+---
+
+## 2.3 Non-Functional Requirements (Kebutuhan Kualitas & Batasan Sistem)
 Kebutuhan non-fungsional mendefinisikan standar mutu, performa, dan batasan operasional sistem:
 
 * **NFR-01 (Kecepatan Respons / Latensi):** Hasil rekomendasi Top-3 dan kartu penjelasannya wajib tampil di layar pengguna dalam waktu kurang dari 1 detik (target inferensi model di bawah 0,5 detik).
@@ -55,34 +73,43 @@ Kebutuhan non-fungsional mendefinisikan standar mutu, performa, dan batasan oper
 * **NFR-05 (Keamanan & Integritas Data):** Sistem tidak mengubah basis data riwayat akademik dan hanya menggunakan koneksi aman (HTTPS) serta membatasi akses konfigurasi backend.
 * **NFR-06 (Modularitas Arsitektur):** Logika model kecerdasan buatan terpisah secara independen dari tampilan antarmuka web melalui perantara REST API terstruktur.
 
-## 2.3 Core Features (Fitur Utama Produk)
+---
 
-| No | Fitur Utama | Manfaat dan Nilai bagi Mahasiswa |
-|:--:|:---|:---|
-| 1 | **Smart Title Input & Preprocessing** | Mahasiswa cukup mengetik draf judul usulan; sistem otomatis memilah kata kunci penting tanpa terganggu kata umum formal skripsi. |
-| 2 | **Two-Tier Hierarchical Inference** | Mencegah salah sasaran dengan terlebih dahulu memetakan topik ke Kelompok Keahlian (KK) yang tepat sebelum memilih nama dosen perorangan. |
-| 3 | **Dual-Source Dynamic Late-Fusion** | Menghasilkan penilaian yang adil dan akurat dengan memadukan rekam jejak bimbingan masa lalu dan karya publikasi riset terkini dosen. |
-| 4 | **Zero-History Cold-Start Resolver** | Memberikan kesempatan yang setara bagi 5 dosen tetap aktif yang belum pernah menjadi Pembimbing 1 untuk direkomendasikan berdasarkan kepakaran karya ilmiah aslinya. |
-| 5 | **Explainable AI (XAI) Justification Cards** | Memberikan rasa percaya bagi mahasiswa karena rekomendasi disertai bukti kata kunci dan rujukan judul paper asli dosen. |
-| 6 | **Administrative Summary Export** | Memudahkan mahasiswa mencetak lembar rekomendasi sebagai lampiran pendukung resmi pengisian Formulir TA-01 dan TA-02 ke Departemen. |
+## 2.4 Core Features (Fitur Utama Produk)
 
-## 2.4 User Flow (Alur Perjalanan Pengguna)
+| No | Modul Terkait | Fitur Utama | Manfaat dan Nilai bagi Mahasiswa |
+|:--:|:---|:---|:---|
+| 1 | Modul 1 | **Smart Title Input & Preprocessing** | Mahasiswa cukup mengetik draf kalimat judul usulan; sistem otomatis memilah kata kunci penting tanpa terganggu kata umum formal skripsi. |
+| 2 | Modul 1 | **Two-Tier Hierarchical Inference** | Mencegah salah sasaran dengan terlebih dahulu memetakan topik ke Kelompok Keahlian (KK) yang tepat sebelum memilih nama dosen perorangan. |
+| 3 | Modul 1 | **Dual-Source Dynamic Late-Fusion** | Menghasilkan penilaian yang adil dan akurat dengan memadukan rekam jejak bimbingan masa lalu dan karya publikasi riset terkini dosen. |
+| 4 | Modul 1 | **Zero-History Cold-Start Resolver** | Memberikan kesempatan yang setara bagi 5 dosen tetap aktif yang belum pernah menjadi Pembimbing 1 untuk direkomendasikan berdasarkan kepakaran karya ilmiah aslinya. |
+| 5 | Modul 1 | **Explainable AI (XAI) Justification Cards** | Memberikan rasa percaya bagi mahasiswa karena rekomendasi disertai bukti kata kunci dan rujukan judul paper asli dosen. |
+| 6 | Modul 1 | **Administrative Summary Export** | Memudahkan mahasiswa mencetak lembar rekomendasi sebagai lampiran pendukung resmi pengisian Formulir TA-01 dan TA-02 ke Departemen. |
+| 7 | Modul 2 | **Faculty Directory & Research Portfolio Explorer** | Mahasiswa dapat menelusuri profil 17 dosen aktif, melihat riwayat skripsi yang pernah dibimbing (Dataset 1), dan publikasi ilmiah aslinya (Dataset 2). |
+| 8 | Modul 3 | **Knowledge Group (KK) Information Center** | Mahasiswa dapat memahami fokus penelitian 4 Kelompok Keahlian resmi departemen beserta dosen anggotanya sebelum mengajukan judul. |
+
+---
+
+## 2.5 User Flow (Alur Perjalanan Pengguna)
 Alur interaksi mahasiswa dari awal hingga selesai:
 
-1. **Akses Sistem:** Mahasiswa membuka laman web aplikasi SI-REKTA melalui laptop atau ponsel pintar.
-2. **Input Usulan Judul:** Mahasiswa memasukkan draf kalimat judul skripsi yang ingin diajukan ke dalam kolom formulir.
-3. **Proses Inferensi Cerdas (Sistem Otomatis):**  
+1. **Akses Sistem:** Mahasiswa membuka laman web aplikasi SI-REKTA secara publik tanpa hambatan login melalui laptop atau ponsel pintar.
+2. **Eksplorasi Informasi Awal (Opsional):** Mahasiswa dapat membuka menu Direktori Dosen atau Informasi Kelompok Keahlian untuk melihat profil riset 17 dosen dan fokus 4 KK.
+3. **Input Usulan Judul:** Mahasiswa memasukkan draf kalimat judul skripsi yang ingin diajukan ke dalam kolom formulir di halaman utama.
+4. **Proses Inferensi Cerdas (Sistem Otomatis):**  
    * Sistem membersihkan teks usulan melalui pipeline NLP (Case Folding, Cleansing, Academic Stopword Removal, N-Gram).
    * Tingkat 1: Sistem memprediksi Kelompok Keahlian resmi yang paling selaras (RD-BI, SD, SE, atau TK-ITI).
    * Tingkat 2: Sistem menghitung skor kecocokan dosen menggunakan formula Dynamic Late-Fusion (kombinasi bimbingan lampau dan publikasi riset).
-4. **Penyajian Hasil (Tampilan XAI):** Mahasiswa melihat kartu hasil rekomendasi: nama Kelompok Keahlian terprediksi dan 3 kartu calon dosen pembimbing teratas lengkap dengan persentase kecocokan, kata kunci topik, dan bukti judul artikel dosen.
-5. **Tindak Lanjut Administratif:** Mahasiswa mengunduh atau mencetak kartu rekomendasi tersebut sebagai dasar diskusi pra-proposal bersama dosen untuk pengisian Formulir TA-01 atau TA-02 ke Departemen.
+5. **Penyajian Hasil (Tampilan XAI):** Mahasiswa melihat kartu hasil rekomendasi: nama Kelompok Keahlian terprediksi dan 3 kartu calon dosen pembimbing teratas lengkap dengan persentase kecocokan, kata kunci topik, dan bukti judul artikel dosen.
+6. **Tindak Lanjut Administratif:** Mahasiswa mengunduh atau mencetak kartu rekomendasi tersebut sebagai dasar diskusi pra-proposal bersama dosen untuk pengisian Formulir TA-01 atau TA-02 ke Departemen.
 
-## 2.5 Data Requirements (Kebutuhan Data Utama & Skema Relasional 3NF)
+---
+
+## 2.6 Data Requirements (Kebutuhan Data Utama & Skema Relasional 3NF)
 
 Untuk menjamin sistem siap diimplementasikan ke dalam basis data relasional (RDBMS) seperti PostgreSQL atau MySQL secara tangguh, kebutuhan data dimodelkan ke dalam 6 entitas yang telah dinormalisasi hingga **Third Normal Form (3NF)**. Standar penamaan entitas dan atribut menggunakan konvensi `snake_case` yang baku, eksplisit, dan siap digunakan langsung untuk *Data Definition Language* (DDL).
 
-### 2.5.1 Tabel Spesifikasi Entitas dan Atribut Relasional (Database-Ready 3NF)
+### 2.6.1 Tabel Spesifikasi Entitas dan Atribut Relasional (Database-Ready 3NF)
 
 | Nama Entitas (Tabel) | Kolom Atribut & Tipe Data | Constraint & Kunci | Deskripsi & Peran bagi Sistem |
 | :--- | :--- | :--- | :--- |
@@ -162,7 +189,7 @@ erDiagram
     }
 ```
 
-### 2.5.3 Pembuktian Pemenuhan Third Normal Form (3NF)
+### 2.6.3 Pembuktian Pemenuhan Third Normal Form (3NF)
 
 1. **Pemenuhan 1NF (Bentuk Normal Pertama):**  
    Seluruh nilai atribut bersifat atomik (tidak ada atribut bernilai jamak / *multivalued attributes* seperti array nama dosen di tabel pengajuan). Hasil rekomendasi Top-3 dipisahkan menjadi entitas mandiri `detail_rekomendasi_dosen` di mana setiap baris mewakili 1 rekomendasi dosen per peringkat.
@@ -174,14 +201,16 @@ erDiagram
    * Data dosen penulis tidak disimpan di tabel `publikasi_dosen`, melainkan ditautkan melalui `nip_dosen`.
    * Nilai skor dan kata kunci penjelas melekat pada transaksi hasil rekomendasi (`detail_rekomendasi_dosen`), bukan pada profil master dosen.
 
-## 2.6 Constraints & Assumptions (Batasan dan Asumsi)
-* **Batasan Entitas:** Ruang rekomendasi dibatasi disiplin hanya untuk 17 Dosen Tetap Aktif Departemen Sistem Informasi FTI Unand sesuai rujukan dokumen resmi Dosen_Tetap_Aktif_DSI.md.
+## 2.7 Constraints & Assumptions (Batasan dan Asumsi)
+* **Sistem Publik Tanpa Autentikasi (Public No-Auth Web Application):** Sistem dirancang sebagai utilitas publik terbuka (*open web utility*) bagi sivitas akademika Departemen Sistem Informasi FTI Unand tanpa mewajibkan mekanisme login/registrasi akun, guna memangkas friksi mahasiswa dalam mencari rekomendasi topik skripsi secara instan.
+* **Model Komputasi Statis (Stateless Frozen Inference Pipeline):** Pipeline Machine Learning beroperasi secara deterministik dan statis (*frozen model* `.joblib`) saat sistem web berjalan. Model tidak melakukan pelatihan ulang dinamis (*online continuous retraining*) setiap kali mahasiswa mengirimkan judul baru, melainkan hanya menjalankan inferensi inferensial searah berlatensi rendah (<0,5 detik). Pembaruan bobot model dikelola secara terpisah melalui prosedur *offline batch retraining*.
+* **Batasan Entitas Dosen:** Ruang rekomendasi dibatasi disiplin hanya untuk 17 Dosen Tetap Aktif Departemen Sistem Informasi FTI Unand sesuai rujukan dokumen resmi `Dosen_Tetap_Aktif_DSI.md`.
 * **Batasan Sumber Data:** Korpus riset dosen bersumber dari judul artikel ilmiah yang terindeks resmi di Google Scholar dan Sinta.
-* **Karakteristik Teks:** Sistem dioptimalkan untuk masukan kalimat pendek (short-text berkisar 10–30 kata) berbahasa Indonesia yang memuat istilah komputasi bahasa Inggris.
+* **Karakteristik Teks:** Sistem dioptimalkan untuk masukan kalimat pendek (*short-text* berkisar 10–30 kata) berbahasa Indonesia yang memuat istilah komputasi bahasa Inggris.
 * **Asumsi Operasional:** Mahasiswa mengajukan judul tugas akhir yang berorientasi pada konteks organisasi nyata sesuai Pedoman Topik Tugas Akhir DSI 2025.
-* **Batasan Infrastruktur:** Model machine learning dikemas dalam bentuk berkas serialisasi mandiri (.joblib) yang dimuat secara in-memory untuk menjamin kecepatan inferensi di bawah 0,5 detik.
+* **Batasan Infrastruktur:** Model machine learning dikemas dalam bentuk berkas serialisasi mandiri (`.joblib`) yang dimuat secara *in-memory* pada microservice FastAPI untuk menjamin kecepatan inferensi di bawah 0,5 detik.
 
-## 2.7 Success Criteria (Kriteria Keberhasilan Produk)
+## 2.8 Success Criteria (Kriteria Keberhasilan Produk)
 1. **Penyelesaian Masalah Cold-Start 100%:** Seluruh dosen tetap aktif yang belum memiliki riwayat bimbingan Pembimbing 1 (5 dosen dengan 0 riwayat skripsi P1) berhasil memiliki profil kepakaran dan berpeluang direkomendasikan secara proporsional.
 2. **Kualitas Peringkat Rekomendasi Teruji:** Sistem meraih Akurasi Top-3 (Hit@3) $\ge 80\%$ dan MRR $\ge 0,60$ pada data uji independen.
 3. **Keadilan Distribusi Bimbingan Terjamin:** Model mencapai nilai Macro-Averaged F1-Score $\ge 70\%$ pada evaluasi kelas bimbingan aktif tanpa terdistorsi oleh tingginya data dosen senior.
@@ -262,13 +291,13 @@ Bagian ini dapat dijadikan konteks instruksi ringkas saat meminta bantuan kecerd
 * [x] Problem statement jelas dan berfokus pada kebingungan mahasiswa tingkat akhir di kampus.
 * [x] Target user spesifik (Mahasiswa Tingkat Akhir DSI Unand sebagai Single Primary User).
 * [x] Project goal menjawab langsung masalah penentuan pembimbing dan cold-start.
-* [x] Core features berjumlah 6 fitur inti yang relevan dan bernilai nyata bagi mahasiswa.
+* [x] Core features terbagi rapi ke dalam 3 Modul Utama (Rekomendasi Cerdas & XAI, Direktori & Eksplorasi Dosen, dan Pusat Informasi KK).
 * [x] User flow utama tertulis runtut dari input judul hingga cetak mandiri Form TA-01/02.
 * [x] Data utama teridentifikasi secara lengkap (Judul_TA, Publikasi_Dosen, 17 Dosen, 4 KK) dengan skema 3NF.
-* [x] Constraints dan assumptions tercatat jelas mengacu pada regulasi DSI Unand 2025.
+* [x] Constraints dan assumptions tercatat jelas mengacu pada regulasi DSI Unand 2025 serta sistem publik tanpa login (*stateless frozen model*).
 * [x] Success criteria memiliki tolok ukur kuantitatif baku (Hit@3 >= 80%, MRR >= 0,60, Macro-F1 >= 70%).
 * [x] In Scope dan Out of Scope terdefinisi dengan batas yang tegas (tanpa multi-role admin).
-* [x] Functional requirements (FR-01 s.d. FR-08) menjelaskan perilaku fungsional mandiri mahasiswa.
+* [x] Functional requirements (FR-01 s.d. FR-10) menjelaskan perilaku fungsional mandiri mahasiswa yang terkelompok dalam 3 modul.
 * [x] Non-functional requirements (NFR-01 s.d. NFR-06) terukur dan realistis.
 * [x] Arsitektur sistem (Next.js 16, React 19, FastAPI, Drizzle ORM, Neon PostgreSQL) terdefinisi lengkap.
 * [x] Functional requirements selaras dengan core features.
