@@ -208,7 +208,53 @@ erDiagram
 * Sistem tidak melakukan pemrosesan dokumen naskah proposal skripsi utuh ratusan halaman (sistem berfokus pada analisis teks judul dan ringkasan ide riset).
 * Sistem tidak melayani rekomendasi untuk mahasiswa atau dosen di luar Departemen Sistem Informasi FTI Universitas Andalas.
 
-# 4. AI Prompt Context
+# 4. Arsitektur Sistem & Spesifikasi Teknologi (System Architecture)
+
+### 4.1 Penyesuaian Naskah Arsitektur SI-REKTA yang Benar (Bisa Langsung Dipakai)
+
+Sistem Informasi Rekomendasi Dosen Pembimbing Tugas Akhir (SI-REKTA) mengadopsi arsitektur terdistribusi berbasis layanan mikro (*microservice*) modern yang memisahkan aplikasi web interaktif, lapisan akses data relasional, dan modul komputasi cerdas *machine learning*:
+
+1. **Frontend Layer (UI/Client):** Menggunakan **Next.js 16 (App Router)**, **React 19**, **TypeScript**, dan **Tailwind CSS** untuk antarmuka pengguna yang responsif, modular (komponen kartu rekomendasi di `src/components`), dan *mobile-friendly* (formulir pengajuan judul mahasiswa, pratinjau kartu XAI, dan cetak lampiran Formulir TA-01/TA-02).
+2. **Routing & State Management:** Sistem navigasi berbasis berkas di `src/app` (seperti `/rekomendasi`, `/dosen-aktif`, `/kelompok-keahlian`, `/admin-verifikasi`), memanfaatkan **Server Components** untuk render cepat dan **Client Components** untuk interaktivitas dinamis (input teks proposal, filter Kelompok Keahlian, modal detail paper dosen).
+3. **Application & API Layer (Backend/Serverless):** **Next.js Server Actions** dan **Route Handlers** yang memproses logika bisnis web (validasi sesi mahasiswa, pencatatan histori pengajuan judul ke database, dan meneruskan kueri inferensi ke service machine learning Python).
+4. **Machine Learning Service Layer (FastAPI Microservice):** Layanan API independen berbasis **Python FastAPI** yang memuat pipeline model `si_rekta_pipeline.joblib` secara *in-memory* untuk mengeksekusi normalisasi NLP, prediksi 4 Kelompok Keahlian, dan kalkulasi skor *Dynamic Late-Fusion* dengan latensi di bawah 0,5 detik.
+5. **Data Access Layer (ORM):** **Drizzle ORM** (`drizzle-orm` & `drizzle-kit`) sebagai penghubung kode dengan database, mengelola skema relasional di `src/db/schema.ts`, migrasi database aman, serta query bertipe data ketat (*type-safe*).
+6. **Database Layer (Storage):** **Neon Serverless PostgreSQL** (`@neondatabase/serverless`) untuk menyimpan seluruh data operasional (data pengajuan judul mahasiswa, direktori 17 Dosen Tetap Aktif, kuota bimbingan, dan rekam jejak audit rekomendasi).
+7. **Security & Environment Config:** Mengamankan kredensial (`DATABASE_URL`, API key endpoint ML) melalui berkas `.env.local` saat *development* dan *Environment Variables* terenkripsi saat *production*.
+8. **Build, Testing & Deployment:** Pengujian kode menggunakan `npm run lint` dan `npm run build`. Frontend di-deploy secara otomatis ke **Vercel** via *CI/CD GitHub*, terhubung ke Neon PostgreSQL dan API service model ML.
+
+### 4.2 Diagram Blok Arsitektur SI-REKTA
+
+```mermaid
+graph TD
+    Client["Client Browser (Mahasiswa & Admin TA)<br>Next.js 16 / React 19 / Tailwind CSS"]
+    
+    subgraph Vercel_Platform["Vercel Cloud Platform"]
+        AppRouter["App Router & Navigation<br>src/app (/rekomendasi, /dosen-aktif, dll)"]
+        ServerActions["Server Actions & Route Handlers<br>(Logika Bisnis & Validasi)"]
+        DrizzleORM["Drizzle ORM (src/db/schema.ts)<br>Type-Safe Database Access"]
+    end
+    
+    subgraph Database_Cloud["Neon Serverless PostgreSQL"]
+        DB[(PostgreSQL 3NF Schema<br>17 Dosen, KK, Riwayat TA, Log Pengajuan)]
+    end
+    
+    subgraph ML_Microservice["Python FastAPI Microservice"]
+        FastAPIEndpoint["FastAPI REST Endpoint<br>/api/v1/recommend"]
+        JoblibPipeline["Pipeline In-Memory Model<br>si_rekta_pipeline.joblib<br>(NLP, Linear SVM KK, Dynamic Late-Fusion)"]
+    end
+
+    Client -->|HTTP/HTTPS Request| AppRouter
+    AppRouter --> ServerActions
+    ServerActions -->|Query/Mutation| DrizzleORM
+    DrizzleORM -->|Connection Pool SSL| DB
+    ServerActions -->|Async POST Payload Judul| FastAPIEndpoint
+    FastAPIEndpoint --> JoblibPipeline
+    JoblibPipeline -->|Top-3 + XAI JSON Response| ServerActions
+    ServerActions -->|Rendered View & Data| Client
+```
+
+# 5. AI Prompt Context
 Bagian ini dapat dijadikan konteks instruksi ringkas saat meminta bantuan kecerdasan buatan untuk pengembangan teknis:
 
 > SI-REKTA adalah sistem pendukung keputusan cerdas berbasis Machine Learning dan Natural Language Processing (NLP) untuk merekomendasikan Top-3 Dosen Pembimbing Tugas Akhir di Departemen Sistem Informasi FTI Universitas Andalas. Target pengguna utamanya adalah mahasiswa tingkat akhir (pengisian Form TA-01/TA-02) dan Komisi Tugas Akhir (verifikasi keselarasan proposal untuk Form TA-04). Masalah inti yang diselesaikan adalah ketidakcocokan topik, ketimpangan bimbingan, dan masalah dosen tanpa riwayat Pembimbing 1 (cold-start problem). Sistem menggunakan pendekatan Dual-Source Dataset (625 riwayat skripsi dan 643 publikasi riset dosen) yang diproses melalui dua tahap inferensi: Tingkat 1 memprediksi 4 Kelompok Keahlian resmi (RD-BI, SD, SE, TK-ITI), dan Tingkat 2 melakukan Dynamic Late-Fusion (menggabungkan kemiripan publikasi dan riwayat skripsi secara proporsional). Sistem dibatasi secara disiplin hanya untuk 17 Dosen Tetap Aktif DSI Unand. Kriteria keberhasilan mencakup Top-3 Accuracy minimal 80%, MRR minimal 0,60, Macro-F1 minimal 70%, latensi di bawah 0,5 detik, serta penyajian kartu Explainable AI yang memuat persentase kecocokan, kata kunci keselarasan topik, dan bukti judul artikel ilmiah asli dosen.
@@ -219,11 +265,12 @@ Bagian ini dapat dijadikan konteks instruksi ringkas saat meminta bantuan kecerd
 * [x] Project goal menjawab langsung masalah penentuan pembimbing dan cold-start.
 * [x] Core features berjumlah 6 fitur inti yang relevan dan bernilai nyata.
 * [x] User flow utama tertulis runtut dari input judul hingga tindak lanjut administratif.
-* [x] Data utama teridentifikasi secara lengkap (Judul_TA, Publikasi_Dosen, 17 Dosen, 4 KK).
+* [x] Data utama teridentifikasi secara lengkap (Judul_TA, Publikasi_Dosen, 17 Dosen, 4 KK) dengan skema 3NF.
 * [x] Constraints dan assumptions tercatat jelas mengacu pada regulasi DSI Unand 2025.
 * [x] Success criteria memiliki tolok ukur kuantitatif baku (Hit@3 >= 80%, MRR >= 0,60, Macro-F1 >= 70%).
 * [x] In Scope dan Out of Scope terdefinisi dengan batas yang tegas.
 * [x] Functional requirements (FR-01 s.d. FR-08) menjelaskan perilaku fungsional yang dapat diuji.
 * [x] Non-functional requirements (NFR-01 s.d. NFR-06) terukur dan realistis.
+* [x] Arsitektur sistem (Next.js 16, React 19, FastAPI, Drizzle ORM, Neon PostgreSQL) terdefinisi lengkap.
 * [x] Functional requirements selaras dengan core features.
 * [x] Non-functional requirements tidak ditulis sebagai fitur baru.
