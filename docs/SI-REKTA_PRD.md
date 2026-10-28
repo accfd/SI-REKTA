@@ -15,7 +15,7 @@ Dokumen Product Requirements Document (PRD) ini disusun untuk menjelaskan secara
 # 1. Problem & Users
 
 ## 1.1 Problem Statement
-Proses penentuan dosen pembimbing tugas akhir di Departemen Sistem Informasi FTI Unand masih sering mengalami ketidaksesuaian topik (topic mismatch), penumpukan bimbingan pada segelintir dosen senior, serta ketidakmampuan sistem konvensional dalam merekomendasikan 5 dosen tetap aktif baru yang belum memiliki riwayat bimbingan masa lalu (cold-start problem).
+Proses penentuan dosen pembimbing tugas akhir di Departemen Sistem Informasi FTI Unand masih sering mengalami ketidaksesuaian topik (topic mismatch), penumpukan bimbingan pada segelintir dosen senior, serta ketidakmampuan sistem konvensional dalam merekomendasikan 5 dosen tetap aktif yang belum memiliki riwayat bimbingan sebagai Pembimbing 1 (cold-start problem).
 
 ## 1.2 Target Users
 Target pengguna utama sistem SI-REKTA mencakup:
@@ -27,7 +27,7 @@ Target pengguna utama sistem SI-REKTA mencakup:
 1. **Kebingungan Mahasiswa Menentukan Pembimbing:** Mahasiswa kesulitan mengetahui fokus riset terbaru dosen secara akurat, sehingga sering salah sasaran mengajukan topik.
 2. **Tingginya Risiko Penolakan Judul:** Proposal tugas akhir mahasiswa sering ditolak saat verifikasi karena tidak selaras dengan peta jalan riset laboratorium departemen.
 3. **Ketimpangan Beban Bimbingan Ekstrem:** Terjadi penumpukan beban bimbingan pada dosen-dosen senior (hingga 149 judul), sementara dosen aktif lainnya minim bimbingan.
-4. **Dosen Baru "Tidak Terlihat" oleh Sistem:** Dosen baru yang belum pernah membimbing (0 riwayat skripsi) tidak pernah disarankan ke mahasiswa, padahal memiliki rekam jejak publikasi ilmiah yang aktif dan kompeten.
+4. **Dosen Tanpa Riwayat Pembimbing 1 "Tidak Terlihat" oleh Sistem:** Dosen tetap aktif yang belum pernah menjabat sebagai Pembimbing 1 (0 riwayat bimbingan P1 di arsip skripsi) tidak pernah disarankan ke mahasiswa jika hanya menggunakan model berbasis riwayat masa lalu, padahal mereka memiliki rekam jejak publikasi ilmiah yang aktif dan kompeten.
 5. **Kurangnya Transparansi Alasan Penugasan:** Penentuan pembimbing sebelumnya tidak disertai bukti keterkaitan topik yang jelas (efek kotak hitam / black-box).
 
 ## 1.4 Project Goal
@@ -43,7 +43,7 @@ Kebutuhan fungsional mendefinisikan apa saja kemampuan dan perilaku yang wajib d
 * **FR-03 (Prediksi Kelompok Keahlian / KK):** Sistem dapat mengidentifikasi dan menampilkan 1 dari 4 Kelompok Keahlian resmi (RD-BI, SD, SE, TK-ITI) yang paling sesuai dengan topik mahasiswa (Klasifikasi Tingkat 1).
 * **FR-04 (Penyajian Rekomendasi Top-3 Dosen):** Sistem menyajikan 3 kartu nama calon dosen pembimbing teratas yang paling relevan di dalam Kelompok Keahlian tersebut (Pemeringkatan Tingkat 2).
 * **FR-05 (Fitur Transparansi / Explainable AI Card):** Setiap kartu rekomendasi dosen wajib menampilkan persentase kecocokan topik, daftar 3–5 kata kunci penentu keselarasan, serta 2–3 rujukan judul artikel publikasi asli karya dosen bersangkutan.
-* **FR-06 (Penanganan Dosen Baru yang Adil):** Sistem secara otomatis menghitung skor kecocokan dosen baru yang belum punya riwayat skripsi secara murni 100% dari data publikasi karya ilmiahnya, sehingga dosen baru tetap berpeluang masuk rekomendasi Top-3.
+* **FR-06 (Penanganan Dosen Tanpa Riwayat P1 yang Adil):** Sistem secara otomatis menghitung skor kecocokan dosen yang belum memiliki riwayat bimbingan Pembimbing 1 secara murni 100% dari data publikasi karya ilmiahnya, sehingga mereka tetap berpeluang adil masuk rekomendasi Top-3.
 * **FR-07 (Penyaringan Dosen Tetap Aktif / Whitelist):** Sistem membatasi ruang rekomendasi hanya pada 17 Dosen Tetap Aktif DSI Unand dan secara otomatis mengeluarkan dosen yang sedang cuti, tugas belajar, atau berasal dari luar departemen.
 * **FR-08 (Ekspor / Cetak Rekomendasi Administratif):** Mahasiswa dan koordinator tugas akhir dapat mengunduh atau mencetak ringkasan hasil rekomendasi sebagai lampiran pendukung resmi pengisian Formulir TA-01 dan TA-02.
 
@@ -64,7 +64,7 @@ Kebutuhan non-fungsional mendefinisikan standar mutu, performa, dan batasan oper
 | 1 | **Smart Title Input & Preprocessing** | Mahasiswa cukup mengetik draf judul usulan; sistem otomatis memilah kata kunci penting tanpa terganggu kata umum formal skripsi. |
 | 2 | **Two-Tier Hierarchical Inference** | Mencegah salah sasaran dengan terlebih dahulu memetakan topik ke Kelompok Keahlian (KK) yang tepat sebelum memilih nama dosen perorangan. |
 | 3 | **Dual-Source Dynamic Late-Fusion** | Menghasilkan penilaian yang adil dan akurat dengan memadukan rekam jejak bimbingan masa lalu dan karya publikasi riset terkini dosen. |
-| 4 | **Zero-History Cold-Start Resolver** | Memberikan kesempatan yang setara bagi 5 dosen tetap aktif baru untuk direkomendasikan berdasarkan kepakaran karya ilmiah aslinya. |
+| 4 | **Zero-History Cold-Start Resolver** | Memberikan kesempatan yang setara bagi 5 dosen tetap aktif yang belum pernah menjadi Pembimbing 1 untuk direkomendasikan berdasarkan kepakaran karya ilmiah aslinya. |
 | 5 | **Explainable AI (XAI) Justification Cards** | Memberikan rasa percaya bagi mahasiswa dan pengelola tugas akhir karena rekomendasi disertai bukti kata kunci dan judul paper asli dosen. |
 | 6 | **Administrative Summary Export** | Memudahkan integrasi proses bisnis kampus untuk pengisian Formulir TA-01 (Pengajuan Judul) dan TA-02 (Pendaftaran Judul). |
 
@@ -86,7 +86,7 @@ Alur interaksi pengguna dari awal hingga tujuan tercapai:
 | :--- | :--- | :--- |
 | **Data Usulan Mahasiswa** | Teks judul skripsi, teks deskripsi rencana riset, timestamp pengajuan. | Menjadi teks kueri utama yang dianalisis oleh modul NLP untuk dicocokkan dengan kepakaran dosen. |
 | **Data Riwayat Skripsi (Dataset 1)** | 625 judul skripsi masa lalu, nama dosen pembimbing, tahun bimbingan. | Menjadi korpus data latih untuk mengenali pola topik bimbingan skripsi mahasiswa di masa lampau. |
-| **Data Publikasi Dosen (Dataset 2)** | 643 judul artikel ilmiah terverifikasi, nama dosen penulis, bidang keahlian. | Menjadi korpus data kepakaran riset aktual untuk menyelesaikan masalah dosen baru (cold-start). |
+| **Data Publikasi Dosen (Dataset 2)** | 643 judul artikel ilmiah terverifikasi, nama dosen penulis, bidang keahlian. | Menjadi korpus data kepakaran riset aktual untuk menyelesaikan masalah dosen tanpa riwayat Pembimbing 1 (cold-start). |
 | **Entitas 17 Dosen Tetap Aktif** | NIP, nama lengkap dan gelar baku, Kelompok Keahlian resmi, status aktif mengajar. | Menjadi daftar filter resmi (whitelist) agar rekomendasi tidak salah sasaran ke dosen luar atau dosen non-aktif. |
 | **Data 4 Kelompok Keahlian (KK)** | Kode KK (RD-BI, SD, SE, TK-ITI), deskripsi fokus keahlian, daftar dosen anggota. | Menjadi acuan klasifikasi hierarkis Tingkat 1 untuk mengelompokkan bidang keilmuan secara terstruktur. |
 | **Log Hasil Rekomendasi** | Rekam jejak usulan mahasiswa, Top-3 dosen terprediksi, konfirmasi persetujuan dosen. | Digunakan untuk evaluasi operasional berkala dan pelatihan ulang model (monitoring & retraining). |
@@ -99,7 +99,7 @@ Alur interaksi pengguna dari awal hingga tujuan tercapai:
 * **Batasan Infrastruktur:** Model machine learning dikemas dalam bentuk berkas serialisasi mandiri (.joblib) yang dimuat secara in-memory untuk menjamin kecepatan inferensi di bawah 0,5 detik.
 
 ## 2.7 Success Criteria (Kriteria Keberhasilan Produk)
-1. **Penyelesaian Masalah Cold-Start 100%:** Seluruh dosen tetap aktif baru (5 dosen dengan 0 riwayat skripsi) berhasil memiliki profil kepakaran dan berpeluang direkomendasikan secara proporsional.
+1. **Penyelesaian Masalah Cold-Start 100%:** Seluruh dosen tetap aktif yang belum memiliki riwayat bimbingan Pembimbing 1 (5 dosen dengan 0 riwayat skripsi P1) berhasil memiliki profil kepakaran dan berpeluang direkomendasikan secara proporsional.
 2. **Kualitas Peringkat Rekomendasi Teruji:** Sistem meraih Akurasi Top-3 (Hit@3) $\ge 80\%$ dan MRR $\ge 0,60$ pada data uji independen.
 3. **Keadilan Distribusi Bimbingan Terjamin:** Model mencapai nilai Macro-Averaged F1-Score $\ge 70\%$ pada evaluasi kelas bimbingan aktif tanpa terdistorsi oleh tingginya data dosen senior.
 4. **Kepuasan Pengguna Tinggi:** Kartu Explainable AI dinilai transparan, jelas, dan membantu mahasiswa serta komisi tugas akhir dalam pengisian Formulir TA-01 dan TA-02.
@@ -125,7 +125,7 @@ Alur interaksi pengguna dari awal hingga tujuan tercapai:
 # 4. AI Prompt Context
 Bagian ini dapat dijadikan konteks instruksi ringkas saat meminta bantuan kecerdasan buatan untuk pengembangan teknis:
 
-> SI-REKTA adalah sistem pendukung keputusan cerdas berbasis Machine Learning dan Natural Language Processing (NLP) untuk merekomendasikan Top-3 Dosen Pembimbing Tugas Akhir di Departemen Sistem Informasi FTI Universitas Andalas. Target pengguna utamanya adalah mahasiswa tingkat akhir (pengisian Form TA-01/TA-02) dan Komisi Tugas Akhir (verifikasi keselarasan proposal untuk Form TA-04). Masalah inti yang diselesaikan adalah ketidakcocokan topik, ketimpangan bimbingan, dan masalah dosen baru tanpa riwayat bimbingan (cold-start problem). Sistem menggunakan pendekatan Dual-Source Dataset (625 riwayat skripsi dan 643 publikasi riset dosen) yang diproses melalui dua tahap inferensi: Tingkat 1 memprediksi 4 Kelompok Keahlian resmi (RD-BI, SD, SE, TK-ITI), dan Tingkat 2 melakukan Dynamic Late-Fusion (menggabungkan kemiripan publikasi dan riwayat skripsi secara proporsional). Sistem dibatasi secara disiplin hanya untuk 17 Dosen Tetap Aktif DSI Unand. Kriteria keberhasilan mencakup Top-3 Accuracy minimal 80%, MRR minimal 0,60, Macro-F1 minimal 70%, latensi di bawah 0,5 detik, serta penyajian kartu Explainable AI yang memuat persentase kecocokan, kata kunci keselarasan topik, dan bukti judul artikel ilmiah asli dosen.
+> SI-REKTA adalah sistem pendukung keputusan cerdas berbasis Machine Learning dan Natural Language Processing (NLP) untuk merekomendasikan Top-3 Dosen Pembimbing Tugas Akhir di Departemen Sistem Informasi FTI Universitas Andalas. Target pengguna utamanya adalah mahasiswa tingkat akhir (pengisian Form TA-01/TA-02) dan Komisi Tugas Akhir (verifikasi keselarasan proposal untuk Form TA-04). Masalah inti yang diselesaikan adalah ketidakcocokan topik, ketimpangan bimbingan, dan masalah dosen tanpa riwayat Pembimbing 1 (cold-start problem). Sistem menggunakan pendekatan Dual-Source Dataset (625 riwayat skripsi dan 643 publikasi riset dosen) yang diproses melalui dua tahap inferensi: Tingkat 1 memprediksi 4 Kelompok Keahlian resmi (RD-BI, SD, SE, TK-ITI), dan Tingkat 2 melakukan Dynamic Late-Fusion (menggabungkan kemiripan publikasi dan riwayat skripsi secara proporsional). Sistem dibatasi secara disiplin hanya untuk 17 Dosen Tetap Aktif DSI Unand. Kriteria keberhasilan mencakup Top-3 Accuracy minimal 80%, MRR minimal 0,60, Macro-F1 minimal 70%, latensi di bawah 0,5 detik, serta penyajian kartu Explainable AI yang memuat persentase kecocokan, kata kunci keselarasan topik, dan bukti judul artikel ilmiah asli dosen.
 
 # PRD Checklist
 * [x] Problem statement jelas dan berfokus pada kendala nyata pengguna di kampus.

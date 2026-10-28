@@ -38,7 +38,7 @@ Sesuai silabus resmi pada dokumen Project Machine Learning 2026, pengembangan pr
 
 | No | 12 Tahapan Resmi Proyek ML 2026 | Fase CRISP-ML(Q) Terkait | Fokus Implementasi pada SI-REKTA |
 |:--:|:---|:---|:---|
-| 1 | **Problem Identification** | Fase 1: Business and Data Understanding | Identifikasi kendala pemilihan pembimbing, ketimpangan bimbingan, dan masalah dosen baru (cold-start). |
+| 1 | **Problem Identification** | Fase 1: Business and Data Understanding | Identifikasi kendala pemilihan pembimbing, ketimpangan bimbingan, dan masalah dosen tanpa riwayat Pembimbing 1 (cold-start). |
 | 2 | **System Requirements Analysis** | Fase 1: Business and Data Understanding | Analisis kebutuhan pengguna (mahasiswa & prodi), batasan 17 dosen aktif, 4 KK, dan penetapan KPI kelayakan. |
 | 3 | **Data Analysis** | Fase 1: Business and Data Understanding | Audit kualitas data riwayat skripsi (Judul_TA.csv) dan publikasi riset dosen (Publikasi_Dosen.csv) via EDA. |
 | 4 | **Data Preprocessing** | Fase 2: Data Engineering / Preparation | Normalisasi teks, pembersihan tanda baca, case folding, stopword removal akademik, dan penanganan istilah asing. |
@@ -58,7 +58,7 @@ Sesuai silabus resmi pada dokumen Project Machine Learning 2026, pengembangan pr
 Pada Departemen Sistem Informasi (DSI) FTI Universitas Andalas, proses penentuan dosen pembimbing tugas akhir menghadapi tiga kendala nyata:
 1. **Ketidaksesuaian Topik (Topic Mismatch):** Mahasiswa kerap mengajukan usulan proposal yang tidak selaras dengan keahlian dosen, memicu revisi berulang atau penolakan judul.
 2. **Ketimpangan Beban Bimbingan (Workload Imbalance):** Penentuan pembimbing konvensional memicu penumpukan antrean pada dosen senior tertentu (hingga 149 mahasiswa), sedangkan dosen lain minim bimbingan.
-3. **Kendala Dosen Baru (Zero-History Cold-Start):** Dosen baru yang belum pernah membimbing (riwayat bimbingan = 0) tidak akan pernah dikenali oleh model pembelajaran mesin biasa jika hanya dilatih dari data riwayat masa lalu.
+3. **Kendala Dosen Tanpa Riwayat Pembimbing 1 (Zero-History Cold-Start):** Dosen tetap aktif yang belum pernah menjabat sebagai Pembimbing 1 (riwayat bimbingan P1 = 0 di arsip skripsi) tidak akan pernah dikenali oleh model pembelajaran mesin biasa jika hanya dilatih dari data riwayat masa lalu.
 
 ## Tahap 2: System Requirements Analysis (Analisis Kebutuhan Sistem)
 Sesuai Pedoman Topik Tugas Akhir DSI 2025 dan kebutuhan operasional perguruan tinggi:
@@ -77,9 +77,9 @@ Sesuai Pedoman Topik Tugas Akhir DSI 2025 dan kebutuhan operasional perguruan ti
 
 ## Tahap 3: Data Analysis (Analisis Data Eksploratif / EDA)
 Berdasarkan Laporan Exploratory Data Analysis (EDA) Gabungan pada dokumen EDA_Dual_Dataset.md:
-1. **Dataset 1 (Judul_TA.csv):** Memuat 625 riwayat judul bimbingan masa lalu. Rata-rata panjang judul 16,6 kata. Sebanyak 5 dari 17 dosen tetap aktif (29,4%) memiliki data bimbingan nol (N = 0).
+1. **Dataset 1 (Judul_TA.csv):** Memuat 625 riwayat judul bimbingan masa lalu. Rata-rata panjang judul 16,6 kata. Sebanyak 5 dari 17 dosen tetap aktif (29,4%) memiliki data bimbingan nol (N = 0) sebagai Pembimbing 1.
 2. **Dataset 2 (Publikasi_Dosen.csv):** Memuat 643 judul artikel ilmiah terverifikasi dari Google Scholar/Sinta yang mencakup 100% dari 17 dosen aktif (7 hingga 32 paper per dosen). Rata-rata panjang judul 13,7 kata.
-3. **Penyatuan Kosakata Semantik:** Penyatuan kedua dataset memperluas kosakata unik dari 1.691 kata menjadi 3.470 kata unik (+105,2%), dengan irisan leksikal Jaccard sebesar 19,57%. Publikasi riset dosen terbukti berhasil menutup kekosongan data dosen baru.
+3. **Penyatuan Kosakata Semantik:** Penyatuan kedua dataset memperluas kosakata unik dari 1.691 kata menjadi 3.470 kata unik (+105,2%), dengan irisan leksikal Jaccard sebesar 19,57%. Publikasi riset dosen terbukti berhasil menutup ketiadaan data riwayat P1 pada 5 dosen tersebut.
 
 # FASE 2: DATA ENGINEERING / DATA PREPARATION
 
@@ -111,7 +111,7 @@ Sistem dibangun menggunakan arsitektur inferensi bertingkat:
 Skor Akhir Rekomendasi = (Bobot Riset × Nilai Kemiripan Publikasi) + (Bobot Riwayat × Probabilitas Riwayat Skripsi)
 
 Porsi bobot diatur secara dinamis:
-1. **Bagi Dosen Baru (Riwayat Bimbingan = 0):** Bobot riset otomatis bernilai 100% (Bobot = 1,0). Skor dosen baru dihitung murni dari kemiripan semantik kosinus antara usulan mahasiswa dan karya publikasi riset dosen, sehingga masalah cold-start teratasi secara adil.
+1. **Bagi Dosen Tanpa Riwayat P1 (Riwayat Bimbingan P1 = 0):** Bobot riset otomatis bernilai 100% (Bobot = 1,0). Skor dosen tersebut dihitung murni dari kemiripan semantik kosinus antara usulan mahasiswa dan karya publikasi riset dosen, sehingga masalah cold-start teratasi secara adil.
 2. **Bagi Dosen Berpengalaman (Riwayat Bimbingan > 0):** Bobot dibagi seimbang (35% sampai 50% untuk publikasi riset terkini, dan sisanya untuk rekam jejak bimbingan masa lalu).
 
 # FASE 4: ML MODEL EVALUATION & QUALITY ASSURANCE (QA)

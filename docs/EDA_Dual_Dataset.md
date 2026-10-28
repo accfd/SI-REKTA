@@ -91,7 +91,7 @@ Penyatuan dua dataset ini terbukti memberikan lompatan kekayaan kosakata teknis 
 ## 5. Kesimpulan Kritis Hasil EDA untuk Landasan SLR
 
 1. **Bukti Validasi Ilmiah Solusi Dual-Dataset:**  
-   Dataset 1 (`Judul_TA.csv`) memiliki kelemahan struktural tidak terhindarkan berupa **5 dosen baru bernilai 0 bimbingan (29,4% faculty cold-start)**. Dataset 2 (`Publikasi_Dosen.csv`) berhasil mengisi kekosongan tersebut secara 100% tanpa ada satu pun dosen yang terlewat.
+   Dataset 1 (`Judul_TA.csv`) memiliki kelemahan struktural tidak terhindarkan berupa **5 dosen tetap aktif yang belum memiliki riwayat sebagai Pembimbing 1 (29,4% faculty cold-start pada peran P1)**. Dataset 2 (`Publikasi_Dosen.csv`) berhasil mengisi kekosongan tersebut secara 100% tanpa ada satu pun dosen yang terlewat.
 2. **Kebutuhan Model *Late-Fusion Hybrid*:**  
    Karena karakteristik teks mahasiswa (Dataset 1) dan publikasi dosen (Dataset 2) saling melengkapi (Jaccard Index 19,57%), arsitektur rekomendasi yang ideal bukanlah *single-classifier*, melainkan **arsitektur dua tingkat (Hierarchical Two-Tier) dengan Late-Fusion**:
    - **Tingkat 1:** Memprediksi Kelompok Keahlian (KK).

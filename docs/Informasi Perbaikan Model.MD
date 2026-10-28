@@ -44,7 +44,7 @@
 ### 1.1 Masalah Nyata yang Diselesaikan (*Problem Identification*)
 Pada Departemen Sistem Informasi FTI Universitas Andalas, proses penentuan dosen pembimbing tugas akhir menghadapi dua kendala mendasar:
 1. **Ketidaksesuaian Topik (*Topic Mismatch*):** Mahasiswa kerap mengajukan usulan judul yang tidak selaras dengan bidang kepakaran maupun laboratorium riset dosen.
-2. **Ketimpangan Beban Bimbingan Ekstrem (*Workload Imbalance*):** Penentuan pembimbing berbasis subjektivitas memicu penumpukan antrean pada segelintir dosen senior (hingga 149 judul bimbingan), sementara dosen tetap lainnya dan dosen baru belum terutilisasi secara proporsional.
+2. **Ketimpangan Beban Bimbingan Ekstrem (*Workload Imbalance*):** Penentuan pembimbing berbasis subjektivitas memicu penumpukan antrean pada segelintir dosen senior (hingga 149 judul bimbingan), sementara dosen tetap lainnya dan dosen yang belum memiliki riwayat bimbingan P1 belum terutilisasi secara proporsional.
 
 ### 1.2 Tujuan Penerapan Machine Learning & Manfaat Sistem
 * **Tujuan:** Membangun sistem pendukung keputusan cerdas (**SI-REKTA**) yang mampu memetakan draf judul usulan mahasiswa secara otomatis ke Kelompok Keahlian (KK) yang relevan dan merekomendasikan Top-3 Dosen Pembimbing Aktif berdasarkan kecocokan semantik leksikal yang transparan (*Explainable AI*).
@@ -79,12 +79,12 @@ Sesuai **Buku Panduan Tugas Akhir DSI 2025**, target pengguna dan kebutuhan fung
 ### 2.1 Identifikasi Kendala Utama yang Ditemukan
 Saat mengevaluasi implementasi model awal pada [SI_REKTA_Final_Modeling_PR1.ipynb](file:///d:/%23%23%20SEMESTER%205/ML/SI_REKTA_Final_Modeling_PR1.ipynb), tim menemukan anomali kritis:
 * **Kendala 1 (The Zero-History Faculty Cold-Start Problem):**  
-  Pada dataset awal (`Judul_TA.csv`), sebanyak **5 dari 17 dosen tetap aktif (29,4%)**—yaitu Febby Apri Wenando, Ph.D., Aina Hubby Aziira, M.Eng., Nisa Dwi Angresti, M.Kom., Hafzatin Nurlatifa, M.Eng., dan Adi Arga Arifnur, M.Kom.—**memiliki 0 riwayat bimbingan (sampel data latih $N=0$)**.
+  Pada dataset awal (`Judul_TA.csv`), sebanyak **5 dari 17 dosen tetap aktif (29,4%)**—yaitu Febby Apri Wenando, Ph.D., Aina Hubby Aziira, M.Eng., Nisa Dwi Angresti, M.Kom., Hafzatin Nurlatifa, M.Eng., dan Adi Arga Arifnur, M.Kom.—**belum pernah tercatat sebagai Pembimbing 1 (sampel data latih peran P1 $N=0$)**.
 * **Kendala 2 (False Hierarchical Fallback / "Hanya Prediksi KK"):**  
-  Karena model klasifikasi terawasi murni (SVM/Naive Bayes) tidak mampu memprediksi kelas dengan $N=0$, sistem sebelumnya terpaksa hanya mengelompokkan mahasiswa ke tingkat Kelompok Keahlian (KK). Dosen baru di dalam KK tersebut hanya diberi skor probabilitas *dummy/flat* berbasis nilai KK (`conf = min(top_kk_score * 1.8, 88.0)`). Ini menyimpang dari prinsip keilmuan dan tidak mencerminkan keahlian personal dosen.
+  Karena model klasifikasi terawasi murni (SVM/Naive Bayes) tidak mampu memprediksi kelas dengan $N=0$, sistem sebelumnya terpaksa hanya mengelompokkan mahasiswa ke tingkat Kelompok Keahlian (KK). Dosen tanpa riwayat P1 di dalam KK tersebut hanya diberi skor probabilitas *dummy/flat* berbasis nilai KK (`conf = min(top_kk_score * 1.8, 88.0)`). Ini menyimpang dari prinsip keilmuan dan tidak mencerminkan keahlian personal dosen.
 
 ### 2.2 Analisis Penyebab Akar Masalah (*Root Cause Analysis*)
-Kelemahan tersebut berakar dari **ketergantungan naif pada satu sumber data tunggal (*Single-Source Historical Data*)**. Data historis skripsi mahasiswa merekam masa lalu (5–10 tahun terakhir), sehingga secara alamiah dosen-dosen muda atau dosen yang baru bergabung di Departemen Sistem Informasi FTI Unand belum memiliki catatan bimbingan skripsi S1 di arsip lama.
+Kelemahan tersebut berakar dari **ketergantungan naif pada satu sumber data tunggal (*Single-Source Historical Data*)**. Data historis skripsi mahasiswa merekam riwayat Pembimbing 1 (P1) masa lalu, sehingga dosen-dosen tetap yang belum pernah ditugaskan sebagai Pembimbing Utama (P1) di Departemen Sistem Informasi FTI Unand belum memiliki catatan bimbingan di arsip tersebut.
 
 ### 2.3 Solusi Nyata & Upaya Penyelesaian Tim
 Alih-alih merekayasa data fiktif atau pasrah pada tebakan tingkat KK saja, tim mengambil langkah terobosan ilmiah dengan mengadopsi pendekatan **Dual-Source Hybrid Representation**:
@@ -98,7 +98,7 @@ Alih-alih merekayasa data fiktif atau pasrah pada tebakan tingkat KK saja, tim m
 ### 2.4 Hasil & Bukti Kuantitatif Setelah Solusi Diterapkan
 Berdasarkan audit kuantitatif yang terdokumentasi pada [docs/EDA_Dual_Dataset.md](file:///d:/%23%23%20SEMESTER%205/ML/docs/EDA_Dual_Dataset.md):
 * **Cakupan Dosen Aktif Meningkat Menjadi 100%:**  
-  Kelima dosen baru yang sebelumnya $N=0$ kini memiliki profil riset yang solid:
+  Kelima dosen tetap aktif yang sebelumnya $N=0$ pada riwayat Pembimbing 1 kini memiliki profil riset yang solid:
   - Febby Apri Wenando, Ph.D. (Pakar Machine Learning & Data Science): **32 paper**
   - Aina Hubby Aziira, M.Eng. (Pakar NLP & Deep Learning/GANs): **7 paper**
   - Nisa Dwi Angresti, M.Kom. (Pakar UI/UX & Software Eng): **11 paper**
@@ -109,7 +109,7 @@ Berdasarkan audit kuantitatif yang terdokumentasi pada [docs/EDA_Dual_Dataset.md
 * **Penyempurnaan Arsitektur Model Lanjutan:**  
   Tim merumuskan arsitektur baru **Hierarchical Dual-Stream Late Fusion**:
   $$\text{Skor Akhir}(D_i) = \alpha_i \cdot \text{Sim}_{\text{Publikasi}}(Q, D_i) + (1 - \alpha_i) \cdot P_{\text{Skripsi}}(D_i | Q)$$
-  Di mana $\alpha_i = 1,0$ secara otomatis untuk dosen baru, sehingga dosen baru dinilai 100% berdasarkan kesesuaian karya publikasi riset aslinya secara adil dan terukur.
+  Di mana $\alpha_i = 1,0$ secara otomatis untuk dosen tanpa riwayat P1, sehingga dosen tersebut dinilai 100% berdasarkan kesesuaian karya publikasi riset aslinya secara adil dan terukur.
 
 ---
 
@@ -196,7 +196,7 @@ Proyek SI-REKTA dikerjakan secara kolaboratif dengan struktur pembagian peran da
 
 ### Mekanisme Koordinasi saat Menghadapi Kendala:
 Ketika kendala *cold-start* dan keterbatasan satu dataset teridentifikasi pada evaluasi model awal, tim segera mengadakan sesi peninjauan (*code & data review*):
-1. **Analyst & Acquisition Specialist** bertindak cepat menelusuri repositori publikasi dosen guna menutup kekosongan data 5 dosen baru.
+1. **Analyst & Acquisition Specialist** bertindak cepat menelusuri repositori publikasi dosen guna menutup kekosongan data 5 dosen tanpa riwayat bimbingan P1.
 2. **NLP Specialist** menyaring noise homonim judul non-IT agar korpus publikasi tetap murni bidang sistem informasi.
 3. **ML Lead** mengintegrasikan matriks profil baru ke dalam rancangan model inferensi *Late-Fusion*.
 4. **System Architect** menyelaraskan seluruh perubahan dengan alur regulasi akademik Departemen Sistem Informasi FTI Unand.
@@ -206,7 +206,7 @@ Ketika kendala *cold-start* dan keterbatasan satu dataset teridentifikasi pada e
 # BAGIAN 5: RENCANA KERJA TAHAP LANJUTAN (PROGRESS REPORT 2 & 3)
 
 1. **Implementasi Full Dual-Stream Late Fusion pada Notebook:**  
-   Menyempurnakan fungsi `predict_pembimbing()` agar pembobotan kemiripan publikasi dosen baru berjalan dinamis ($\alpha=1.0$) dan menampilkan kutipan judul paper nyata sebagai bukti *Explainable AI*.
+   Menyempurnakan fungsi `predict_pembimbing()` agar pembobotan kemiripan publikasi dosen tanpa riwayat P1 berjalan dinamis ($\alpha=1.0$) dan menampilkan kutipan judul paper nyata sebagai bukti *Explainable AI*.
 2. **Pembangunan Backend API (FastAPI / Flask):**  
    Membungkus berkas model `si_rekta_pipeline.joblib` ke dalam REST API endpoint yang ringan, aman, dan berlatensi rendah ($<0,1$ detik).
 3. **Implementasi Antarmuka Pengguna Interaktif (Streamlit / Modern Web UI):**  
