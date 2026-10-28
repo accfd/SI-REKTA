@@ -7,7 +7,7 @@
 > **Dosen Pengampu:** Febby Apri Wenando, M.Eng., Ph.D. & Aina Hubby Aziira, M.Eng.  
 > **Standar Metodologi:** CRISP-ML(Q) (*Cross-Industry Standard Process for Machine Learning with Quality Assurance*)  
 > **Kepatuhan Regulasi:** Pedoman Topik TA DSI 2025 (V2) & Panduan Pelaksanaan TA DSI 2025  
-> **Dokumen Terkait:** [DosenAktif.MD](file:///d:/%23%23%20SEMESTER%205/ML/DosenAktif.MD) | [EDA_Dual_Dataset.md](file:///d:/%23%23%20SEMESTER%205/ML/docs/EDA_Dual_Dataset.md) | [SI-REKTA_SLR.md](file:///d:/%23%23%20SEMESTER%205/ML/docs/SI-REKTA_SLR.md)
+> **Dokumen Terkait:** [Dosen_Tetap_Aktif_DSI.md](file:///d:/%23%23%20SEMESTER%205/ML/docs/Dosen_Tetap_Aktif_DSI.md) | [EDA_Dual_Dataset.md](file:///d:/%23%23%20SEMESTER%205/ML/docs/EDA_Dual_Dataset.md) | [SI-REKTA_SLR.md](file:///d:/%23%23%20SEMESTER%205/ML/docs/SI-REKTA_SLR.md)
 
 ---
 
