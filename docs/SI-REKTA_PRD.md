@@ -36,7 +36,7 @@ Membangun sistem informasi rekomendasi pembimbing tugas akhir berbasis web satu 
 ## 2.1 Functional Requirements (Kebutuhan Fungsional)
 Kebutuhan fungsional mendefinisikan apa saja kemampuan dan perilaku yang wajib dijalankan oleh sistem dari sudut pandang mahasiswa:
 
-* **FR-01 (Input Usulan Judul & Rencana Riset):** Mahasiswa dapat memasukkan draf kalimat judul tugas akhir dan ringkasan rencana riset melalui formulir web yang mudah digunakan.
+* **FR-01 (Input Usulan Judul Tugas Akhir):** Mahasiswa memasukkan draf kalimat judul tugas akhir yang diajukan melalui formulir web yang sederhana dan intuitif.
 * **FR-02 (Pembersihan Teks Otomatis):** Sistem secara otomatis membersihkan tanda baca, menyeragamkan huruf kecil, dan menyaring kata-kata template formal skripsi (seperti "rancang bangun", "berbasis web").
 * **FR-03 (Prediksi Kelompok Keahlian / KK):** Sistem dapat mengidentifikasi dan menampilkan 1 dari 4 Kelompok Keahlian resmi (RD-BI, SD, SE, TK-ITI) yang paling sesuai dengan topik mahasiswa (Klasifikasi Tingkat 1).
 * **FR-04 (Penyajian Rekomendasi Top-3 Dosen):** Sistem menyajikan 3 kartu nama calon dosen pembimbing teratas yang paling relevan di dalam Kelompok Keahlian tersebut (Pemeringkatan Tingkat 2).
@@ -70,7 +70,7 @@ Kebutuhan non-fungsional mendefinisikan standar mutu, performa, dan batasan oper
 Alur interaksi mahasiswa dari awal hingga selesai:
 
 1. **Akses Sistem:** Mahasiswa membuka laman web aplikasi SI-REKTA melalui laptop atau ponsel pintar.
-2. **Input Usulan Riset:** Mahasiswa memasukkan draf kalimat judul skripsi dan ringkasan singkat ide penelitian yang ingin diambil.
+2. **Input Usulan Judul:** Mahasiswa memasukkan draf kalimat judul skripsi yang ingin diajukan ke dalam kolom formulir.
 3. **Proses Inferensi Cerdas (Sistem Otomatis):**  
    * Sistem membersihkan teks usulan melalui pipeline NLP (Case Folding, Cleansing, Academic Stopword Removal, N-Gram).
    * Tingkat 1: Sistem memprediksi Kelompok Keahlian resmi yang paling selaras (RD-BI, SD, SE, atau TK-ITI).
@@ -90,7 +90,7 @@ Untuk menjamin sistem siap diimplementasikan ke dalam basis data relasional (RDB
 | **`dosen`** | `nip` (VARCHAR(18))<br>`nama_lengkap` (VARCHAR(150))<br>`gelar_depan` (VARCHAR(20))<br>`gelar_belakang` (VARCHAR(50))<br>`email` (VARCHAR(100))<br>`jabatan_akademik` (VARCHAR(100))<br>`id_kk` (VARCHAR(10))<br>`status_aktif` (ENUM('aktif','cuti','tugas_belajar'))<br>`is_eligible_p1` (BOOLEAN) | **PK:** `nip`<br>**FK:** `id_kk` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**UNIQUE:** `email`<br>**NOT NULL:** `nip`, `nama_lengkap`, `gelar_belakang`, `id_kk`, `status_aktif`, `is_eligible_p1` | Tabel master 17 Dosen Tetap Aktif DSI Unand yang berfungsi sebagai filter resmi (*whitelist*). Memisahkan status dosen tanpa riwayat P1 secara atomik. |
 | **`publikasi_dosen`** | `id_publikasi` (INT AUTO_INCREMENT)<br>`nip_dosen` (VARCHAR(18))<br>`judul_publikasi` (TEXT)<br>`tahun_terbit` (INT)<br>`nama_sumber_indeks` (VARCHAR(100))<br>`url_dokumen` (VARCHAR(255)) | **PK:** `id_publikasi`<br>**FK:** `nip_dosen` $\rightarrow$ `dosen.nip`<br>**NOT NULL:** `id_publikasi`, `nip_dosen`, `judul_publikasi`, `tahun_terbit` | Korpus Dataset 2 (643 artikel ilmiah terverifikasi) untuk menghitung kemiripan kosinus riset aktual dosen dan mengatasi masalah dosen tanpa riwayat P1 (*cold-start*). |
 | **`riwayat_skripsi`** | `id_skripsi` (INT AUTO_INCREMENT)<br>`judul_skripsi` (TEXT)<br>`tahun_lulus` (INT)<br>`nip_pembimbing_1` (VARCHAR(18))<br>`id_kk` (VARCHAR(10)) | **PK:** `id_skripsi`<br>**FK 1:** `nip_pembimbing_1` $\rightarrow$ `dosen.nip`<br>**FK 2:** `id_kk` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**NOT NULL:** `id_skripsi`, `judul_skripsi`, `tahun_lulus`, `nip_pembimbing_1`, `id_kk` | Korpus Dataset 1 (625 riwayat skripsi masa lalu) untuk melatih model probabilitas Pembimbing 1 (*prior likelihood*) dan pola topik bimbingan lampau. |
-| **`pengajuan_rekomendasi`** | `id_pengajuan` (VARCHAR(36))<br>`nim_mahasiswa` (VARCHAR(15))<br>`nama_mahasiswa` (VARCHAR(100))<br>`judul_usulan` (TEXT)<br>`ringkasan_ide` (TEXT)<br>`id_kk_terprediksi` (VARCHAR(10))<br>`waktu_pengajuan` (TIMESTAMP) | **PK:** `id_pengajuan`<br>**FK:** `id_kk_terprediksi` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**NOT NULL:** `id_pengajuan`, `nim_mahasiswa`, `nama_mahasiswa`, `judul_usulan`, `id_kk_terprediksi`, `waktu_pengajuan` | Sesi transaksi pencarian rekomendasi oleh mahasiswa untuk keperluan draf pengisian Formulir TA-01 dan TA-02. |
+| **`pengajuan_rekomendasi`** | `id_pengajuan` (VARCHAR(36))<br>`nim_mahasiswa` (VARCHAR(15))<br>`nama_mahasiswa` (VARCHAR(100))<br>`judul_usulan` (TEXT)<br>`id_kk_terprediksi` (VARCHAR(10))<br>`waktu_pengajuan` (TIMESTAMP) | **PK:** `id_pengajuan`<br>**FK:** `id_kk_terprediksi` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**NOT NULL:** `id_pengajuan`, `nim_mahasiswa`, `nama_mahasiswa`, `judul_usulan`, `id_kk_terprediksi`, `waktu_pengajuan` | Sesi transaksi pencarian rekomendasi oleh mahasiswa untuk keperluan draf pengisian Formulir TA-01 dan TA-02. |
 | **`detail_rekomendasi_dosen`** | `id_detail` (INT AUTO_INCREMENT)<br>`id_pengajuan` (VARCHAR(36))<br>`ranking` (TINYINT)<br>`nip_dosen` (VARCHAR(18))<br>`skor_kecocokan` (DECIMAL(5,2))<br>`kata_kunci_keselarasan` (TEXT)<br>`id_publikasi_rujukan` (INT)<br>`status_konfirmasi` (ENUM('menunggu','disetujui','ditolak')) | **PK:** `id_detail`<br>**FK 1:** `id_pengajuan` $\rightarrow$ `pengajuan_rekomendasi.id_pengajuan`<br>**FK 2:** `nip_dosen` $\rightarrow$ `dosen.nip`<br>**FK 3:** `id_publikasi_rujukan` $\rightarrow$ `publikasi_dosen.id_publikasi`<br>**NOT NULL:** `id_detail`, `id_pengajuan`, `ranking`, `nip_dosen`, `skor_kecocokan` | Menyimpan 3 kartu rekomendasi dosen teratas (Top-3) per sesi pengajuan secara atomik beserta bukti transparansi *Explainable AI* (skor, kata kunci, artikel rujukan). |
 
 ### 2.5.2 Diagram Relasi Entitas (Entity-Relationship Diagram / ERD)
@@ -146,7 +146,6 @@ erDiagram
         varchar nim_mahasiswa
         varchar nama_mahasiswa
         text judul_usulan
-        text ringkasan_ide
         varchar id_kk_terprediksi FK
         timestamp waktu_pengajuan
     }
@@ -203,7 +202,7 @@ erDiagram
 ## 3.2 Out of Scope (Tidak Termasuk dalam Pekerjaan Proyek)
 * Sistem tidak mengambil alih kewenangan administratif formal Ketua Departemen dalam menerbitkan SK pembimbing (sistem hanya bertindak sebagai alat bantu rekomendasi mandiri bagi mahasiswa).
 * Sistem tidak mengelola bimbingan mingguan, presensi, logbook skripsi, atau pendaftaran sidang sarjana.
-* Sistem tidak melakukan pemrosesan dokumen naskah proposal skripsi utuh ratusan halaman (sistem berfokus pada analisis teks judul dan ringkasan ide riset).
+* Sistem tidak melakukan pemrosesan dokumen naskah proposal skripsi utuh ratusan halaman (sistem berfokus murni pada analisis teks kalimat judul tugas akhir sesuai karakteristik korpus dataset).
 * Sistem tidak menyediakan portal multi-role atau panel admin dinamis (retraining model dikelola secara offline batch).
 * Sistem tidak melayani rekomendasi untuk mahasiswa atau dosen di luar Departemen Sistem Informasi FTI Universitas Andalas.
 
