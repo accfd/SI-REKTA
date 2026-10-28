@@ -97,35 +97,44 @@ Output sel harus menampilkan:
 
 ---
 
-# PROMPT 2: DATA CLEANING & STANDARISASI 17 DOSEN TETAP AKTIF (WHITELISTING)
+# PROMPT 2: DATA CLEANING & STANDARISASI 17 DOSEN TETAP AKTIF (WHITELISTING DARI DATASET 2)
 
 ```markdown
 [PERAN]
 Data Engineer & Data Quality Assurance Specialist.
 
 [KONTEKS]
-Berdasarkan dokumen resmi `Dosen_Tetap_Aktif_DSI.md`, ruang rekomendasi SI-REKTA dibatasi secara disiplin hanya untuk **17 Dosen Tetap Aktif Departemen Sistem Informasi FTI Unand**. Pada data mentah, penulisan nama dosen di `pembimbing_1` dan `nama_dosen` memiliki variasi gelar, singkatan, dan salah ketik (misal: "Prof. Surya Afnarius, Ph.D", "Prof.Surya Afnarius,Ph.D", "Surya Afnarius"). Selain itu, ada dosen purna tugas/luar departemen di Dataset 1 yang harus dikeluarkan dari ruang rekomendasi aktif.
+Berdasarkan audit data, Dataset 2 (`Publikasi_Dosen.csv`) telah memuat tepat **17 nama Dosen Tetap Aktif DSI Unand** dengan penulisan resmi bergelar lengkap pada kolom `nama_dosen`. Sementara itu, pada Dataset 1 (`Judul_TA.csv`), kolom `pembimbing_1` memiliki variasi penulisan nama, singkatan marga/nama belakang (misal: "Rahmatika Pratama S, MT", "Dwi Welly Sukma N, MT", "Jefril Ramadoni,M.Kom"), serta mencakup dosen purna tugas/luar departemen yang harus dikeluarkan dari ruang rekomendasi aktif.
+Kita ingin memanfaatkan kolom `nama_dosen` di Dataset 2 sebagai sumber *canonical whitelist* secara dinamis tanpa melakukan *hardcoding* manual 17 nama dosen (mencegah pemborosan kode).
 
 [TASK]
-Tuliskan sel Code Python untuk:
-1. Mendefinisikan daftar resmi (*canonical whitelist*) 17 Dosen Tetap Aktif DSI Unand (nama baku tanpa gelar untuk pencocokan seragam, dan nama bergelar lengkap untuk tampilan antarmuka).
-2. Membuat fungsi normalisasi teks nama dosen (menghapus gelar akademis seperti Prof, Dr, M.Eng, M.Kom, MT, Ph.D, spasi ganda, tanda titik/koma) sehingga variasi penulisan nama dosen dapat dipetakan secara deterministik ke nama baku.
-3. Menerapkan fungsi normalisasi tersebut pada kolom `pembimbing_1` di Dataset 1 dan `nama_dosen` di Dataset 2.
-4. Menyaring Dataset 1 sehingga hanya mempertahankan riwayat bimbingan yang dibimbing oleh 17 Dosen Tetap Aktif sebagai Pembimbing 1.
-5. Menghitung dan memvisualisasikan jumlah bimbingan per dosen di Dataset 1 (tunjukkan secara eksplisit bahwa ada 5 dosen tetap aktif yang memiliki 0 bimbingan / cold-start).
-6. Menghitung dan memvisualisasikan jumlah publikasi per dosen di Dataset 2 untuk membuktikan bahwa 5 dosen cold-start tersebut memiliki data publikasi riset aktif.
+Tuliskan sel Code Python yang efisien dan elegan untuk:
+1. Mengekstrak daftar resmi 17 Dosen Tetap Aktif langsung dari Dataset 2 secara dinamis:
+   `whitelist_17_dosen = df_publikasi['nama_dosen'].unique()`
+2. Membuat fungsi normalisasi teks nama (`clean_name_key`) yang membuang gelar akademis (Prof, Dr, M.Eng, M.Kom, MT, Ph.D, dsb.), tanda baca, dan spasi ganda, lalu mengubahnya ke huruf kecil.
+3. Membangun kamus pemetaan nama (*canonical mapping dictionary*) otomatis dari `clean_name_key` ke nama bergelar resmi di `whitelist_17_dosen`, dilengkapi penanganan singkatan nama belakang di Dataset 1 (seperti "rahmatika pratama s" -> "Rahmatika Pratama Santi, M.T.", "dwi welly sukma n" -> "Dwi Welly Sukma Nirad, M.T.", "jefril ramadoni" -> "Jefril Rahmadoni, M.Kom.").
+4. Menerapkan pemetaan tersebut pada kolom `pembimbing_1` di Dataset 1 ke kolom baru `pembimbing_1_resmi`.
+5. Memfilter Dataset 1 sehingga hanya mempertahankan baris skripsi yang dibimbing oleh 17 Dosen Tetap Aktif (`df_skripsi_clean = df_skripsi[df_skripsi['pembimbing_1_resmi'].notnull()]`).
+6. Membuat tabel ringkasan gabungan (*dosen_summary_df*) untuk ke-17 dosen:
+   - `nama_dosen` (nama resmi)
+   - `jumlah_skripsi` (jumlah bimbingan P1 di Dataset 1)
+   - `jumlah_publikasi` (jumlah paper di Dataset 2)
+   - `is_cold_start` (True jika `jumlah_skripsi == 0`, False jika `>= 1`)
+7. Menampilkan visualisasi bar chart horizontal seaborn yang membandingkan `jumlah_skripsi` dan `jumlah_publikasi` untuk ke-17 dosen.
 
 [BATASAN]
-- Tidak boleh ada data dosen di luar 17 Dosen Tetap Aktif yang lolos ke tahap pemodelan.
-- 5 dosen tanpa riwayat P1 tidak boleh dihapus dari sistem, melainkan ditandai secara eksplisit dengan flag `is_cold_start = True`.
+- Jangan melakukan hardcoding daftar 17 string nama secara manual di kode; ekstrak langsung dari `df_publikasi['nama_dosen'].unique()`.
+- Dosen purna tugas/luar departemen di Dataset 1 (seperti Meza Silvana, Alizar Hasan, Syafii, Wahyudi, Difana Meilani) otomatis tereliminasi karena tidak ada di Dataset 2.
+- 5 dosen tanpa riwayat P1 harus tetap ada di tabel ringkasan dengan `jumlah_skripsi = 0`.
 
 [OUTPUT]
-Kode Python modular lengkap dengan fungsi pemetaan nama, tabel agregasi per dosen (nama dosen, jumlah bimbingan skripsi, jumlah publikasi paper, status cold-start), dan visualisasi bar chart horizontal seaborn.
+Kode Python yang bersih, ringkas (tidak boros baris), tabel DataFrame ringkasan 17 dosen, serta plot visualisasi seaborn.
 
 [VALIDASI]
-Tabel agregasi harus menunjukkan tepat 17 dosen unik, di mana:
-- 12 dosen memiliki riwayat bimbingan skripsi ($N_{skripsi} \ge 1$).
-- 5 dosen memiliki 0 bimbingan skripsi ($N_{skripsi} = 0$), namun memiliki jumlah publikasi ilmiah ($N_{publikasi} > 0$).
+Output harus menunjukkan:
+- `len(whitelist_17_dosen)` tepat 17 dosen.
+- Dataset 1 terfilter menjadi ~506 riwayat skripsi terverifikasi.
+- Tabel ringkasan menampilkan tepat 12 dosen dengan $N_{skripsi} \ge 1$ dan 5 dosen cold-start dengan $N_{skripsi} = 0$ (Febby Apri Wenando, Aina Hubby Aziira, Nisa Dwi Angresti, Hafzatin Nurlatifa, Adi Arga Arifnur) yang memiliki $N_{publikasi} > 0$.
 ```
 
 ---
@@ -145,9 +154,23 @@ Tuliskan sel Code Python untuk membangun pipeline prapengolahan teks bertingkat:
    - Case folding (mengubah ke huruf kecil).
    - Menghapus tanda baca, angka, simbol matematika, dan karakter non-alfanumerik.
    - Menghapus spasi ganda (*whitespace stripping*).
-2. Menyusun daftar kata henti khusus (*Custom DSI Academic Stopwords*) sebanyak minimal 100+ kata yang menggabungkan:
-   - Stopwords umum bahasa Indonesia (seperti: yang, dan, di, ke, dari, untuk, pada, dengan, sebagai, dalam, terhadap).
-   - Stopwords formal skripsi DSI (seperti: sistem, informasi, aplikasi, rancang, bangun, perancangan, pengembangan, implementasi, analisis, studi, kasus, berbasis, web, mobile, android, evaluasi, penerapan, pt, cv, dinas, kantor, kota, kabupaten, provinsi, sumatera, barat, padang).
+2. Menyusun daftar kata henti khusus (*Custom DSI Academic Stopwords*) yang menyaring kata formal tanpa merusak istilah teknologi:
+   ```python
+   DSI_ACADEMIC_STOPWORDS = [
+       # Stopwords umum Bahasa Indonesia
+       "yang", "dan", "di", "ke", "dari", "untuk", "pada", "dengan", "sebagai", "dalam", 
+       "terhadap", "atau", "oleh", "ini", "itu", "adalah", "yaitu", "secara", "guna", "agar",
+       "bisa", "dapat", "akan", "telah", "bagi", "tentang", "atas", "antara", "hingga", "sampai",
+       # Stopwords template formal skripsi DSI
+       "sistem", "informasi", "aplikasi", "rancang", "bangun", "perancangan", "pengembangan",
+       "pembangunan", "implementasi", "analisis", "studi", "kasus", "berbasis", "web", "mobile",
+       "android", "desktop", "evaluasi", "penerapan", "penggunaan", "komparasi", "perbandingan",
+       # Stopwords entitas & lokasi geografis umum
+       "pt", "cv", "tbk", "dinas", "kantor", "badan", "lembaga", "balai", "provinsi", "kabupaten",
+       "kota", "kecamatan", "nagari", "desa", "sumatera", "barat", "padang", "indonesia",
+       "universitas", "fakultas", "sekolah", "jurusan", "departemen", "laboratorium"
+   ]
+   ```
 3. Fungsi tokenisasi dan stopword filtering (`preprocess_academic_text`) yang mempertahankan istilah teknologi dwibahasa (seperti machine learning, data warehouse, business intelligence, deep learning, enterprise resource planning).
 4. Menerapkan pipeline pada kolom `judul_ta` (Dataset 1) dan `judul_publikasi` (Dataset 2), lalu menyimpan hasilnya ke kolom baru `judul_clean`.
 5. Menampilkan perbandingan 5 teks judul sebelum dan sesudah preprocessing untuk verifikasi.
