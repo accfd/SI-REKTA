@@ -1,4 +1,4 @@
-# PROGRESS REPORT 1 — PROYEK MACHINE LEARNING
+# PEDOMAN & REKAPITULASI PROGRES PROYEK UNTUK PENYUSUNAN PROGRESS REPORT 1
 ## SI-REKTA: Sistem Informasi Rekomendasi Dosen Pembimbing Tugas Akhir Berbasis Dual-Source Dataset & Explainable AI
 
 > **Mata Kuliah:** Machine Learning (DSI61133) — Semester 5 (Tahun Akademik 2025/2026)  
@@ -6,12 +6,8 @@
 > **Dosen Pengampu:** Febby Apri Wenando, M.Eng., Ph.D. & Aina Hubby Aziira, M.Eng.  
 > **Kelompok / Tim:** Tim Proyek SI-REKTA  
 > **Repositori Resmi:** [https://github.com/accfd/SI-REKTA](https://github.com/accfd/SI-REKTA)  
-> **Tanggal Pelaporan:** 28 Oktober 2026  
-> **Target Capaian Rubrik:** Kategori **Excellent (Skor 100 / Bobot Penuh)** pada seluruh 4 aspek penilaian:
-> 1. *Progress Project Machine Learning* (Bobot 30%) — 4 Poin
-> 2. *Kendala & Solusi* (Bobot 20%) — 4 Poin
-> 3. *Persiapan Data & Pengembangan Model* (Bobot 30%) — 4 Poin
-> 4. *Koordinasi Tim* (Bobot 20%) — 4 Poin
+> **Sifat Dokumen:** Dokumen Acuan Internal Tim & Rekapitulasi Progres Proyek (*Internal Preparation Guide*)  
+> **Tujuan Dokumen:** Dokumen ini **bukan laporan formal akhir yang langsung dikumpulkan**, melainkan **pedoman kerja dan bank data rekapitulasi progres riil dari awal hingga saat ini**. Dokumen ini merangkum seluruh perjalanan proses empiris, audit data, kendala dan solusi nyata, formulasi model, serta pembagian koordinasi tim agar mempermudah tim dalam menyusun naskah laporan resmi maupun slide presentasi *Progress Report 1* sesuai 4 aspek rubrik penilaian (Target Nilai: 100 / Kategori *Excellent*).
 
 ---
 
@@ -45,7 +41,9 @@ graph TD
 
 ---
 
-# BAGIAN 2: LAPORAN PROGRESS SESUAI 4 ASPEK RUBRIK PENILAIAN
+# BAGIAN 2: BANK DATA SUBSTANSI PENYUSUNAN PROGRESS REPORT 1 (ACUAN 4 ASPEK RUBRIK)
+
+Bagian ini merupakan **bank data substansi siap pakai** yang merangkum seluruh jawaban dan bukti nyata yang dibutuhkan oleh tim saat menyusun naskah laporan formal maupun slide presentasi Progress Report 1:
 
 ## ASPEK 1: Progress Proyek Machine Learning (Bobot 30% — Target: 4 Poin / Excellent)
 
