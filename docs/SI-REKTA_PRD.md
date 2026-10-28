@@ -80,16 +80,102 @@ Alur interaksi pengguna dari awal hingga tujuan tercapai:
 4. **Penyajian Hasil (Tampilan XAI):** Mahasiswa melihat kartu hasil rekomendasi: nama Kelompok Keahlian terprediksi dan 3 kartu calon dosen pembimbing teratas lengkap dengan persentase kecocokan, kata kunci topik, dan bukti judul artikel dosen.
 5. **Tindak Lanjut Administratif:** Mahasiswa menggunakan rekomendasi tersebut sebagai dasar diskusi pra-proposal bersama dosen untuk pengisian Formulir TA-01 atau TA-02 ke Departemen.
 
-## 2.5 Data Requirements (Kebutuhan Data Utama)
+## 2.5 Data Requirements (Kebutuhan Data Utama & Skema Relasional 3NF)
 
-| Entitas Data | Informasi Kunci | Alasan dan Kegunaan bagi Sistem |
-| :--- | :--- | :--- |
-| **Data Usulan Mahasiswa** | Teks judul skripsi, teks deskripsi rencana riset, timestamp pengajuan. | Menjadi teks kueri utama yang dianalisis oleh modul NLP untuk dicocokkan dengan kepakaran dosen. |
-| **Data Riwayat Skripsi (Dataset 1)** | 625 judul skripsi masa lalu, nama dosen pembimbing, tahun bimbingan. | Menjadi korpus data latih untuk mengenali pola topik bimbingan skripsi mahasiswa di masa lampau. |
-| **Data Publikasi Dosen (Dataset 2)** | 643 judul artikel ilmiah terverifikasi, nama dosen penulis, bidang keahlian. | Menjadi korpus data kepakaran riset aktual untuk menyelesaikan masalah dosen tanpa riwayat Pembimbing 1 (cold-start). |
-| **Entitas 17 Dosen Tetap Aktif** | NIP, nama lengkap dan gelar baku, Kelompok Keahlian resmi, status aktif mengajar. | Menjadi daftar filter resmi (whitelist) agar rekomendasi tidak salah sasaran ke dosen luar atau dosen non-aktif. |
-| **Data 4 Kelompok Keahlian (KK)** | Kode KK (RD-BI, SD, SE, TK-ITI), deskripsi fokus keahlian, daftar dosen anggota. | Menjadi acuan klasifikasi hierarkis Tingkat 1 untuk mengelompokkan bidang keilmuan secara terstruktur. |
-| **Log Hasil Rekomendasi** | Rekam jejak usulan mahasiswa, Top-3 dosen terprediksi, konfirmasi persetujuan dosen. | Digunakan untuk evaluasi operasional berkala dan pelatihan ulang model (monitoring & retraining). |
+Untuk menjamin sistem siap diimplementasikan ke dalam basis data relasional (RDBMS) seperti PostgreSQL atau MySQL secara tangguh, kebutuhan data dimodelkan ke dalam 6 entitas yang telah dinormalisasi hingga **Third Normal Form (3NF)**. Standar penamaan entitas dan atribut menggunakan konvensi `snake_case` yang baku, eksplisit, dan siap digunakan langsung untuk *Data Definition Language* (DDL).
+
+### 2.5.1 Tabel Spesifikasi Entitas dan Atribut Relasional (Database-Ready 3NF)
+
+| Nama Entitas (Tabel) | Kolom Atribut & Tipe Data | Constraint & Kunci | Deskripsi & Peran bagi Sistem |
+| :--- | :--- | :--- | :--- |
+| **`kelompok_keahlian`** | `id_kk` (VARCHAR(10))<br>`nama_kk` (VARCHAR(100))<br>`deskripsi_fokus` (TEXT) | **PK:** `id_kk`<br>**NOT NULL:** semua | Tabel master 4 Kelompok Keahlian resmi DSI Unand (RD-BI, SD, SE, TK-ITI) sebagai kelas target klasifikasi Tingkat 1. |
+| **`dosen`** | `nip` (VARCHAR(18))<br>`nama_lengkap` (VARCHAR(150))<br>`gelar_depan` (VARCHAR(20))<br>`gelar_belakang` (VARCHAR(50))<br>`email` (VARCHAR(100))<br>`jabatan_akademik` (VARCHAR(100))<br>`id_kk` (VARCHAR(10))<br>`status_aktif` (ENUM('aktif','cuti','tugas_belajar'))<br>`is_eligible_p1` (BOOLEAN) | **PK:** `nip`<br>**FK:** `id_kk` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**UNIQUE:** `email`<br>**NOT NULL:** `nip`, `nama_lengkap`, `gelar_belakang`, `id_kk`, `status_aktif`, `is_eligible_p1` | Tabel master 17 Dosen Tetap Aktif DSI Unand yang berfungsi sebagai filter resmi (*whitelist*). Memisahkan status dosen tanpa riwayat P1 secara atomik. |
+| **`publikasi_dosen`** | `id_publikasi` (INT AUTO_INCREMENT)<br>`nip_dosen` (VARCHAR(18))<br>`judul_publikasi` (TEXT)<br>`tahun_terbit` (INT)<br>`nama_sumber_indeks` (VARCHAR(100))<br>`url_dokumen` (VARCHAR(255)) | **PK:** `id_publikasi`<br>**FK:** `nip_dosen` $\rightarrow$ `dosen.nip`<br>**NOT NULL:** `id_publikasi`, `nip_dosen`, `judul_publikasi`, `tahun_terbit` | Korpus Dataset 2 (643 artikel ilmiah terverifikasi) untuk menghitung kemiripan kosinus riset aktual dosen dan mengatasi masalah dosen tanpa riwayat P1 (*cold-start*). |
+| **`riwayat_skripsi`** | `id_skripsi` (INT AUTO_INCREMENT)<br>`judul_skripsi` (TEXT)<br>`tahun_lulus` (INT)<br>`nip_pembimbing_1` (VARCHAR(18))<br>`id_kk` (VARCHAR(10)) | **PK:** `id_skripsi`<br>**FK 1:** `nip_pembimbing_1` $\rightarrow$ `dosen.nip`<br>**FK 2:** `id_kk` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**NOT NULL:** `id_skripsi`, `judul_skripsi`, `tahun_lulus`, `nip_pembimbing_1`, `id_kk` | Korpus Dataset 1 (625 riwayat skripsi masa lalu) untuk melatih model probabilitas Pembimbing 1 (*prior likelihood*) dan pola topik bimbingan lampau. |
+| **`pengajuan_rekomendasi`** | `id_pengajuan` (VARCHAR(36))<br>`nim_mahasiswa` (VARCHAR(15))<br>`nama_mahasiswa` (VARCHAR(100))<br>`judul_usulan` (TEXT)<br>`ringkasan_ide` (TEXT)<br>`id_kk_terprediksi` (VARCHAR(10))<br>`waktu_pengajuan` (TIMESTAMP) | **PK:** `id_pengajuan`<br>**FK:** `id_kk_terprediksi` $\rightarrow$ `kelompok_keahlian.id_kk`<br>**NOT NULL:** `id_pengajuan`, `nim_mahasiswa`, `nama_mahasiswa`, `judul_usulan`, `id_kk_terprediksi`, `waktu_pengajuan` | Sesi transaksi pencarian rekomendasi oleh mahasiswa untuk keperluan draf pengisian Formulir TA-01 dan TA-02. |
+| **`detail_rekomendasi_dosen`** | `id_detail` (INT AUTO_INCREMENT)<br>`id_pengajuan` (VARCHAR(36))<br>`ranking` (TINYINT)<br>`nip_dosen` (VARCHAR(18))<br>`skor_kecocokan` (DECIMAL(5,2))<br>`kata_kunci_keselarasan` (TEXT)<br>`id_publikasi_rujukan` (INT)<br>`status_konfirmasi` (ENUM('menunggu','disetujui','ditolak')) | **PK:** `id_detail`<br>**FK 1:** `id_pengajuan` $\rightarrow$ `pengajuan_rekomendasi.id_pengajuan`<br>**FK 2:** `nip_dosen` $\rightarrow$ `dosen.nip`<br>**FK 3:** `id_publikasi_rujukan` $\rightarrow$ `publikasi_dosen.id_publikasi`<br>**NOT NULL:** `id_detail`, `id_pengajuan`, `ranking`, `nip_dosen`, `skor_kecocokan` | Menyimpan 3 kartu rekomendasi dosen teratas (Top-3) per sesi pengajuan secara atomik beserta bukti transparansi *Explainable AI* (skor, kata kunci, artikel rujukan). |
+
+### 2.5.2 Diagram Relasi Entitas (Entity-Relationship Diagram / ERD)
+
+```mermaid
+erDiagram
+    kelompok_keahlian ||--o{ dosen : "menaungi"
+    kelompok_keahlian ||--o{ riwayat_skripsi : "diklasifikasikan_ke"
+    kelompok_keahlian ||--o{ pengajuan_rekomendasi : "diprediksi_sebagai"
+    dosen ||--o{ publikasi_dosen : "menulis"
+    dosen ||--o{ riwayat_skripsi : "membimbing_p1"
+    dosen ||--o{ detail_rekomendasi_dosen : "direkomendasikan_sebagai"
+    pengajuan_rekomendasi ||--|{ detail_rekomendasi_dosen : "menghasilkan_top3"
+    publikasi_dosen ||--o{ detail_rekomendasi_dosen : "menjadi_rujukan_xai"
+
+    kelompok_keahlian {
+        varchar id_kk PK
+        varchar nama_kk
+        text deskripsi_fokus
+    }
+
+    dosen {
+        varchar nip PK
+        varchar nama_lengkap
+        varchar gelar_depan
+        varchar gelar_belakang
+        varchar email UK
+        varchar jabatan_akademik
+        varchar id_kk FK
+        enum status_aktif
+        boolean is_eligible_p1
+    }
+
+    publikasi_dosen {
+        int id_publikasi PK
+        varchar nip_dosen FK
+        text judul_publikasi
+        int tahun_terbit
+        varchar nama_sumber_indeks
+        varchar url_dokumen
+    }
+
+    riwayat_skripsi {
+        int id_skripsi PK
+        text judul_skripsi
+        int tahun_lulus
+        varchar nip_pembimbing_1 FK
+        varchar id_kk FK
+    }
+
+    pengajuan_rekomendasi {
+        varchar id_pengajuan PK
+        varchar nim_mahasiswa
+        varchar nama_mahasiswa
+        text judul_usulan
+        text ringkasan_ide
+        varchar id_kk_terprediksi FK
+        timestamp waktu_pengajuan
+    }
+
+    detail_rekomendasi_dosen {
+        int id_detail PK
+        varchar id_pengajuan FK
+        tinyint ranking
+        varchar nip_dosen FK
+        decimal skor_kecocokan
+        text kata_kunci_keselarasan
+        int id_publikasi_rujukan FK
+        enum status_konfirmasi
+    }
+```
+
+### 2.5.3 Pembuktian Pemenuhan Third Normal Form (3NF)
+
+1. **Pemenuhan 1NF (Bentuk Normal Pertama):**  
+   Seluruh nilai atribut bersifat atomik (tidak ada atribut bernilai jamak / *multivalued attributes* seperti array nama dosen di tabel pengajuan). Hasil rekomendasi Top-3 dipisahkan menjadi entitas mandiri `detail_rekomendasi_dosen` di mana setiap baris mewakili 1 rekomendasi dosen per peringkat.
+2. **Pemenuhan 2NF (Bentuk Normal Kedua):**  
+   Skema telah memenuhi 1NF dan seluruh Primary Key berupa *single-column key* (misal `nip`, `id_publikasi`, `id_skripsi`, `id_pengajuan`). Hal ini memastikan tidak ada ketergantungan fungsional sebagian (*partial dependency*) dari atribut non-kunci terhadap kunci utama.
+3. **Pemenuhan 3NF (Bentuk Normal Ketiga):**  
+   Skema telah memenuhi 2NF dan tidak memiliki ketergantungan transitif (*transitive dependency*) di antara atribut non-kunci. Seluruh atribut non-kunci hanya bergantung langsung pada Primary Key tabelnya:
+   * Nama dan deskripsi Kelompok Keahlian tidak diduplikasi di tabel `dosen`, `riwayat_skripsi`, maupun `pengajuan_rekomendasi`, melainkan direferensikan melalui *foreign key* `id_kk`.
+   * Data dosen penulis tidak disimpan di tabel `publikasi_dosen`, melainkan ditautkan melalui `nip_dosen`.
+   * Nilai skor dan kata kunci penjelas melekat pada transaksi hasil rekomendasi (`detail_rekomendasi_dosen`), bukan pada profil master dosen.
 
 ## 2.6 Constraints & Assumptions (Batasan dan Asumsi)
 * **Batasan Entitas:** Ruang rekomendasi dibatasi disiplin hanya untuk 17 Dosen Tetap Aktif Departemen Sistem Informasi FTI Unand sesuai rujukan dokumen resmi Dosen_Tetap_Aktif_DSI.md.
