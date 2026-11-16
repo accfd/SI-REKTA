@@ -9,7 +9,7 @@
 ### **Mata Kuliah:**
 Pembelajaran Mesin / Machine Learning (DSI61133) — Kelas A (Semester Ganjil 2025/2026)
 
-### **Disusun Oleh (Kelompok 5):**
+### **Disusun Oleh Kelompok 5:**
 1. **Fuadi Dhiyaulhaq** (NIM: 2411522001) — *Project Manager, Data Pipeline Architect, Database Engineer, & Backend API Engineer*
 2. **Rafa Gian Atthari** (NIM: 2411522014) — *Core Machine Learning Engineer, NLP Preprocessing Specialist, & Information System Designer*
 3. **Farrel Ghufran Rahman** (NIM: 2411521009) — *Information Retrieval Benchmarking Specialist, Model Serialization Developer, & Frontend UI/UX Engineer*
@@ -43,7 +43,7 @@ Padang, 16 November 2026
 
 ---
 
-## RINGKASAN EKSEKUTIF (EXECUTIVE SUMMARY)
+## RINGKASAN EKSEKUTIF
 
 Penentuan calon dosen pembimbing tugas akhir di tingkat perguruan tinggi sering kali terkendala oleh asimetri informasi antara mahasiswa dan departemen. Di Departemen Sistem Informasi (DSI) Universitas Andalas, mahasiswa kerap mengalami kebingungan dalam memetakan topik usulan tugas akhir mereka terhadap keahlian dosen yang tepat, memicu penumpukan usulan hanya pada dosen senior tertentu (*topic congestion*), sementara dosen tetap lainnya tidak terutilisasi secara optimal. Permasalahan semakin kompleks dengan adanya fenomena **Cold-Start Problem**, yaitu adanya 3 dosen tetap aktif yang belum pernah memiliki riwayat bimbingan tugas akhir (0 data skripsi).
 
@@ -68,12 +68,12 @@ Pada fase Progress Report 2, tim melakukan lompatan dan penyempurnaan mendasar y
 ## DAFTAR ISI
 
 - **KATA PENGANTAR**
-- **RINGKASAN EKSEKUTIF (EXECUTIVE SUMMARY)**
+- **RINGKASAN EKSEKUTIF**
 - **DAFTAR ISI**
 - **DAFTAR TABEL**
 - **DAFTAR GAMBAR**
 - **BAB 1: PENGEMBANGAN DAN EKSPERIMEN MODEL MACHINE LEARNING**
-  - 1.1 Dataset dan Fitur yang Digunakan (Serta Perubahan dari Progress 1)
+  - 1.1 Dataset dan Fitur yang Digunakan
   - 1.2 Persiapan Data dan Feature Engineering
   - 1.3 Algoritma Model dan Alasan Pemilihan
   - 1.4 Proses Eksperimen dan Variasi Parameter / Hyperparameter
@@ -82,7 +82,7 @@ Pada fase Progress Report 2, tim melakukan lompatan dan penyempurnaan mendasar y
   - 1.7 Bagian Pengembangan Model yang Belum Selesai dan Rencana Tindak Lanjut
 - **BAB 2: KENDALA DAN SOLUSI**
   - 2.1 Keterbatasan Bobot Manual Alpha Late-Fusion pada Progress 1
-  - 2.2 Risiko Kebocoran Data (Data Leakage) pada Evaluasi Model
+  - 2.2 Risiko Kebocoran Data pada Evaluasi Model
   - 2.3 Risiko Kesalahpahaman Terhadap Tampilan Skor Persentase
   - 2.4 Masukan Judul Kueri yang Terlalu Singkat dan Ambigu
 - **BAB 3: KOORDINASI TIM**
@@ -93,8 +93,8 @@ Pada fase Progress Report 2, tim melakukan lompatan dan penyempurnaan mendasar y
   - 4.1 Kesimpulan Capaian Progress Report 2
   - 4.2 Tindak Lanjut Menuju Final Report
 - **LAMPIRAN**
-  - Lampiran 1: Literatur Systematic Literature Review (SLR)
-  - Lampiran 2: Tautan Repositori dan Panduan Eksekusi Sistem Secara Mandiri di Lingkungan Lokal (`run_system.bat`)
+  - Lampiran 1: Literatur Systematic Literature Review
+  - Lampiran 2: Tautan Repositori dan Panduan Eksekusi Sistem Mandiri
 
 ---
 
@@ -140,7 +140,7 @@ Pada fase Progress Report 2, tim melakukan lompatan dan penyempurnaan mendasar y
 
 # BAB 1: PENGEMBANGAN DAN EKSPERIMEN MODEL MACHINE LEARNING
 
-### 1.1 Dataset dan Fitur yang Digunakan (Serta Perubahan dari Progress 1)
+### 1.1 Dataset dan Fitur yang Digunakan
 Pengembangan model SI-REKTA memanfaatkan pendekatan korpus data ganda (*Dual-Source Dataset*) yang mencakup rekam jejak bimbingan tugas akhir alumni dan publikasi riset dosen (sesuai eksekusi Cell 3–25 notebook `SIREKTA.ipynb`):
 
 1. **Dataset 1: Riwayat Tugas Akhir Alumni (`Judul_TA.csv`)**:
@@ -210,7 +210,8 @@ Tahapan rekayasa data dan ekstraksi fitur (Cell 26–54 notebook `SIREKTA.ipynb`
 | `min_df` | `1` | Mempertahankan istilah langka yang spesifik pada keahlian unik dosen |
 
 Formula matematis pembobotan TF-IDF Sublinear yang digunakan adalah:
-$$	ext{TF-IDF}(t, d, D) = ig(1 + \log(	ext{TF}(t, d))ig) 	imes \left(\lograc{1 + |D|}{1 + 	ext{DF}(t, D)} + 1ight)$$
+$$	ext{TF-IDF}(t, d, D) = ig(1 + \log(	ext{TF}(t, d))ig) 	imes \left(\lograc{1 + |D|}{1 + 	ext{DF}(t, D)} + 1
+ight)$$
 
 Berdasarkan luaran Cell 54 notebook `SIREKTA.ipynb`, ukuran matriks yang terbentuk adalah:
 - Ukuran matriks dokumen training: **$(1.204 	imes 12.364)$**
@@ -296,7 +297,7 @@ Hasil Tabel 1.6 membuktikan bahwa Prof. Surya Afnarius, Ph.D. yang memiliki kepa
 ### 1.6 Model Terpilih, Evaluasi Kinerja IR, dan Alasan Pemilihan
 Model terpilih adalah **EXP-06 (Unified Corpus Profile Aggregation + TF-IDF Bigram Sublinear + Cosine Similarity)**.
 
-#### Prosedur Partisi Bebas Kebocoran Data (*Data Leakage Prevention*)
+#### Prosedur Partisi Bebas Kebocoran Data
 Berdasarkan luaran Cell 48 notebook `SIREKTA.ipynb`, pemisahan dataset dilakukan dengan aturan ketat:
 1. **Seluruh 642 publikasi dosen dikunci 100% pada training set** sebagai profil referensi kepakaran dan dilarang keras dijadikan kueri testing.
 2. Dari **593 judul TA unik**, sebanyak 6 judul yang identik dengan publikasi dikeluarkan dari testing set untuk mencegah bias kebocoran data lintas sumber, menyisakan 587 kandidat.
@@ -363,7 +364,7 @@ Tabel 1.9 merangkum komparasi metrik Progress 1 vs Progress 2.
 | **Recall@3** | Tidak Diukur | **75.42%** | **Cakupan Relevansi Sangat Baik** |
 | **MRR@3** | 0.5912 | **0.6031** | **+0.0119 (Urutan Rekomendasi Lebih Tepat Sasaran)** |
 
-#### Validasi Ilmiah Terhadap Kajian Systematic Literature Review (SLR)
+#### Validasi Ilmiah Terhadap Kajian Systematic Literature Review
 Untuk membuktikan bahwa capaian model SI-REKTA berada pada taraf yang sangat baik, hasil empiris disandingkan dengan temuan sintesis dokumen kajian riset **`docs/SIREKTA_SLR.docx`**. Rata-rata penelitian terdahulu yang menggunakan korpus judul pendek berbasis TF-IDF atau BM25 mencatatkan Hit Rate@3 pada rentang 68%–74% dan MRR pada rentang 0.48–0.55. Komparasi disajikan pada Tabel 1.10.
 
 **Tabel 1.10 Tabel Benchmarking Hasil SI-REKTA terhadap Literatur Kajian SLR**
@@ -428,7 +429,7 @@ Pada Progress Report 1, tim menerapkan arsitektur *Late-Fusion* dengan memisahka
 
 ---
 
-### 2.2 Risiko Kebocoran Data (Data Leakage) pada Evaluasi Model
+### 2.2 Risiko Kebocoran Data pada Evaluasi Model
 Pada Progress Report 1, pengujian evaluasi menggunakan 5-Fold Cross Validation sederhana pada korpus skripsi tanpa memisahkan peran publikasi dosen secara tepat.
 
 **Tabel 2.2 Analisis Kendala 2: Partisi Terisolasi Bebas Data Leakage**
@@ -517,9 +518,12 @@ Untuk menjamin kualitas perangkat lunak, keutuhan arsitektur, dan mencegah konfl
 | Nama Tabel | Jumlah Kolom | Primary Key | Foreign Key Relasi | Fungsi dan Entitas Data |
 |---|---|---|---|---|
 | `kelompok_keahlian` | 3 | `id_kk` | - | Master 4 Kelompok Keahlian DSI (RD-BI, SE, SD, TK-ITI) |
-| `dosen` | 4 | `id_dosen` | `id_kk` $ightarrow$ `kelompok_keahlian` | Data 17 Dosen Tetap Aktif DSI Unand |
-| `profil_dosen` | 5 | `id_profil` | `id_dosen` $ightarrow$ `dosen` (Unique) | Statistik jumlah bimbingan, publikasi, & flag is_publikasi_only |
-| `kata_kunci_dosen` | 4 | `id_kata_kunci` | `id_dosen` $ightarrow$ `dosen` | 136 kata kunci representasi kepakaran dosen hasil TF-IDF |
+| `dosen` | 4 | `id_dosen` | `id_kk` $
+ightarrow$ `kelompok_keahlian` | Data 17 Dosen Tetap Aktif DSI Unand |
+| `profil_dosen` | 5 | `id_profil` | `id_dosen` $
+ightarrow$ `dosen` (Unique) | Statistik jumlah bimbingan, publikasi, & flag is_publikasi_only |
+| `kata_kunci_dosen` | 4 | `id_kata_kunci` | `id_dosen` $
+ightarrow$ `dosen` | 136 kata kunci representasi kepakaran dosen hasil TF-IDF |
 | `tugas_akhir` | 5 | `id_ta` | - | 625 riwayat judul tugas akhir alumni DSI |
 | `bimbingan_ta` | 4 | `id_bimbingan` | `id_ta`, `id_dosen` | Relasi bimbingan tugas akhir (Pembimbing 1 & 2) |
 | `publikasi` | 3 | `id_publikasi` | - | 643 judul artikel publikasi ilmiah resmi dosen |
@@ -577,7 +581,7 @@ Meskipun sistem telah berhasil dibangun dan diintegrasikan secara penuh dari bac
 
 # LAMPIRAN
 
-### Lampiran 1: Literatur Systematic Literature Review (SLR)
+### Lampiran 1: Literatur Systematic Literature Review
 Rangkuman sintesis literatur dari dokumen `docs/SIREKTA_SLR.docx` menunjukkan bahwa model sistem rekomendasi tugas akhir berbasis leksikal terpadu SI-REKTA memberikan rasio efisiensi akurasi-terhadap-komputasi tertinggi dibandingkan arsitektur lain:
 - *Akurasi Hit Rate@3*: SI-REKTA (79.66%) vs Baseline Literatur (68.20% – 71.40%).
 - *Kecepatan Inferensi*: SI-REKTA (3.68 ms) vs Dense BERT Retriever (120–450 ms).
@@ -586,7 +590,7 @@ Rangkuman sintesis literatur dari dokumen `docs/SIREKTA_SLR.docx` menunjukkan ba
 
 ---
 
-### Lampiran 2: Tautan Repositori dan Panduan Eksekusi Sistem Secara Mandiri di Lingkungan Lokal (`run_system.bat`)
+### Lampiran 2: Tautan Repositori dan Panduan Eksekusi Sistem Mandiri
 
 #### 1. Informasi dan Tautan Repositori Resmi
 Seluruh kode sumber (*source code*), skema basis data, buku kerja eksperimen, dan artefak model pembelajaran mesin SI-REKTA dikelola secara terbuka dan terpusat pada repositori GitHub resmi:
