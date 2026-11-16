@@ -26,7 +26,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 flex">
+    <div className="min-h-screen bg-stone-50 text-stone-800 flex">
       {/* Sidebar Navigasi */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 

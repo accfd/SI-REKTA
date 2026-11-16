@@ -61,7 +61,7 @@ export const DokumenPedomanPage: React.FC = () => {
         </div>
       ) : loading ? (
         <div className="text-center py-20 bg-white rounded-3xl border border-slate-200">
-          <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-8 h-8 border-3 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-sm text-slate-500 font-medium">Memuat berkas pedoman resmi...</p>
         </div>
       ) : (
@@ -81,7 +81,7 @@ export const DokumenPedomanPage: React.FC = () => {
                     onClick={() => setSelectedDocId(doc.id_dokumen)}
                     className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all ${
                       isActive
-                        ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+                        ? 'bg-brand-600 text-white shadow-sm shadow-brand-500/20'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
@@ -119,9 +119,9 @@ export const DokumenPedomanPage: React.FC = () => {
 
           {/* Inline Document Info Banner */}
           {currentDoc && (
-            <div className="bg-blue-50/70 p-4 rounded-2xl border border-blue-200/60 flex items-center justify-between text-xs text-blue-900">
+            <div className="bg-brand-50/70 p-4 rounded-2xl border border-brand-200/60 flex items-center justify-between text-xs text-brand-900">
               <div className="flex items-center space-x-2">
-                <FileText className="w-4 h-4 text-blue-600 shrink-0" />
+                <FileText className="w-4 h-4 text-brand-600 shrink-0" />
                 <span>
                   Sedang menampilkan: <strong>{currentDoc.judul_dokumen}</strong> ({currentDoc.nama_file_pdf})
                 </span>

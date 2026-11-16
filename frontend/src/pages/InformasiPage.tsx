@@ -35,14 +35,14 @@ export const InformasiPage: React.FC = () => {
 
       {loading && (
         <div className="text-center py-4">
-          <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-1" />
+          <div className="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto mb-1" />
           <p className="text-xs text-slate-400">Sinkronisasi data model terkini...</p>
         </div>
       )}
 
       {/* Bagian 1: Tujuan Sistem */}
       <section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-3">
-        <div className="flex items-center space-x-2 text-blue-600 font-bold text-sm uppercase tracking-wider">
+        <div className="flex items-center space-x-2 text-brand-600 font-bold text-sm uppercase tracking-wider">
           <Info className="w-4 h-4" />
           <span>Bagian 1 • Tujuan Sistem</span>
         </div>
@@ -54,7 +54,7 @@ export const InformasiPage: React.FC = () => {
 
       {/* Bagian 2: Cara Kerja Model NLP */}
       <section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
-        <div className="flex items-center space-x-2 text-indigo-600 font-bold text-sm uppercase tracking-wider">
+        <div className="flex items-center space-x-2 text-copper-600 font-bold text-sm uppercase tracking-wider">
           <Cpu className="w-4 h-4" />
           <span>Bagian 2 • Cara Kerja Model Rekomendasi</span>
         </div>
@@ -62,31 +62,31 @@ export const InformasiPage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
-            <span className="text-xs font-bold text-indigo-600">Langkah 1</span>
+            <span className="text-xs font-bold text-copper-600">Langkah 1</span>
             <h4 className="font-bold text-slate-800 text-sm mt-1">Input Judul</h4>
             <p className="text-xs text-slate-500 mt-1">Menerima judul tugas akhir (minimal 6 kata).</p>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
-            <span className="text-xs font-bold text-indigo-600">Langkah 2</span>
+            <span className="text-xs font-bold text-copper-600">Langkah 2</span>
             <h4 className="font-bold text-slate-800 text-sm mt-1">Pembersihan Teks</h4>
             <p className="text-xs text-slate-500 mt-1">Lowercase, URL removal, sanitasi regex tanda baca, normalisasi spasi.</p>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
-            <span className="text-xs font-bold text-indigo-600">Langkah 3</span>
+            <span className="text-xs font-bold text-copper-600">Langkah 3</span>
             <h4 className="font-bold text-slate-800 text-sm mt-1">TF-IDF N-Gram</h4>
             <p className="text-xs text-slate-500 mt-1">Transformasi ke 12.364 fitur kata & frasa (unigram + bigram, sublinear_tf).</p>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
-            <span className="text-xs font-bold text-indigo-600">Langkah 4</span>
+            <span className="text-xs font-bold text-copper-600">Langkah 4</span>
             <h4 className="font-bold text-slate-800 text-sm mt-1">Cosine Similarity</h4>
             <p className="text-xs text-slate-500 mt-1">Perhitungan sudut kosinus terhadap 17 vektor profil dosen.</p>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
-            <span className="text-xs font-bold text-indigo-600">Langkah 5</span>
+            <span className="text-xs font-bold text-copper-600">Langkah 5</span>
             <h4 className="font-bold text-slate-800 text-sm mt-1">Top-3 Ranking</h4>
             <p className="text-xs text-slate-500 mt-1">Perangkingan urutan #1, #2, #3 serta pencocokan kata kunci.</p>
           </div>
@@ -108,15 +108,15 @@ export const InformasiPage: React.FC = () => {
             <p className="text-xs text-slate-500 mt-2">Mencakup kelompok keahlian RD-BI, SE, SD, dan TK-ITI.</p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-blue-50/60 border border-blue-100">
-            <div className="text-2xl font-black text-blue-900">706 Riwayat Bimbingan</div>
-            <p className="text-xs font-semibold text-blue-700 mt-0.5">Tugas Akhir Terdahulu</p>
+          <div className="p-5 rounded-2xl bg-brand-50/60 border border-brand-100">
+            <div className="text-2xl font-black text-brand-900">706 Riwayat Bimbingan</div>
+            <p className="text-xs font-semibold text-brand-700 mt-0.5">Tugas Akhir Terdahulu</p>
             <p className="text-xs text-slate-500 mt-2">Data bimbingan pembimbing 1 dan 2 lulusan DSI.</p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-purple-50/60 border border-purple-100">
-            <div className="text-2xl font-black text-purple-900">643 Publikasi Ilmiah</div>
-            <p className="text-xs font-semibold text-purple-700 mt-0.5">Jurnal & Konferensi Dosen</p>
+          <div className="p-5 rounded-2xl bg-copper-50/60 border border-copper-100">
+            <div className="text-2xl font-black text-copper-900">643 Publikasi Ilmiah</div>
+            <p className="text-xs font-semibold text-copper-700 mt-0.5">Jurnal & Konferensi Dosen</p>
             <p className="text-xs text-slate-500 mt-2">Publikasi penelitian resmi dosen yang terindeks.</p>
           </div>
         </div>
@@ -124,7 +124,7 @@ export const InformasiPage: React.FC = () => {
 
       {/* Bagian 4: Kinerja Model & Evaluasi (Tanpa Precision) */}
       <section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
-        <div className="flex items-center space-x-2 text-amber-600 font-bold text-sm uppercase tracking-wider">
+        <div className="flex items-center space-x-2 text-copper-600 font-bold text-sm uppercase tracking-wider">
           <BarChart3 className="w-4 h-4" />
           <span>Bagian 4 • Metrik Evaluasi Resmi Model</span>
         </div>
@@ -134,16 +134,16 @@ export const InformasiPage: React.FC = () => {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="p-6 rounded-3xl bg-blue-50/70 border border-blue-200 text-center">
-            <div className="text-4xl font-extrabold text-blue-700">{info?.hit_rate_at_3 ?? 79.66}%</div>
+          <div className="p-6 rounded-3xl bg-brand-50/70 border border-brand-200 text-center">
+            <div className="text-4xl font-extrabold text-brand-700">{info?.hit_rate_at_3 ?? 79.66}%</div>
             <div className="text-sm font-bold text-slate-800 mt-2">Hit Rate@3</div>
             <p className="text-xs text-slate-500 mt-1">
               Sebanyak <strong>79.66%</strong> judul uji berhasil mendapatkan minimal satu dosen pembimbing yang tepat di dalam Top 3 rekomendasi.
             </p>
           </div>
 
-          <div className="p-6 rounded-3xl bg-indigo-50/70 border border-indigo-200 text-center">
-            <div className="text-4xl font-extrabold text-indigo-700">{info?.recall_at_3 ?? 75.42}%</div>
+          <div className="p-6 rounded-3xl bg-copper-50/70 border border-copper-200 text-center">
+            <div className="text-4xl font-extrabold text-copper-700">{info?.recall_at_3 ?? 75.42}%</div>
             <div className="text-sm font-bold text-slate-800 mt-2">Recall@3</div>
             <p className="text-xs text-slate-500 mt-1">
               Sebanyak <strong>75.42%</strong> dari seluruh dosen relevan berhasil ditangkap oleh sistem pada Top 3 rekomendasi.

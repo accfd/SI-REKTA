@@ -44,8 +44,8 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
       </div>
 
       {/* Banner Privasi Local Storage */}
-      <div className="flex items-start space-x-3 p-4 rounded-2xl bg-blue-50/70 border border-blue-200/80 text-blue-900 text-xs">
-        <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+      <div className="flex items-start space-x-3 p-4 rounded-2xl bg-brand-50/70 border border-brand-200/80 text-brand-900 text-xs">
+        <ShieldCheck className="w-5 h-5 text-brand-600 shrink-0 mt-0.5" />
         <div className="leading-relaxed">
           <span className="font-bold">Privasi Penyimpanan:</span> Riwayat pencarian ini hanya disimpan pada Local Storage di browser perangkat Anda, tanpa akun dan tanpa database cloud. Menghapus data/cache browser atau menggunakan jendela penyamaran (Incognito) akan menghapus riwayat ini.
         </div>
@@ -77,7 +77,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => onSearchAgain(selectedHistory.search_title)}
-                className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm"
+                className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 shadow-sm shadow-brand-600/20"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Cari Ulang dengan Judul Ini</span>
@@ -133,7 +133,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
               </div>
               <button
                 onClick={() => setActiveTab('cari')}
-                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 text-xs shadow-md shadow-blue-500/20"
+                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-700 text-xs shadow-md shadow-brand-500/20"
               >
                 <Search className="w-4 h-4" />
                 <span>Mulai Cari Dosen Sekarang</span>
@@ -172,7 +172,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                             key={rec.id_dosen}
                             className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200"
                           >
-                            <span className="font-bold text-blue-600 mr-1">#{rec.peringkat}</span>
+                            <span className="font-bold text-brand-600 mr-1">#{rec.peringkat}</span>
                             <span>{rec.nama_dosen}</span>
                           </span>
                         ))}
@@ -182,7 +182,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                     <div className="flex items-center space-x-2 self-end md:self-center shrink-0">
                       <button
                         onClick={() => setSelectedHistory(item)}
-                        className="px-3.5 py-2 rounded-xl text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
+                        className="px-3.5 py-2 rounded-xl text-xs font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 transition-colors"
                       >
                         Lihat Detail
                       </button>
