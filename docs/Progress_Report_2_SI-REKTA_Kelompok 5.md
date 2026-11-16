@@ -99,10 +99,7 @@ Pada fase Progress Report 2, tim melakukan lompatan dan penyempurnaan mendasar (
   - 4.2 Rencana Tindak Lanjut Menuju Final Report
 - **LAMPIRAN**
   - Lampiran 1: Literatur Systematic Literature Review (SLR)
-  - Lampiran 2: Tautan Repositori Resmi GitHub & Live Notebook
-  - Lampiran 3: Panduan Eksekusi Sistem Secara Mandiri di Lingkungan Lokal (`run_system.bat`)
-
----
+  - Lampiran 2: Tautan Repositori dan Panduan Eksekusi Sistem Secara Mandiri di Lingkungan Lokal (`run_system.bat`)
 
 ## DAFTAR TABEL
 
@@ -680,21 +677,59 @@ Rangkuman sintesis literatur dari dokumen `docs/SIREKTA_SLR.docx` menunjukkan ba
 
 ---
 
-### Lampiran 2: Tautan Repositori Resmi GitHub & Live Notebook
-- **Repositori Utama GitHub**: [https://github.com/accfd/SI-REKTA.git](https://github.com/accfd/SI-REKTA.git)
-- **Buku Kerja Eksperimen Resmi**: Berkas `docs/SIREKTA.ipynb` pada repositori.
-- **Branch Aktif**: `main`.
+### Lampiran 2: Tautan Repositori dan Panduan Eksekusi Sistem Secara Mandiri di Lingkungan Lokal (`run_system.bat`)
 
----
+#### 1. Informasi dan Tautan Repositori Resmi
+Seluruh kode sumber (*source code*), skema basis data, buku kerja eksperimen, dan artefak model pembelajaran mesin SI-REKTA dikelola secara terbuka dan terpusat pada repositori GitHub resmi:
+- **Tautan Repositori GitHub**: [https://github.com/accfd/SI-REKTA.git](https://github.com/accfd/SI-REKTA.git)
+- **Buku Kerja Eksperimen Resmi**: Berkas `docs/SIREKTA.ipynb` (dapat dijalankan langsung pada Google Colab maupun Jupyter Lab lokal).
+- **Cabang Utama (*Main Branch*)**: `main` (seluruh kode telah tersinkronisasi penuh).
 
-### Lampiran 3: Panduan Eksekusi Sistem Secara Mandiri di Lingkungan Lokal (run_system.bat)
-Untuk menjalankan ekosistem SI-REKTA secara mandiri pada komputer penguji:
-1. Pastikan Laragon aktif (Apache & MySQL port 3306).
-2. Jalankan berkas skrip otomatis di root proyek:
-   ```cmd
-   d:\SEMESTER 5\ML
-un_system.bat
+#### 2. Panduan Langkah Demi Langkah Menjalankan Sistem di Komputer Lokal
+
+Untuk mereplikasi dan menjalankan aplikasi web SI-REKTA secara mandiri dari awal (*from scratch*), ikuti langkah-langkah terstruktur berikut:
+
+**Langkah 1: Mengunduh atau Memperbarui Repositori (*Git Clone / Pull*)**
+Buka terminal (Git Bash, Command Prompt, atau PowerShell), kemudian klon repositori ke komputer lokal Anda:
+```bash
+git clone https://github.com/accfd/SI-REKTA.git
+cd SI-REKTA
+```
+Apabila Anda telah mengklon repositori sebelumnya, pastikan kode berada pada revisi terkini dengan menjalankan perintah pembaruan:
+```bash
+git pull origin main
+```
+
+**Langkah 2: Menyiapkan dan Mengaktifkan Basis Data MySQL (Laragon / XAMPP)**
+1. Buka aplikasi **Laragon** (atau XAMPP) pada komputer Anda.
+2. Klik tombol **"Start All"** untuk menjalankan layanan **Apache** dan **MySQL** (pastikan port default MySQL adalah `3306`).
+3. Buka **phpMyAdmin** melalui browser (`http://localhost/phpmyadmin`).
+4. Buat basis data baru bernama `sirekta_db`.
+5. Impor skema basis data ternormalisasi (3NF) dari berkas yang telah disediakan di:
+   ```text
+   database/sirekta_db.sql
    ```
-3. Akses antarmuka web melalui browser pada alamat:
-   - **Frontend Web UI**: `http://localhost:5173`
-   - **Backend API Docs (Swagger)**: `http://localhost:8000/docs`
+   *(Catatan: Basis data ini telah memuat 10 tabel lengkap dengan data 17 dosen tetap aktif, kelompok keahlian, dan riwayat bimbingan).*
+
+**Langkah 3: Menjalankan Sistem Menggunakan Skrip Otomasi Satu-Klik (`run_system.bat`)**
+Tim telah menyusun skrip *batch* otomasi cerdas yang menangani seluruh instalasi dependensi backend, virtual environment, dependensi frontend, serta menyalakan kedua server secara simultan:
+1. Pastikan Anda berada di direktori root proyek (`d:\SEMESTER 5\ML` atau folder hasil kloning Anda).
+2. Klik dua kali berkas **`run_system.bat`** pada Windows Explorer, atau jalankan melalui terminal:
+   ```cmd
+   run_system.bat
+   ```
+3. Skrip otomatis akan melakukan:
+   - Memeriksa ketersediaan Python 3.10+ dan membuat Virtual Environment (`backend/.venv`) secara otomatis jika belum ada.
+   - Menginstal pustaka Python yang dibutuhkan (`FastAPI`, `Uvicorn`, `Scikit-Learn`, `Scipy`, `Pandas`, `Joblib`, `PyMySQL`).
+   - Menjalankan server backend FastAPI pada alamat `http://127.0.0.1:8000` dengan pemuatan in-memory model pembelajaran mesin.
+   - Memeriksa Node.js dan menginstal dependensi pustaka frontend (`npm install`) jika folder `node_modules` belum tersedia.
+   - Menjalankan server frontend React Vite pada alamat `http://127.0.0.1:5173`.
+
+**Langkah 4: Mengakses Antarmuka Web Pengguna dan Dokumentasi API**
+Setelah kedua jendela konsol server aktif dan berjalan, buka browser dan akses tautan berikut:
+- **Antarmuka Aplikasi Web (Frontend UI)**:
+  `http://localhost:5173`
+  *(Pengguna dapat langsung mencoba fitur pencarian rekomendasi dosen dengan mengetikkan judul tugas akhir minimal 6 kata, mengeklik kartu rekomendasi Top-3, membuka modal riwayat bimbingan & publikasi dosen, serta membaca buku panduan PDF tugas akhir secara in-page).*
+- **Dokumentasi Interaktif RESTful API (Backend Swagger UI)**:
+  `http://localhost:8000/docs`
+  *(Penguji dapat melakukan pengetesan langsung terhadap seluruh kontrak endpoint API seperti `POST /api/recommend`, `GET /api/dosen`, dan `GET /api/info`).*
