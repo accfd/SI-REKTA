@@ -52,7 +52,7 @@ Proyek **SI-REKTA (Sistem Informasi Rekomendasi Dosen Pembimbing Tugas Akhir)** 
 Pada fase Progress Report 2, tim melakukan lompatan dan penyempurnaan mendasar yang mencakup 3 aspek penilaian utama:
 1. **Pengembangan dan Eksperimen Model Machine Learning (Bobot 60%)**:
    - Melakukan transisi arsitektur dari model *Dual-Matrix Late-Fusion* berbobot manual heuristik $\alpha$ (3.947 fitur) menuju **Unified Corpus Profile Aggregation** dengan ekstraksi **12.364 fitur TF-IDF N-gram (1,2)** berparameter `sublinear_tf=True`.
-   - Melaksanakan pengujian empiris variasi parameter: N-gram $(1,1)$ vs $(1,2)$ vs $(1,3)$, Linear TF vs Sublinear TF ($1+\log(\text{TF})$), dan Cosine Similarity vs Euclidean Distance.
+   - Melaksanakan pengujian empiris variasi parameter: N-gram $(1,1)$ vs $(1,2)$ vs $(1,3)$, Linear TF vs Sublinear TF ($1 + \log(\text{TF})$), dan Cosine Similarity vs Euclidean Distance.
    - Merancang partisi data bebas kebocoran data (*zero data leakage*): 100% publikasi (642 dokumen) dikunci di set latih bersama 475 judul TA unik training (562 relasi), sedangkan evaluasi dijalankan pada 118 kueri judul TA unik testing independen (145 relasi) dengan irisan 0 dokumen.
    - Evaluasi baku temu balik informasi menggunakan library resmi `ranx` mencatatkan **Hit Rate@3 = 79.66%**, **Recall@3 = 75.42%**, dan **Mean Reciprocal Rank (MRR@3) = 0.6031**.
    - Menyajikan justifikasi ilmiah mengapa metrik $\text{Precision@3}$ ditiadakan secara sadar: pada kueri ground-truth dengan hanya 1 atau 2 pembimbing sah ($|R_q| \le 2$), metrik Precision@3 secara matematis terbatasi pada skor maksimal 33.33% atau 66.67%, sehingga memberikan penalti semu yang menyesatkan (*structurally biased penalty*).
@@ -168,12 +168,12 @@ Sebaran sebaran dokumen riwayat bimbingan tugas akhir dan publikasi ilmiah dari 
 | 10 | Dwi Welly Sukma Nirad, M.T. | RD-BI | 28 | 19 | 47 | Dosen Senior |
 | 11 | Ullya Mega Wahyuni, M.Kom. | SD | 23 | 21 | 44 | Dosen Senior |
 | 12 | Jefril Rahmadoni, M.Kom. | SD | 14 | 29 | 43 | Dosen Senior |
-| 13 | Febby Apri Wenando, M.Eng., Ph.D. | SD | 0 | 32 | 32 | **Dosen Cold-Start Murni** |
+| 13 | Febby Apri Wenando, M.Eng., Ph.D. | SD | 0 | 32 | 32 | Profil Publikasi Riset |
 | 14 | Adi Arga Arifnur, M.Kom. | SD | 3 | 18 | 21 | Dosen Terpetakan |
 | 15 | Aina Hubby Aziira, M.Eng. | SD | 7 | 7 | 14 | Dosen Terpetakan |
-| 16 | Nisa Dwi Angresti, M.Kom. | TK-ITI | 0 | 11 | 11 | **Dosen Cold-Start Murni** |
-| 17 | Hafzatin Nurlatifa, M.Eng. | TK-ITI | 0 | 9 | 9 | **Dosen Cold-Start Murni** |
-| **TOTAL** | **17 Dosen Tetap Aktif** | **4 KK** | **707** | **643** | **1.350** | **14 Ada TA, 3 Cold-Start** |
+| 16 | Nisa Dwi Angresti, M.Kom. | TK-ITI | 0 | 11 | 11 | Profil Publikasi Riset |
+| 17 | Hafzatin Nurlatifa, M.Eng. | TK-ITI | 0 | 9 | 9 | Profil Publikasi Riset |
+| **TOTAL** | **17 Dosen Tetap Aktif** | **4 KK** | **707** | **643** | **1.350** | **14 Riwayat TA, 3 Publikasi Riset** |
 
 > **[SCREENSHOT: Gambar 1.1 - Grafik Perbandingan Riwayat Bimbingan Skripsi vs Publikasi Ilmiah 17 Dosen DSI]**  
 > *Panduan Bukti Visual: Tangkapan layar grafik batang horizontal dari notebook Cell 24 yang menampilkan perbandingan dokumen tugas akhir dan publikasi per dosen.*
@@ -204,19 +204,18 @@ Tahapan rekayasa data dan ekstraksi fitur (Cell 26–54 notebook `SIREKTA.ipynb`
 |---|---|---|
 | `analyzer` | `'word'` | Ekstraksi berbasis token kata |
 | `ngram_range` | `(1, 2)` | Mengakomodasi unigram (kata tunggal) dan bigram (frasa 2 kata penting, misal: *data mining*, *supply chain*) |
-| `sublinear_tf` | `True` | Menerapkan formula logaritmik $1 + \log(	ext{TF})$ untuk meredam dominasi istilah yang muncul berulang-ulang |
+| `sublinear_tf` | `True` | Menerapkan formula logaritmik $1 + \log(\text{TF})$ untuk meredam dominasi istilah yang muncul berulang-ulang |
 | `smooth_idf` | `True` | Menambahkan angka 1 pada pembilang dan penyebut IDF untuk mencegah pembagian dengan nol |
 | `norm` | `'l2'` | Menormalisasi panjang vektor ke satuan unit euclidean agar dokumen panjang tidak mendominasi |
 | `min_df` | `1` | Mempertahankan istilah langka yang spesifik pada keahlian unik dosen |
 
 Formula matematis pembobotan TF-IDF Sublinear yang digunakan adalah:
-$$	ext{TF-IDF}(t, d, D) = ig(1 + \log(	ext{TF}(t, d))ig) 	imes \left(\lograc{1 + |D|}{1 + 	ext{DF}(t, D)} + 1
-ight)$$
+$$\text{TF-IDF}(t, d, D) = \left(1 + \log(\text{TF}(t, d))\right) \times \left(\log\frac{1 + |D|}{1 + \text{DF}(t, D)} + 1\right)$$
 
 Berdasarkan luaran Cell 54 notebook `SIREKTA.ipynb`, ukuran matriks yang terbentuk adalah:
-- Ukuran matriks dokumen training: **$(1.204 	imes 12.364)$**
-- Ukuran matriks dokumen testing: **$(145 	imes 12.364)$**
-- Ukuran matriks profil dosen: **$(17 	imes 12.364)$**
+- Ukuran matriks dokumen training: **$(1.204 \times 12.364)$**
+- Ukuran matriks dokumen testing: **$(145 \times 12.364)$**
+- Ukuran matriks profil dosen: **$(17 \times 12.364)$**
 
 > **[SCREENSHOT: Gambar 1.2 - Pengujian Fungsi Preprocessing Teks Akademis pada Notebook]**  
 > *Panduan Bukti Visual: Tangkapan layar eksekusi fungsi pembersihan teks di notebook Cell 33 yang memperlihatkan eliminasi kata template akademik.*
@@ -235,12 +234,12 @@ Pemilihan algoritma didasarkan pada karakteristik korpus tugas akhir dan publika
 | **Klasifikasi Multikelas (SVM / Naive Bayes / Random Forest)** | Mudah diukur akurasi klasifikasinya | Gagal total menangani dosen cold-start (3 dosen tanpa kelas latih tidak akan pernah diprediksi); rentan bias kelas dominan. | **Ditolak** |
 | **Collaborative Filtering (Matrix Factorization / SVD)** | Mampu menangkap pola perilaku pengguna | Membutuhkan matriks interaksi rating mahasiswa-dosen yang masif; gagal menangani item/user baru. | **Ditolak** |
 | **Model Bahasa Pra-Latih (BERT / IndoBERT Dense Embedding)** | Mampu menangkap kesamaan semantik tanpa kemiripan leksikal langsung | Membutuhkan GPU berbiaya tinggi, rentan *overfitting* pada dataset pendek (<2.000 judul), dan sulit dijelaskan (*black-box*). | **Dipertimbangkan untuk Riset Lanjutan** |
-| **Dual-Matrix Late-Fusion (Metode Progress 1)** | Memisahkan sumber skripsi dan publikasi | Memerlukan tuning bobot heuristik $lpha$ manual yang subjektif; fragmentasi fitur. | **Ditinggalkan (Dievolusi)** |
+| **Dual-Matrix Late-Fusion (Metode Progress 1)** | Memisahkan sumber skripsi dan publikasi | Memerlukan tuning bobot heuristik $\alpha$ manual yang subjektif; fragmentasi fitur. | **Ditinggalkan (Dievolusi)** |
 | **Unified Profile Aggregation + Cosine Similarity (Metode Progress 2)** | Mengintegrasikan seluruh bukti keahlian alami, menangani cold-start 100%, deterministik, latensi < 5 ms, dan Explainable AI transparan. | Terbatas pada keselarasan kosakata leksikal (namun diatasi dengan bigram 12.364 fitur). | **DIPILIH & DIIMPLEMENTASIKAN** |
 
 **Alasan Pemilihan Cosine Similarity**:
-Cosine Similarity mengukur kosinus sudut antara vektor kueri masukan $ec{Q}$ dan vektor profil dosen $ec{D}_i$:
-$$	ext{Sim}(Q, D_i) = rac{ec{Q} \cdot ec{D}_i}{\|ec{Q}\| \|ec{D}_i\|} = rac{\sum_{j=1}^{M} w_{Q, j} \cdot w_{D_i, j}}{\sqrt{\sum_{j=1}^{M} w_{Q, j}^2} \cdot \sqrt{\sum_{j=1}^{M} w_{D_i, j}^2}}$$
+Cosine Similarity mengukur kosinus sudut antara vektor kueri masukan $\vec{Q}$ dan vektor profil dosen $\vec{D}_i$:
+$$\text{Sim}(Q, D_i) = \frac{\vec{Q} \cdot \vec{D}_i}{\|\vec{Q}\| \|\vec{D}_i\|} = \frac{\sum_{j=1}^{M} w_{Q, j} \cdot w_{D_i, j}}{\sqrt{\sum_{j=1}^{M} w_{Q, j}^2} \cdot \sqrt{\sum_{j=1}^{M} w_{D_i, j}^2}}$$
 Metrik ini terbukti jauh lebih unggul dibandingkan jarak euclidean karena bersifat **invarian terhadap panjang dokumen (*length-invariant*)**. Dosen senior yang memiliki ratusan publikasi tidak akan mendominasi peringkat semata-mata karena jumlah katanya lebih banyak, melainkan karena proporsi keselarasan sudut topiknya terhadap kueri.
 
 ---
@@ -265,10 +264,10 @@ Analisis Tabel 1.5 membuktikan bahwa penambahan bigram `(1, 2)` bersama peredama
 ### 1.5 Contoh Proses Pemodelan dan Hasil Keluaran Rekomendasi
 Alur inferensi rekomendasi bekerja secara berurutan:
 1. Kueri judul baru $Q$ dibersihkan melalui fungsi `preprocessing_input(judul)` (Cell 61).
-2. Kueri ditransformasikan ke dalam ruang vektor 12.364 dimensi: $ec{Q} = 	ext{TF-IDF}(Q)$.
-3. Menghitung Cosine Similarity terhadap matriks profil $(17 	imes 12.364)$.
+2. Kueri ditransformasikan ke dalam ruang vektor 12.364 dimensi: $\vec{Q} = \text{TF-IDF}(Q)$.
+3. Menghitung Cosine Similarity terhadap matriks profil $(17 \times 12.364)$.
 4. Mengurutkan skor secara menurun (*descending*) untuk menetapkan dosen peringkat #1, #2, dan #3.
-5. Modul *Explainable AI* mengekstraksi kata kunci yang cocok (*matched keywords*) melalui perkalian per elemen vektor ($w_{Q, j} 	imes w_{D_i, j}$).
+5. Modul *Explainable AI* mengekstraksi kata kunci yang cocok (*matched keywords*) melalui perkalian per elemen vektor ($w_{Q, j} \times w_{D_i, j}$).
 
 #### Bukti Hasil Inferensi Nyata pada Notebook
 - **Contoh 1: Judul Uji Kueri Geografis (Cell 63)**:
@@ -340,18 +339,18 @@ Pengujian dilakukan terhadap 118 kueri testing independen menggunakan pustaka `r
 1. **Hit Rate@3 (Top-3 Accuracy)**: Mengukur apakah minimal satu dosen pembimbing yang sah berhasil masuk ke dalam 3 besar rekomendasi. Model SI-REKTA mencatatkan **Hit Rate@3 sebesar 0.7966 (79.66%)**.
 2. **Recall@3**: Mengukur proporsi dosen relevan yang berhasil ditangkap oleh sistem pada Top-3 dibandingkan seluruh pembimbing sah pada kueri tersebut. Model SI-REKTA mencatatkan **Recall@3 sebesar 0.7542 (75.42%)**.
 3. **Mean Reciprocal Rank (MRR@3)**: Mengukur kualitas urutan posisi dosen relevan pertama:
-   $$	ext{MRR@3} = rac{1}{|Q|} \sum_{q=1}^{|Q|} rac{1}{	ext{rank}_q}$$
+   $$\text{MRR@3} = \frac{1}{|Q|} \sum_{q=1}^{|Q|} \frac{1}{\text{rank}_q}$$
    Model SI-REKTA mencatatkan **MRR@3 sebesar 0.6031**, membuktikan bahwa dosen yang paling relevan secara konsisten ditempatkan pada ranking #1 atau #2.
 
 #### Alasan Metrik Precision Ditiadakan pada Evaluasi Top-3
-Dalam standar baku evaluasi temu balik informasi (*Information Retrieval*), metrik $	ext{Precision@}k$ dihitung berdasarkan rasio jumlah item relevan yang berhasil terpilih dibagi dengan kuota rekomendasi $k$:
-$$	ext{Precision@}k = rac{|	ext{Dosen Relevan pada Top-}k|}{k}$$
+Dalam standar baku evaluasi temu balik informasi (*Information Retrieval*), metrik $\text{Precision@}k$ dihitung berdasarkan rasio jumlah item relevan yang berhasil terpilih dibagi dengan kuota rekomendasi $k$:
+$$\text{Precision@}k = \frac{|\text{Dosen Relevan pada Top-}k|}{k}$$
 
 Pada konteks bimbingan tugas akhir di Departemen Sistem Informasi, setiap judul tugas akhir pada *ground-truth* pengujian hanya memiliki tepat 1 atau maksimal 2 dosen pembimbing sah ($|R_q| \in \{1, 2\}$). Ketika sistem mengevaluasi performa pada batas 3 rekomendasi teratas ($k = 3$), muncul kendala matematis mendasar:
-1. **Pada skripsi dengan 1 orang pembimbing**: Batas skor $	ext{Precision@3}$ maksimum yang dapat diraih sistem secara teoritis (bahkan jika model bekerja 100% sempurna dan menempatkan dosen tersebut di peringkat #1) terkunci pada angka $1/3 pprox 33.33\%$. Dua slot rekomendasi sisanya otomatis dianggap "salah" oleh formula Precision.
-2. **Pada skripsi dengan 2 orang pembimbing**: Batas skor $	ext{Precision@3}$ maksimum terkunci pada angka $2/3 pprox 66.67\%$. Satu slot sisanya tetap dianggap "salah".
+1. **Pada skripsi dengan 1 orang pembimbing**: Batas skor $\text{Precision@3}$ maksimum yang dapat diraih sistem secara teoritis (bahkan jika model bekerja 100% sempurna dan menempatkan dosen tersebut di peringkat #1) terkunci pada angka $1/3 \approx 33.33\%$. Dua slot rekomendasi sisanya otomatis dianggap "salah" oleh formula Precision.
+2. **Pada skripsi dengan 2 orang pembimbing**: Batas skor $\text{Precision@3}$ maksimum terkunci pada angka $2/3 \approx 66.67\%$. Satu slot sisanya tetap dianggap "salah".
 
-Keterbatasan struktural ini menyebabkan metrik $	ext{Precision@3}$ memberikan penalti matematis yang semu dan menyesatkan (*structurally biased penalty*). Skor yang rendah bukan disebabkan oleh ketidakmampuan model dalam merekomendasikan dosen yang relevan, melainkan karena jumlah dosen pembimbing riil pada skripsi mahasiswa memang lebih sedikit dibandingkan kuota 3 rekomendasi yang disediakan. 
+Keterbatasan struktural ini menyebabkan metrik $\text{Precision@3}$ memberikan penalti matematis yang semu dan menyesatkan (*structurally biased penalty*). Skor yang rendah bukan disebabkan oleh ketidakmampuan model dalam merekomendasikan dosen yang relevan, melainkan karena jumlah dosen pembimbing riil pada skripsi mahasiswa memang lebih sedikit dibandingkan kuota 3 rekomendasi yang disediakan. 
 
 Oleh sebab itu, sejalan dengan literatur baku Sistem Rekomendasi dan *Information Retrieval*, **metrik Precision@3 ditiadakan secara sadar** dan digantikan secara elegan oleh kombinasi tiga metrik objektif yang adil: Hit Rate@3 (79.66%), Recall@3 (75.42%), dan MRR@3 (0.6031).
 
@@ -384,7 +383,7 @@ Artefak model disimpan pada direktori `model/`, sebagaimana dirinci pada Tabel 1
 | Nama Berkas Artefak | Ukuran File | Format / Tipe | Fungsi pada Sistem Backend |
 |---|---|---|---|
 | `vectorizer.joblib` | 116 KB | Biner Scikit-Learn | Objek `TfidfVectorizer` terlatih (12.364 kosakata N-gram) |
-| `matriks_tfidf_profil_dosen.npz` | 115 KB | Sparse Matrix SciPy | Matriks profil 17 dosen berukuran $(17 	imes 12.364)$ |
+| `matriks_tfidf_profil_dosen.npz` | 115 KB | Sparse Matrix SciPy | Matriks profil 17 dosen berukuran $(17 \times 12.364)$ |
 | `daftar_profil_dosen.csv` | 141.5 KB | Teks CSV | Profil teks gabungan per dosen untuk audit leksikal |
 | `daftar_profil_dosen.json` | 143 KB | JSON Data | Struktur profil dosen dan daftar kata kunci untuk API |
 | `metadata_model.json` | 2 KB | JSON Metadata | Dokumentasi versi model, urutan dosen, dan metrik `ranx` |
@@ -417,15 +416,15 @@ Bagian ini membahas secara komprehensif empat kendala teknis dan konseptual mend
 ---
 
 ### 2.1 Keterbatasan Bobot Manual Alpha Late-Fusion pada Progress 1
-Pada Progress Report 1, tim menerapkan arsitektur *Late-Fusion* dengan memisahkan matriks skripsi dan publikasi, lalu memadukan skornya menggunakan bobot adaptif manual $lpha$ (0.60 untuk riwayat skripsi dan 0.40 untuk publikasi ilmiah).
+Pada Progress Report 1, tim menerapkan arsitektur *Late-Fusion* dengan memisahkan matriks skripsi dan publikasi, lalu memadukan skornya menggunakan bobot adaptif manual $\alpha$ (0.60 untuk riwayat skripsi dan 0.40 untuk publikasi ilmiah).
 
 **Tabel 2.1 Analisis Kendala 1: Keterbatasan Bobot Manual Late-Fusion**
 | Komponen Analisis | Uraian Penjelasan Ilmiah |
 |---|---|
-| **Kronologi Masalah** | Saat dilakukan pengujian pada variasi kueri judul, rekomendasi kerap mengalami bias. Dosen senior yang memiliki riwayat skripsi sangat banyak terkadang tidak muncul di Top-3 meskipun publikasi terbarunya sangat cocok dengan kueri, karena teredam oleh bobot skripsi yang dominan. Sebaliknya, dosen muda dengan publikasi sangat relevan tertindas oleh nilai $lpha$. |
-| **Akar Masalah & Penyebab** | Nilai $lpha = 0.60$ dan $0.40$ ditetapkan secara heuristik (tebakan manual). Pemisahan matriks menyebabkan ruang vektor leksikal terbelah menjadi dua, sehingga pembobotan magnitudo kata tidak terjadi secara alami antar-sumber. |
+| **Kronologi Masalah** | Saat dilakukan pengujian pada variasi kueri judul, rekomendasi kerap mengalami bias. Dosen senior yang memiliki riwayat skripsi sangat banyak terkadang tidak muncul di Top-3 meskipun publikasi terbarunya sangat cocok dengan kueri, karena teredam oleh bobot skripsi yang dominan. Sebaliknya, dosen muda dengan publikasi sangat relevan tertindas oleh nilai $\alpha$. |
+| **Akar Masalah & Penyebab** | Nilai $\alpha = 0.60$ dan $0.40$ ditetapkan secara heuristik (tebakan manual). Pemisahan matriks menyebabkan ruang vektor leksikal terbelah menjadi dua, sehingga pembobotan magnitudo kata tidak terjadi secara alami antar-sumber. |
 | **Solusi Ilmiah Tim** | Melakukan pivot arsitektur ke **Unified Corpus Profile Aggregation**. Teks riwayat skripsi dan publikasi milik dosen disatukan menjadi satu dokumen profil utuh sebelum ditransformasikan oleh TF-IDF. |
-| **Bukti Hasil Perbaikan** | Menghilangkan kebutuhan tuning bobot manual $lpha$ sepenuhnya. Dimensi fitur leksikon melonjak dari 3.947 menjadi **12.364 fitur TF-IDF N-gram (1,2)** dan akurasi Hit Rate@3 meningkat dari 76.41% menjadi **79.66%**. |
+| **Bukti Hasil Perbaikan** | Menghilangkan kebutuhan tuning bobot manual $\alpha$ sepenuhnya. Dimensi fitur leksikon melonjak dari 3.947 menjadi **12.364 fitur TF-IDF N-gram (1,2)** dan akurasi Hit Rate@3 meningkat dari 76.41% menjadi **79.66%**. |
 
 ---
 
@@ -493,7 +492,7 @@ Kontribusi setiap anggota dibuktikan secara transparan melalui artefak kode prog
 | Anggota Tim | Berkas Kode & Artefak Nyata | Rincian Bukti Kontribusi Spesifik |
 |---|---|---|
 | **Fuadi Dhiyaulhaq** | - `backend/app/main.py`<br>- `backend/app/api/endpoints.py`<br>- `backend/app/services/recommender.py`<br>- `database/sirekta_db.sql`<br>- `run_system.bat` | 1. Menganalisis korpus ganda (625 TA dan 643 publikasi), menyusun kamus 120+ kata akademik, dan merancang aturan bisnis Zero Score Exposure.<br>2. Membangun arsitektur RESTful API FastAPI dengan pemuatan model in-memory saat startup.<br>3. Merancang skema DDL basis data relasional 3NF MySQL (10 tabel) dan skrip otomasi satu-klik `run_system.bat`. |
-| **Rafa Gian Atthari** | - `docs/SIREKTA.ipynb`<br>- `Dataset_SI_REKTA_Preprocessed.csv`<br>- `backend/app/models/*`<br>- `database/schema_design.md` | 1. Merekayasa penyatuan korpus (Unified Corpus) dan ekstraksi 12.364 fitur TF-IDF N-gram (1,2) sublinear.<br>2. Melakukan eksperimen sistematis parameter N-gram dan justifikasi pemilihan Cosine Similarity.<br>3. Mengimplementasikan pembentukan matriks profil $(17 	imes 12.364)$ dan modul Explainable AI pendukung.<br>4. Merancang arsitektur data 3-tier dan spesifikasi DDL relasi tabel. |
+| **Rafa Gian Atthari** | - `docs/SIREKTA.ipynb`<br>- `Dataset_SI_REKTA_Preprocessed.csv`<br>- `backend/app/models/*`<br>- `database/schema_design.md` | 1. Merekayasa penyatuan korpus (Unified Corpus) dan ekstraksi 12.364 fitur TF-IDF N-gram (1,2) sublinear.<br>2. Melakukan eksperimen sistematis parameter N-gram dan justifikasi pemilihan Cosine Similarity.<br>3. Mengimplementasikan pembentukan matriks profil $(17 \times 12.364)$ dan modul Explainable AI pendukung.<br>4. Merancang arsitektur data 3-tier dan spesifikasi DDL relasi tabel. |
 | **Farrel Ghufran Rahman** | - `frontend/src/App.tsx`<br>- `frontend/src/components/*`<br>- `frontend/src/pages/*`<br>- `model/vectorizer.joblib`<br>- `model/matriks_tfidf_profil_dosen.npz`<br>- `model/metadata_model.json`<br>- `model/daftar_profil_dosen.json` | 1. Merancang dan mengeksekusi kerangka evaluasi baku IR menggunakan pustaka `ranx` pada 118 kueri testing.<br>2. Menserialisasikan pipeline model ke direktori `model/` (`vectorizer.joblib`, `.npz`, `.json`) dan menguji latensi inferensi (< 5 ms).<br>3. Membangun antarmuka web interaktif React Vite (Sidebar, Form Kueri, Kartu Top-3, Modal Riwayat Dosen, In-Page PDF Viewer).<br>4. Menyelaraskan tema warna antarmuka web ke palet resmi logo: Marun (`#6D302D`) dan Tembaga (`#C5694B`). |
 
 ---
@@ -518,12 +517,9 @@ Untuk menjamin kualitas perangkat lunak, keutuhan arsitektur, dan mencegah konfl
 | Nama Tabel | Jumlah Kolom | Primary Key | Foreign Key Relasi | Fungsi dan Entitas Data |
 |---|---|---|---|---|
 | `kelompok_keahlian` | 3 | `id_kk` | - | Master 4 Kelompok Keahlian DSI (RD-BI, SE, SD, TK-ITI) |
-| `dosen` | 4 | `id_dosen` | `id_kk` $
-ightarrow$ `kelompok_keahlian` | Data 17 Dosen Tetap Aktif DSI Unand |
-| `profil_dosen` | 5 | `id_profil` | `id_dosen` $
-ightarrow$ `dosen` (Unique) | Statistik jumlah bimbingan, publikasi, & flag is_publikasi_only |
-| `kata_kunci_dosen` | 4 | `id_kata_kunci` | `id_dosen` $
-ightarrow$ `dosen` | 136 kata kunci representasi kepakaran dosen hasil TF-IDF |
+| `dosen` | 4 | `id_dosen` | `id_kk` $\rightarrow$ `kelompok_keahlian` | Data 17 Dosen Tetap Aktif DSI Unand |
+| `profil_dosen` | 5 | `id_profil` | `id_dosen` $\rightarrow$ `dosen` (Unique) | Statistik jumlah bimbingan, publikasi, & flag is_publikasi_only |
+| `kata_kunci_dosen` | 4 | `id_kata_kunci` | `id_dosen` $\rightarrow$ `dosen` | 136 kata kunci representasi kepakaran dosen hasil TF-IDF |
 | `tugas_akhir` | 5 | `id_ta` | - | 625 riwayat judul tugas akhir alumni DSI |
 | `bimbingan_ta` | 4 | `id_bimbingan` | `id_ta`, `id_dosen` | Relasi bimbingan tugas akhir (Pembimbing 1 & 2) |
 | `publikasi` | 3 | `id_publikasi` | - | 643 judul artikel publikasi ilmiah resmi dosen |
