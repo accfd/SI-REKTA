@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navbar } from './components/Navbar';
+import { Sidebar } from './components/Sidebar';
 import { Footer } from './components/Footer';
 import { BerandaPage } from './pages/BerandaPage';
 import { CariDosenPage } from './pages/CariDosenPage';
@@ -26,52 +26,56 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="min-h-screen bg-slate-50 text-slate-800 flex">
+      {/* Sidebar Navigasi */}
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        {activeTab === 'beranda' && (
-          <BerandaPage
-            setActiveTab={setActiveTab}
-            onSelectSampleTitle={(title) => {
-              setSelectedTitle(title);
-            }}
-          />
-        )}
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-72">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 sm:py-10">
+          {activeTab === 'beranda' && (
+            <BerandaPage
+              setActiveTab={setActiveTab}
+              onSelectSampleTitle={(title) => {
+                setSelectedTitle(title);
+              }}
+            />
+          )}
 
-        {activeTab === 'cari' && (
-          <CariDosenPage
-            initialTitle={selectedTitle}
-            onSaveToHistory={handleSaveToHistory}
-            setActiveTab={setActiveTab}
-          />
-        )}
+          {activeTab === 'cari' && (
+            <CariDosenPage
+              initialTitle={selectedTitle}
+              onSaveToHistory={handleSaveToHistory}
+              setActiveTab={setActiveTab}
+            />
+          )}
 
-        {activeTab === 'dosen' && (
-          <DaftarDosenPage
-            onSelectLecturerTopic={(title) => {
-              setSelectedTitle(title);
-            }}
-            setActiveTab={setActiveTab}
-          />
-        )}
+          {activeTab === 'dosen' && (
+            <DaftarDosenPage
+              onSelectLecturerTopic={(title) => {
+                setSelectedTitle(title);
+              }}
+              setActiveTab={setActiveTab}
+            />
+          )}
 
-        {activeTab === 'pedoman' && <DokumenPedomanPage />}
+          {activeTab === 'pedoman' && <DokumenPedomanPage />}
 
-        {activeTab === 'history' && (
-          <HistoryPage
-            history={history}
-            onDeleteOne={deleteHistory}
-            onClearAll={clearAllHistory}
-            onSearchAgain={handleSearchAgain}
-            setActiveTab={setActiveTab}
-          />
-        )}
+          {activeTab === 'history' && (
+            <HistoryPage
+              history={history}
+              onDeleteOne={deleteHistory}
+              onClearAll={clearAllHistory}
+              onSearchAgain={handleSearchAgain}
+              setActiveTab={setActiveTab}
+            />
+          )}
 
-        {activeTab === 'informasi' && <InformasiPage />}
-      </main>
+          {activeTab === 'informasi' && <InformasiPage />}
+        </main>
 
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 };

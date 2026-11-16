@@ -36,6 +36,32 @@ class DosenItem(BaseModel):
     is_publikasi_only: bool
     kata_kunci: List[str]
 
+class LecturerTADocument(BaseModel):
+    id_ta: int
+    judul_ta: str
+    tahun: Optional[int] = None
+    nama_mahasiswa: Optional[str] = None
+    nim: Optional[str] = None
+    posisi_pembimbing: int
+
+class LecturerPublicationDocument(BaseModel):
+    id_publikasi: int
+    judul_publikasi: str
+    tahun: Optional[int] = None
+
+class LecturerDetailResponse(BaseModel):
+    id_dosen: int
+    nama_lengkap: str
+    inisial: str
+    kode_kk: Optional[str] = None
+    nama_kk: Optional[str] = None
+    jumlah_ta: int
+    jumlah_publikasi: int
+    is_publikasi_only: bool
+    kata_kunci: List[str]
+    tugas_akhir: List[LecturerTADocument]
+    publikasi: List[LecturerPublicationDocument]
+
 class DokumenItem(BaseModel):
     id_dokumen: int
     judul_dokumen: str
@@ -53,4 +79,3 @@ class ModelInfoResponse(BaseModel):
     hit_rate_at_3: float
     recall_at_3: float
     mrr_at_3: float
-    precision_at_3: float

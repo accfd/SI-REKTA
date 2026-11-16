@@ -29,7 +29,7 @@ export const InformasiPage: React.FC = () => {
       <div className="max-w-3xl">
         <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Transparansi & Metodologi Model</h1>
         <p className="text-sm text-slate-500 mt-1.5">
-          Penjelasan lengkap mengenai tujuan, alur kerja Machine Learning, data referensi, metrik pengujian, dan batasan operasional SI-REKTA.
+          Penjelasan lengkap mengenai tujuan, alur kerja Machine Learning, data referensi, metrik pengujian resmi, dan batasan operasional SI-REKTA.
         </p>
       </div>
 
@@ -122,49 +122,41 @@ export const InformasiPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Bagian 4: Kinerja Model & Evaluasi */}
+      {/* Bagian 4: Kinerja Model & Evaluasi (Tanpa Precision) */}
       <section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
         <div className="flex items-center space-x-2 text-amber-600 font-bold text-sm uppercase tracking-wider">
           <BarChart3 className="w-4 h-4" />
-          <span>Bagian 4 • Kinerja dan Evaluasi Model</span>
+          <span>Bagian 4 • Metrik Evaluasi Resmi Model</span>
         </div>
-        <h2 className="text-xl font-bold text-slate-900">Hasil Evaluasi Pengujian Model (Uji Independen 118 Judul TA)</h2>
+        <h2 className="text-xl font-bold text-slate-900">Hasil Pengujian Kinerja (Uji Independen 118 Judul TA)</h2>
         <p className="text-sm text-slate-600 leading-relaxed">
-          Model diuji pada 118 judul tugas akhir yang disisihkan secara terpisah (data testing) dan tidak pernah digunakan dalam proses pelatihan maupun pembentukan profil vektor dosen (mencegah data leakage).
+          Evaluasi resmi dilakukan menggunakan pustaka <code>ranx</code> pada 118 judul tugas akhir data testing yang disisihkan secara independen dari proses pelatihan model. Tiga metrik evaluasi utama yang digunakan:
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-blue-700">{info?.hit_rate_at_3 ?? 79.66}%</div>
-            <div className="text-xs font-bold text-slate-800 mt-1">Hit Rate@3</div>
-            <p className="text-[11px] text-slate-400 mt-0.5">Dosen pembimbing masuk di Top 3</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="p-6 rounded-3xl bg-blue-50/70 border border-blue-200 text-center">
+            <div className="text-4xl font-extrabold text-blue-700">{info?.hit_rate_at_3 ?? 79.66}%</div>
+            <div className="text-sm font-bold text-slate-800 mt-2">Hit Rate@3</div>
+            <p className="text-xs text-slate-500 mt-1">
+              Sebanyak <strong>79.66%</strong> judul uji berhasil mendapatkan minimal satu dosen pembimbing yang tepat di dalam Top 3 rekomendasi.
+            </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-indigo-700">{info?.recall_at_3 ?? 75.42}%</div>
-            <div className="text-xs font-bold text-slate-800 mt-1">Recall@3</div>
-            <p className="text-[11px] text-slate-400 mt-0.5">Proporsi dosen relevan yang tertangkap</p>
+          <div className="p-6 rounded-3xl bg-indigo-50/70 border border-indigo-200 text-center">
+            <div className="text-4xl font-extrabold text-indigo-700">{info?.recall_at_3 ?? 75.42}%</div>
+            <div className="text-sm font-bold text-slate-800 mt-2">Recall@3</div>
+            <p className="text-xs text-slate-500 mt-1">
+              Sebanyak <strong>75.42%</strong> dari seluruh dosen relevan berhasil ditangkap oleh sistem pada Top 3 rekomendasi.
+            </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-700">{info?.mrr_at_3 ?? 0.60}</div>
-            <div className="text-xs font-bold text-slate-800 mt-1">MRR@3</div>
-            <p className="text-[11px] text-slate-400 mt-0.5">Mean Reciprocal Rank</p>
+          <div className="p-6 rounded-3xl bg-emerald-50/70 border border-emerald-200 text-center">
+            <div className="text-4xl font-extrabold text-emerald-700">{info?.mrr_at_3 ?? 0.60}</div>
+            <div className="text-sm font-bold text-slate-800 mt-2">MRR@3 (Mean Reciprocal Rank)</div>
+            <p className="text-xs text-slate-500 mt-1">
+              Skor <strong>0.60</strong> menunjukkan dosen relevan cenderung berada pada posisi ranking teratas (#1 atau #2).
+            </p>
           </div>
-
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-700">{info?.precision_at_3 ?? 30.51}%</div>
-            <div className="text-xs font-bold text-slate-800 mt-1">Precision@3</div>
-            <p className="text-[11px] text-slate-400 mt-0.5">Kepadatan rekomendasi relevan</p>
-          </div>
-        </div>
-
-        {/* Catatan Akademis mengenai Precision */}
-        <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 text-xs text-blue-900 leading-relaxed space-y-1">
-          <span className="font-bold">Penjelasan Akademis Terkait Nilai Precision@3 (30.51%):</span>
-          <p>
-            Nilai precision tampak berkisar ~30% adalah hal wajar dan terjustifikasi secara matematis, karena sebagian besar tugas akhir hanya memiliki 1 orang pembimbing (atau maksimal 2), sedangkan sistem selalu mengembalikan fixed 3 rekomendasi dosen. Secara teoritis, jika 1 dokumen hanya memiliki 1 dosen pembimbing relevan, batas maksimal precision@3 yang bisa dicapai adalah 1/3 (33.33%).
-          </p>
         </div>
       </section>
 

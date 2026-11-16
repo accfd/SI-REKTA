@@ -33,6 +33,35 @@ export interface DosenItem {
   kata_kunci: string[];
 }
 
+export interface LecturerTADocument {
+  id_ta: number;
+  judul_ta: string;
+  tahun?: number;
+  nama_mahasiswa?: string;
+  nim?: string;
+  posisi_pembimbing: number;
+}
+
+export interface LecturerPublicationDocument {
+  id_publikasi: number;
+  judul_publikasi: string;
+  tahun?: number;
+}
+
+export interface LecturerDetailResponse {
+  id_dosen: number;
+  nama_lengkap: string;
+  inisial: string;
+  kode_kk?: string;
+  nama_kk?: string;
+  jumlah_ta: number;
+  jumlah_publikasi: number;
+  is_publikasi_only: boolean;
+  kata_kunci: string[];
+  tugas_akhir: LecturerTADocument[];
+  publikasi: LecturerPublicationDocument[];
+}
+
 export interface DokumenItem {
   id_dokumen: number;
   judul_dokumen: string;
@@ -51,7 +80,6 @@ export interface ModelInfo {
   hit_rate_at_3: number;
   recall_at_3: number;
   mrr_at_3: number;
-  precision_at_3: number;
 }
 
 export interface HistoryItem {

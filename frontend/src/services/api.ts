@@ -1,5 +1,11 @@
 import axios from 'axios';
-import type { RecommendationResponse, DosenItem, DokumenItem, ModelInfo } from '../types';
+import type {
+  RecommendationResponse,
+  DosenItem,
+  DokumenItem,
+  ModelInfo,
+  LecturerDetailResponse
+} from '../types';
 
 const API_BASE = '/api';
 
@@ -11,6 +17,11 @@ export const api = {
 
   getAllDosen: async (): Promise<DosenItem[]> => {
     const res = await axios.get<DosenItem[]>(`${API_BASE}/dosen`);
+    return res.data;
+  },
+
+  getLecturerDetail: async (idDosen: number): Promise<LecturerDetailResponse> => {
+    const res = await axios.get<LecturerDetailResponse>(`${API_BASE}/dosen/${idDosen}/documents`);
     return res.data;
   },
 
@@ -26,5 +37,9 @@ export const api = {
 
   getDocumentStreamUrl: (docId: number): string => {
     return `${API_BASE}/documents/${docId}/stream`;
+  },
+
+  getDocumentDownloadUrl: (docId: number): string => {
+    return `${API_BASE}/documents/${docId}/download`;
   }
 };

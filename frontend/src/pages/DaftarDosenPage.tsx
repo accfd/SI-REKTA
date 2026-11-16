@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Search, BookOpen, GraduationCap, Tag, ArrowRight, Filter } from 'lucide-react';
-import type { DosenItem } from '../types';
+import {
+  Users,
+  Search,
+  BookOpen,
+  GraduationCap,
+  Tag,
+  Filter,
+  X,
+  FileText,
+  UserCheck,
+  Calendar,
+  Sparkles
+} from 'lucide-react';
+import type { DosenItem, LecturerDetailResponse } from '../types';
 import { api } from '../services/api';
 
 interface DaftarDosenPageProps {
@@ -18,6 +30,13 @@ export const DaftarDosenPage: React.FC<DaftarDosenPageProps> = ({
   const [sortOption, setSortOption] = useState<'nama' | 'ta' | 'pub'>('nama');
   const [selectedKk, setSelectedKk] = useState<string>('all');
 
+  // Detail Modal State
+  const [selectedDosenId, setSelectedDosenId] = useState<number | null>(null);
+  const [dosenDetail, setDosenDetail] = useState<LecturerDetailResponse | null>(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
+  const [activeModalTab, setActiveModalTab] = useState<'ta' | 'publikasi'>('ta');
+  const [modalSearch, setModalSearch] = useState('');
+
   useEffect(() => {
     loadDosen();
   }, []);
@@ -32,6 +51,30 @@ export const DaftarDosenPage: React.FC<DaftarDosenPageProps> = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOpenDetail = async (idDosen: number) => {
+    setSelectedDosenId(idDosen);
+    setActiveModalTab('ta');
+    setModalSearch('');
+    try {
+      setLoadingDetail(true);
+      const detail = await api.getLecturerDetail(idDosen);
+      setDosenDetail(detail);
+      // Jika dosen tidak punya TA (profil dari publikasi), otomatis tab ke publikasi
+      if (detail.tugas_akhir.length === 0 && detail.publikasi.length > 0) {
+        setActiveModalTab('publikasi');
+      }
+    } catch (err) {
+      console.error('Gagal memuat detail karya dosen', err);
+    } finally {
+      setLoadingDetail(false);
+    }
+  };
+
+  const handleCloseDetail = () => {
+    setSelectedDosenId(null);
+    setDosenDetail(null);
   };
 
   // Filter & Sort
@@ -51,6 +94,18 @@ export const DaftarDosenPage: React.FC<DaftarDosenPageProps> = ({
       return a.nama_lengkap.localeCompare(b.nama_lengkap);
     });
 
+  // Filtered TA inside modal
+  const filteredTA = dosenDetail?.tugas_akhir.filter((item) =>
+    item.judul_ta.toLowerCase().includes(modalSearch.toLowerCase()) ||
+    (item.nama_mahasiswa && item.nama_mahasiswa.toLowerCase().includes(modalSearch.toLowerCase())) ||
+    (item.tahun && item.tahun.toString().includes(modalSearch))
+  ) || [];
+
+  // Filtered Publikasi inside modal
+  const filteredPub = dosenDetail?.publikasi.filter((item) =>
+    item.judul_publikasi.toLowerCase().includes(modalSearch.toLowerCase()) ||
+    (item.tahun && item.tahun.toString().includes(modalSearch))
+  ) || [];
 
   return (
     <div className="space-y-8">
@@ -58,13 +113,13 @@ export const DaftarDosenPage: React.FC<DaftarDosenPageProps> = ({
       <div className="max-w-3xl">
         <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Daftar Dosen Pembimbing DSI</h1>
         <p className="text-sm text-slate-500 mt-1.5">
-          Eksplorasi 17 dosen pembimbing yang dicakup dalam model rekomendasi SI-REKTA beserta kelompok keahlian dan riwayat dokumen akademiknya.
+          Eksplorasi 17 dosen pembimbing yang dicakup dalam model rekomendasi. Klik pada kartu dosen untuk melihat seluruh riwayat judul tugas akhir yang pernah dibimbing dan karya publikasi ilmiahnya.
         </p>
       </div>
 
       {/* Filter & Search Bar */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Search */}
+        {/* Search Input */}
         <div className="relative w-full md:w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
           <input
@@ -126,18 +181,18 @@ export const DaftarDosenPage: React.FC<DaftarDosenPageProps> = ({
           {filtered.map((d) => (
             <div
               key={d.id_dosen}
-              className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between"
+              className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between group"
             >
               <div>
                 {/* Header Kartu */}
-                <div className="flex items-start space-x-3 mb-3">
-                  <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 font-extrabold flex items-center justify-center text-base border border-blue-100 shrink-0">
+                <div className="flex items-start space-x-3.5 mb-3.5">
+                  <div className="w-13 h-13 rounded-2xl bg-blue-50 text-blue-700 font-extrabold flex items-center justify-center text-lg border border-blue-100 shrink-0 group-hover:scale-105 transition-transform">
                     {d.inisial}
                   </div>
                   <div>
                     <div className="flex items-center space-x-2">
                       {d.kode_kk && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
+                        <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-700">
                           {d.kode_kk}
                         </span>
                       )}
@@ -157,20 +212,20 @@ export const DaftarDosenPage: React.FC<DaftarDosenPageProps> = ({
                 </div>
 
                 {/* Angka Bimbingan & Publikasi */}
-                <div className="grid grid-cols-2 gap-2 my-3 p-2.5 bg-slate-50 rounded-xl text-center">
+                <div className="grid grid-cols-2 gap-2 my-3 p-3 bg-slate-50 rounded-2xl text-center">
                   <div>
                     <div className="text-xs text-slate-500 flex items-center justify-center space-x-1">
                       <GraduationCap className="w-3.5 h-3.5 text-blue-600" />
                       <span>Riwayat TA</span>
                     </div>
-                    <div className="text-base font-extrabold text-slate-800 mt-0.5">{d.jumlah_ta}</div>
+                    <div className="text-base font-extrabold text-slate-800 mt-0.5">{d.jumlah_ta} judul</div>
                   </div>
                   <div className="border-l border-slate-200">
                     <div className="text-xs text-slate-500 flex items-center justify-center space-x-1">
                       <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
                       <span>Publikasi</span>
                     </div>
-                    <div className="text-base font-extrabold text-slate-800 mt-0.5">{d.jumlah_publikasi}</div>
+                    <div className="text-base font-extrabold text-slate-800 mt-0.5">{d.jumlah_publikasi} artikel</div>
                   </div>
                 </div>
 
@@ -184,7 +239,7 @@ export const DaftarDosenPage: React.FC<DaftarDosenPageProps> = ({
                     {d.kata_kunci.map((kw, i) => (
                       <span
                         key={i}
-                        className="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600"
+                        className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-600"
                       >
                         {kw}
                       </span>
@@ -193,22 +248,225 @@ export const DaftarDosenPage: React.FC<DaftarDosenPageProps> = ({
                 </div>
               </div>
 
-              {/* Action: Cari dengan topik dosen ini */}
-              <button
-                type="button"
-                onClick={() => {
-                  const sampleKw = d.kata_kunci.slice(0, 3).join(' ');
-                  const queryTopic = `Pembangunan Sistem Informasi dan Analisis Terkait ${sampleKw} Berbasis Web`;
-                  onSelectLecturerTopic(queryTopic);
-                  setActiveTab('cari');
-                }}
-                className="w-full mt-2 inline-flex items-center justify-center space-x-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
-              >
-                <span>Cari dengan topik dosen ini</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
+              {/* Action Buttons */}
+              <div className="space-y-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => handleOpenDetail(d.id_dosen)}
+                  className="w-full inline-flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  <FileText className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Lihat Seluruh Riwayat TA & Publikasi</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const sampleKw = d.kata_kunci.slice(0, 3).join(' ');
+                    const queryTopic = `Pembangunan Sistem Informasi dan Analisis Terkait ${sampleKw} Berbasis Web`;
+                    onSelectLecturerTopic(queryTopic);
+                    setActiveTab('cari');
+                  }}
+                  className="w-full inline-flex items-center justify-center space-x-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>Cari Rekomendasi Topik Dosen Ini</span>
+                </button>
+              </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* DETAIL MODAL: DAFTAR SELURUH TA & PUBLIKASI DOSEN */}
+      {selectedDosenId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 sm:p-6 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="p-6 bg-slate-900 text-white flex items-start justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-14 h-14 rounded-2xl bg-white/10 text-white font-extrabold text-xl flex items-center justify-center border border-white/20 shrink-0">
+                  {dosenDetail?.inisial || 'DS'}
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    {dosenDetail?.kode_kk && (
+                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500 text-white">
+                        {dosenDetail.kode_kk}
+                      </span>
+                    )}
+                    {dosenDetail?.is_publikasi_only && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500 text-white">
+                        Profil dari publikasi
+                      </span>
+                    )}
+                  </div>
+                  <h2 className="text-xl font-bold text-white mt-1">
+                    {dosenDetail?.nama_lengkap || 'Memuat...'}
+                  </h2>
+                  <p className="text-xs text-slate-300 mt-0.5">{dosenDetail?.nama_kk}</p>
+                </div>
+              </div>
+
+              <button
+                onClick={handleCloseDetail}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            {loadingDetail ? (
+              <div className="text-center py-20">
+                <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                <p className="text-sm text-slate-500">Mengambil seluruh riwayat judul TA dan publikasi...</p>
+              </div>
+            ) : dosenDetail ? (
+              <div className="flex flex-col flex-1 overflow-hidden">
+                {/* Modal Subheader: Tabs & Search */}
+                <div className="p-4 sm:p-6 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  {/* Tabs */}
+                  <div className="flex items-center space-x-2 w-full sm:w-auto">
+                    <button
+                      onClick={() => setActiveModalTab('ta')}
+                      className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                        activeModalTab === 'ta'
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                      }`}
+                    >
+                      <GraduationCap className="w-4 h-4" />
+                      <span>Riwayat Bimbingan TA ({dosenDetail.tugas_akhir.length})</span>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveModalTab('publikasi')}
+                      className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                        activeModalTab === 'publikasi'
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                      }`}
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span>Publikasi Ilmiah ({dosenDetail.publikasi.length})</span>
+                    </button>
+                  </div>
+
+                  {/* Filter Search inside modal */}
+                  <div className="relative w-full sm:w-72">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+                    <input
+                      type="text"
+                      placeholder={`Cari judul ${activeModalTab === 'ta' ? 'TA' : 'publikasi'}...`}
+                      value={modalSearch}
+                      onChange={(e) => setModalSearch(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-blue-100 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Tab Content List Container */}
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3">
+                  {activeModalTab === 'ta' ? (
+                    filteredTA.length === 0 ? (
+                      <div className="text-center py-12 text-slate-400 text-sm">
+                        {dosenDetail.tugas_akhir.length === 0
+                          ? 'Dosen ini belum memiliki riwayat pembimbingan tugas akhir (Profil berbasis data publikasi ilmiah).'
+                          : 'Tidak ada judul tugas akhir yang sesuai dengan pencarian.'}
+                      </div>
+                    ) : (
+                      filteredTA.map((item, idx) => (
+                        <div
+                          key={item.id_ta}
+                          className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-blue-200 transition-colors flex items-start justify-between gap-4"
+                        >
+                          <div className="space-y-1.5 flex-1">
+                            <div className="flex items-center space-x-2">
+                              <span className="w-6 h-6 rounded-md bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0">
+                                {idx + 1}
+                              </span>
+                              <span
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                  item.posisi_pembimbing === 1
+                                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                    : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                                }`}
+                              >
+                                Pembimbing {item.posisi_pembimbing}
+                              </span>
+                              {item.tahun && (
+                                <span className="inline-flex items-center space-x-1 text-slate-400 text-xs">
+                                  <Calendar className="w-3 h-3" />
+                                  <span>{item.tahun}</span>
+                                </span>
+                              )}
+                            </div>
+
+                            <h4 className="font-bold text-slate-900 text-sm leading-snug">
+                              {item.judul_ta}
+                            </h4>
+
+                            {(item.nama_mahasiswa || item.nim) && (
+                              <div className="flex items-center space-x-2 text-xs text-slate-500">
+                                <UserCheck className="w-3.5 h-3.5 text-slate-400" />
+                                <span>
+                                  Mahasiswa: <strong className="text-slate-700">{item.nama_mahasiswa || '-'}</strong>
+                                  {item.nim ? ` (${item.nim})` : ''}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    )
+                  ) : (
+                    /* Tab Publikasi */
+                    filteredPub.length === 0 ? (
+                      <div className="text-center py-12 text-slate-400 text-sm">
+                        Tidak ada publikasi yang sesuai dengan pencarian.
+                      </div>
+                    ) : (
+                      filteredPub.map((pub, idx) => (
+                        <div
+                          key={pub.id_publikasi}
+                          className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-emerald-200 transition-colors flex items-start space-x-3"
+                        >
+                          <span className="w-6 h-6 rounded-md bg-emerald-50 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                            {idx + 1}
+                          </span>
+                          <div className="space-y-1 flex-1">
+                            <h4 className="font-bold text-slate-900 text-sm leading-snug">
+                              {pub.judul_publikasi}
+                            </h4>
+                            {pub.tahun && (
+                              <span className="inline-flex items-center space-x-1 text-slate-400 text-xs">
+                                <Calendar className="w-3 h-3" />
+                                <span>Tahun Publikasi: {pub.tahun}</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    )
+                  )}
+                </div>
+
+                {/* Modal Footer */}
+                <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                  <span className="text-xs text-slate-500">
+                    Total ditampilkan: {activeModalTab === 'ta' ? filteredTA.length : filteredPub.length} dokumen
+                  </span>
+                  <button
+                    onClick={handleCloseDetail}
+                    className="px-5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100"
+                  >
+                    Tutup
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
       )}
     </div>

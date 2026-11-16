@@ -27,14 +27,14 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="SI-REKTA API",
     description="Backend API Sistem Rekomendasi Dosen Pembimbing Tugas Akhir (DSI)",
-    version="1.0.0",
+    version="1.1.0",
     lifespan=lifespan
 )
 
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Izinkan request dari frontend Vite
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,7 +42,6 @@ app.add_middleware(
 
 def dapatkan_inisial(nama: str) -> str:
     """Mendapatkan inisial 2-3 huruf dari nama dosen."""
-    # Hapus gelar umum
     clean = nama.replace("Prof.", "").replace("Ph.D.", "").replace("M.Kom.", "").replace("M.T.", "").replace("M.Sc.", "").replace("M.Eng.", "").replace("S.Pd.", "")
     parts = [p.strip() for p in clean.split() if p.strip()]
     if not parts:
@@ -82,7 +81,6 @@ def get_recommendation(payload: schemas.RecommendRequest, db: Session = Depends(
             detail="Rekomendasi tidak ditemukan untuk judul yang dimasukkan."
         )
 
-    # Gabungkan dengan data dosen dari Database MySQL
     rekomendasi_output = []
     for r in top_recs:
         nama_dosen = r["nama_dosen"]
@@ -93,7 +91,6 @@ def get_recommendation(payload: schemas.RecommendRequest, db: Session = Depends(
         profil_obj = dosen_obj.profil
         kk_obj = dosen_obj.kelompok_keahlian
 
-        # Ambil top kata kunci dosen dari database
         kw_objs = db.query(models.KataKunciDosen).filter(
             models.KataKunciDosen.id_dosen == dosen_obj.id_dosen
         ).order_by(models.KataKunciDosen.bobot_tfidf.desc()).limit(5).all()
@@ -148,9 +145,73 @@ def get_all_dosen(db: Session = Depends(get_db)):
             kata_kunci=[k.kata_kunci for k in kw_objs]
         ))
 
-    # Default sort by nama
     output.sort(key=lambda x: x.nama_lengkap)
     return output
+
+@app.get("/api/dosen/{dosen_id}/documents", response_model=schemas.LecturerDetailResponse)
+def get_dosen_documents(dosen_id: int, db: Session = Depends(get_db)):
+    """Mengambil rincian seluruh judul bimbingan TA dan publikasi dari dosen tertentu."""
+    dosen = db.query(models.Dosen).filter(models.Dosen.id_dosen == dosen_id).first()
+    if not dosen:
+        raise HTTPException(status_code=404, detail="Dosen tidak ditemukan.")
+
+    profil = dosen.profil
+    kk = dosen.kelompok_keahlian
+
+    # Ambil seluruh judul TA yang pernah dibimbing
+    bimbingan_list = db.query(models.BimbinganTA).filter(
+        models.BimbinganTA.id_dosen == dosen_id
+    ).all()
+
+    ta_output = []
+    for b in bimbingan_list:
+        ta = b.tugas_akhir
+        if ta:
+            ta_output.append(schemas.LecturerTADocument(
+                id_ta=ta.id_ta,
+                judul_ta=ta.judul_ta,
+                tahun=ta.tahun,
+                nama_mahasiswa=ta.nama_mahasiswa,
+                nim=ta.nim,
+                posisi_pembimbing=b.posisi_pembimbing
+            ))
+    # Urutkan TA berdasarkan tahun terbaru
+    ta_output.sort(key=lambda x: (x.tahun or 0, x.id_ta), reverse=True)
+
+    # Ambil seluruh publikasi dosen
+    publikasi_relasi = db.query(models.PublikasiDosen).filter(
+        models.PublikasiDosen.id_dosen == dosen_id
+    ).all()
+
+    pub_output = []
+    for pr in publikasi_relasi:
+        p = pr.publikasi
+        if p:
+            pub_output.append(schemas.LecturerPublicationDocument(
+                id_publikasi=p.id_publikasi,
+                judul_publikasi=p.judul_publikasi,
+                tahun=p.tahun
+            ))
+    # Urutkan publikasi berdasarkan tahun terbaru
+    pub_output.sort(key=lambda x: (x.tahun or 0, x.id_publikasi), reverse=True)
+
+    kw_objs = db.query(models.KataKunciDosen).filter(
+        models.KataKunciDosen.id_dosen == dosen_id
+    ).order_by(models.KataKunciDosen.bobot_tfidf.desc()).limit(8).all()
+
+    return schemas.LecturerDetailResponse(
+        id_dosen=dosen.id_dosen,
+        nama_lengkap=dosen.nama_lengkap,
+        inisial=dapatkan_inisial(dosen.nama_lengkap),
+        kode_kk=kk.kode_kk if kk else None,
+        nama_kk=kk.nama_kk if kk else None,
+        jumlah_ta=profil.jumlah_ta if profil else 0,
+        jumlah_publikasi=profil.jumlah_publikasi if profil else 0,
+        is_publikasi_only=profil.is_publikasi_only if profil else False,
+        kata_kunci=[k.kata_kunci for k in kw_objs],
+        tugas_akhir=ta_output,
+        publikasi=pub_output
+    )
 
 @app.get("/api/info", response_model=schemas.ModelInfoResponse)
 def get_model_info(db: Session = Depends(get_db)):
@@ -158,7 +219,6 @@ def get_model_info(db: Session = Depends(get_db)):
     if not versi:
         raise HTTPException(status_code=404, detail="Data versi model tidak ditemukan.")
 
-    # Ringkasan data dari database
     tot_ta = db.query(func.count(models.TugasAkhir.id_ta)).scalar() or 0
     tot_pub = db.query(func.count(models.Publikasi.id_publikasi)).scalar() or 0
     tot_dosen = db.query(func.count(models.Dosen.id_dosen)).filter(models.Dosen.termasuk_model == True).scalar() or 0
@@ -173,8 +233,7 @@ def get_model_info(db: Session = Depends(get_db)):
         total_publikasi=tot_pub,
         hit_rate_at_3=round(versi.hit_rate_at_3 * 100, 2),
         recall_at_3=round(versi.recall_at_3 * 100, 2),
-        mrr_at_3=round(versi.mrr_at_3, 2),
-        precision_at_3=round(versi.precision_at_3 * 100, 2)
+        mrr_at_3=round(versi.mrr_at_3, 2)
     )
 
 @app.get("/api/documents", response_model=list[schemas.DokumenItem])
@@ -200,8 +259,26 @@ def stream_document(doc_id: int, db: Session = Depends(get_db)):
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File PDF tidak ditemukan di server.")
 
+    # content_disposition_type='inline' AGAR BISA DITAMPILKAN LANGSUNG DI DALAM BROWSER WEB
     return FileResponse(
         path=file_path,
         media_type="application/pdf",
-        filename=doc.nama_file_pdf
+        content_disposition_type="inline"
+    )
+
+@app.get("/api/documents/{doc_id}/download")
+def download_document(doc_id: int, db: Session = Depends(get_db)):
+    doc = db.query(models.DokumenPedoman).filter(models.DokumenPedoman.id_dokumen == doc_id).first()
+    if not doc:
+        raise HTTPException(status_code=404, detail="Dokumen pedoman tidak ditemukan.")
+
+    file_path = DOCS_DIR / doc.nama_file_pdf
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File PDF tidak ditemukan di server.")
+
+    return FileResponse(
+        path=file_path,
+        media_type="application/pdf",
+        filename=doc.nama_file_pdf,
+        content_disposition_type="attachment"
     )
