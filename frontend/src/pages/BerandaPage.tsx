@@ -16,8 +16,8 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
   return (
     <div className="space-y-16">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 text-white p-8 sm:p-14 shadow-2xl">
-        <div className="relative z-10 max-w-3xl space-y-6">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 text-white p-8 sm:p-14 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="relative z-10 max-w-2xl space-y-6">
           <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-semibold backdrop-blur-sm">
             <Cpu className="w-3.5 h-3.5 text-blue-400" />
             <span>Berbasis Text Mining (TF-IDF & Cosine Similarity)</span>
@@ -46,6 +46,17 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
               <FileText className="w-4 h-4" />
               <span>Lihat Dokumen Pedoman</span>
             </button>
+          </div>
+        </div>
+
+        {/* Hero Illustration / Official Logo */}
+        <div className="relative z-10 shrink-0 flex items-center justify-center">
+          <div className="w-48 h-48 sm:w-56 sm:h-56 rounded-3xl bg-white/10 p-5 backdrop-blur-md border border-white/20 shadow-2xl flex items-center justify-center">
+            <img
+              src="/logo.png"
+              alt="SI-REKTA Logo"
+              className="w-full h-full object-contain filter drop-shadow-md"
+            />
           </div>
         </div>
 

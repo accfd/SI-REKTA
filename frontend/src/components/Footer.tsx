@@ -8,9 +8,12 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Kolom 1 */}
           <div className="space-y-3">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-lg bg-white/10 p-1 flex items-center justify-center border border-white/20 shrink-0">
+                <img src="/logo.png" alt="SI-REKTA Logo" className="w-full h-full object-contain" />
+              </div>
               <span className="font-bold text-white text-lg">SI-REKTA</span>
-              <span className="text-[10px] bg-blue-950 text-blue-300 border border-blue-800 px-2 py-0.5 rounded">v1.0</span>
+              <span className="text-[10px] bg-blue-950 text-blue-300 border border-blue-800 px-2 py-0.5 rounded">v1.1</span>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed">
               Sistem Rekomendasi Dosen Pembimbing Tugas Akhir berbasis Text Mining (TF-IDF & Cosine Similarity) Departemen Sistem Informasi (DSI).

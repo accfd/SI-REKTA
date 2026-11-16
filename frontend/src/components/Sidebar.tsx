@@ -6,7 +6,6 @@ import {
   FileText,
   History,
   Info,
-  Sparkles,
   Menu,
   X,
   Database,
@@ -43,9 +42,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
           onClick={() => handleSelectTab('beranda')}
           className="flex items-center space-x-2.5 cursor-pointer"
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-xs">
-            <Sparkles className="w-4 h-4" />
-          </div>
+          <img
+            src="/logo.png"
+            alt="SI-REKTA Logo"
+            className="w-8 h-8 object-contain rounded-lg"
+          />
           <span className="font-extrabold text-lg tracking-tight text-slate-900">SI-REKTA</span>
           <span className="text-[10px] font-bold px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md border border-blue-200">
             DSI
@@ -81,14 +82,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
             onClick={() => handleSelectTab('beranda')}
             className="flex items-center space-x-3 cursor-pointer group pb-6 border-b border-slate-100"
           >
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-6 h-6" />
+            <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/80 p-1.5 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform shrink-0">
+              <img
+                src="/logo.png"
+                alt="SI-REKTA Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-extrabold text-xl tracking-tight text-slate-900">SI-REKTA</span>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded border border-blue-200">
-                  DSI 2025
+                  DSI
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 leading-tight mt-0.5">Rekomendasi Dosen TA</p>
