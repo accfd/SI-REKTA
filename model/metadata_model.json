@@ -1,0 +1,72 @@
+{
+  "nama_model": "SI-REKTA",
+  "metode_pembobotan": "TF-IDF",
+  "metode_pemeringkatan": "Cosine Similarity",
+  "jumlah_dosen": 17,
+  "jumlah_fitur_tfidf": 12364,
+  "bentuk_matriks_profil": [
+    17,
+    12364
+  ],
+  "urutan_nama_dosen": [
+    "Adi Arga Arifnur, M.Kom.",
+    "Afriyanti Dwi Kartika, S.Pd., M.T.",
+    "Aina Hubby Aziira, M.Eng.",
+    "Dwi Welly Sukma Nirad, M.T.",
+    "Fajril Akbar, M.Sc.",
+    "Febby Apri Wenando, M.Eng., Ph.D.",
+    "Hafizah Hanim, M.Kom.",
+    "Hafzatin Nurlatifa, M.Eng.",
+    "Haris Suryamen, M.Sc.",
+    "Hasdi Putra, M.T.",
+    "Husnil Kamil, M.T.",
+    "Jefril Rahmadoni, M.Kom.",
+    "Nisa Dwi Angresti, M.Kom.",
+    "Prof. Surya Afnarius, Ph.D.",
+    "Rahmatika Pratama Santi, M.T.",
+    "Ricky Akbar, M.Kom.",
+    "Ullya Mega Wahyuni, M.Kom."
+  ],
+  "parameter_tfidf": {
+    "analyzer": "word",
+    "binary": false,
+    "decode_error": "strict",
+    "dtype": "<class 'numpy.float64'>",
+    "encoding": "utf-8",
+    "input": "content",
+    "lowercase": true,
+    "max_df": 1.0,
+    "max_features": null,
+    "min_df": 1,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "norm": "l2",
+    "preprocessor": null,
+    "smooth_idf": true,
+    "stop_words": null,
+    "strip_accents": null,
+    "sublinear_tf": true,
+    "token_pattern": "(?u)\\b\\w\\w+\\b",
+    "tokenizer": null,
+    "use_idf": true,
+    "vocabulary": null
+  },
+  "random_state": 42,
+  "proporsi_target_testing_judul_ta": 0.2,
+  "strategi_pembagian": "Seluruh publikasi pada training; judul TA dibagi menjadi training dan testing; judul TA yang identik dengan publikasi tidak menjadi kueri testing",
+  "jumlah_publikasi_training": 642,
+  "jumlah_publikasi_testing": 0,
+  "jumlah_judul_ta_training": 475,
+  "jumlah_judul_ta_testing": 118,
+  "jumlah_dokumen_training": 993,
+  "jumlah_dokumen_testing": 118,
+  "jumlah_kueri_evaluasi": 118,
+  "metrik_evaluasi": {
+    "Hit Rate@3": 0.7966,
+    "Precision@3": 0.3051,
+    "Recall@3": 0.7542,
+    "MRR@3": 0.6031
+  }
+}
