@@ -91,8 +91,8 @@ Pada fase Progress Report 2, tim melakukan evolusi dan penyempurnaan fundamental
   - 4.1 Kesimpulan Capaian Progress Report 2
   - 4.2 Rencana Tindak Lanjut Menuju Final Report
 - **LAMPIRAN**
-  - Lampiran 1: Direktori Tautan Repositori Resmi GitHub & Live Notebook
-  - Lampiran 2: Matriks Komparasi Kinerja terhadap Literatur Kajian SLR
+  - Lampiran 1: Literatur Systematic Literature Review (SLR)
+  - Lampiran 2: Tautan Repositori Resmi GitHub & Live Notebook
   - Lampiran 3: Panduan Eksekusi Sistem Secara Mandiri di Lingkungan Lokal
 
 ---
@@ -569,22 +569,23 @@ Meskipun sistem telah berhasil dibangun dan diintegrasikan secara penuh dari bac
 
 # LAMPIRAN
 
-### Lampiran 1: Direktori Tautan Repositori Resmi GitHub & Live Notebook
-- **Repositori Utama GitHub**: [https://github.com/accfd/SI-REKTA.git](https://github.com/accfd/SI-REKTA.git)
-- **Buku Kerja Eksperimen Resmi**: Berkas `docs/SIREKTA.ipynb` pada repositori.
-- **Branch Aktif**: `main` (Komit terverifikasi: `c4012f6`).
-
----
-
-### Lampiran 2: Matriks Komparasi Kinerja terhadap Literatur Kajian SLR
+### Lampiran 1: Literatur Systematic Literature Review (SLR)
 Rangkuman sintesis literatur dari dokumen `docs/SIREKTA_SLR.docx` menunjukkan bahwa model sistem rekomendasi tugas akhir berbasis leksikal terpadu SI-REKTA memberikan rasio efisiensi akurasi-terhadap-komputasi tertinggi dibandingkan arsitektur lain:
 - *Akurasi Hit Rate@3*: SI-REKTA (79.66%) vs Baseline Literatur (68.20% – 71.40%).
 - *Kecepatan Inferensi*: SI-REKTA (3.68 ms) vs Dense BERT Retriever (120–450 ms).
 - *Biaya Infrastruktur*: SI-REKTA (0 GPU, server CPU biasa) vs Deep Learning (membutuhkan GPU VRAM $\ge$ 8 GB).
+- *Mitigasi Cold-Start*: Berhasil 100% memetakan dosen baru menggunakan publikasi ilmiah, melampaui kelemahan mendasar Collaborative Filtering.
 
 ---
 
-### Lampiran 3: Panduan Eksekusi Sistem Secara Mandiri di Lingkungan Lokal
+### Lampiran 2: Tautan Repositori Resmi GitHub & Live Notebook
+- **Repositori Utama GitHub**: [https://github.com/accfd/SI-REKTA.git](https://github.com/accfd/SI-REKTA.git)
+- **Buku Kerja Eksperimen Resmi**: Berkas `docs/SIREKTA.ipynb` pada repositori.
+- **Branch Aktif**: `main` (Komit terverifikasi: `bddae3c`).
+
+---
+
+### Lampiran 3: Panduan Eksekusi Sistem Secara Mandiri di Lingkungan Lokal (run_system.bat)
 Untuk menjalankan ekosistem SI-REKTA secara mandiri pada komputer penguji:
 1. Pastikan Laragon aktif (Apache & MySQL port 3306).
 2. Jalankan berkas skrip otomatis di root proyek:
