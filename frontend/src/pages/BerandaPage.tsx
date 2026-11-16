@@ -34,16 +34,16 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
           <div className="flex flex-wrap gap-4 pt-2">
             <button
               onClick={() => setActiveTab('cari')}
-              className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-xl font-bold text-brand-950 bg-white hover:bg-copper-50 shadow-lg shadow-white/10 active:scale-95 transition-all"
+              className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-xl font-bold text-stone-900 bg-white hover:bg-stone-100 shadow-lg shadow-black/15 active:scale-95 transition-all cursor-pointer"
             >
-              <Search className="w-4 h-4 text-brand-700" />
-              <span>Cari Dosen Sekarang</span>
+              <Search className="w-4 h-4 text-brand-700 shrink-0" />
+              <span className="text-stone-900 font-bold">Cari Dosen Sekarang</span>
             </button>
             <button
               onClick={() => setActiveTab('pedoman')}
-              className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/20 backdrop-blur-sm active:scale-95 transition-all"
+              className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/20 backdrop-blur-sm active:scale-95 transition-all cursor-pointer"
             >
-              <FileText className="w-4 h-4" />
+              <FileText className="w-4 h-4 shrink-0" />
               <span>Lihat Dokumen Pedoman</span>
             </button>
           </div>

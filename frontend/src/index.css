@@ -11,6 +11,7 @@
   --color-brand-700: #582422;
   --color-brand-800: #461c1a;
   --color-brand-900: #331312;
+  --color-brand-950: #1f0b0a;
 
   --color-copper-50: #fdf7f5;
   --color-copper-100: #faece7;
@@ -22,6 +23,7 @@
   --color-copper-700: #97442d;
   --color-copper-800: #7b3827;
   --color-copper-900: #652f23;
+  --color-copper-950: #3a170f;
 }
 
 @layer base {
