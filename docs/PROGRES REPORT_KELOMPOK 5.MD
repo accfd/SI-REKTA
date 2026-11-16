@@ -275,7 +275,8 @@ Konfigurasi `TfidfVectorizer` yang diterapkan disajikan pada Tabel 1.4.
 | `min_df` | `1` | Mempertahankan istilah langka yang spesifik pada keahlian unik dosen |
 
 Formula matematis pembobotan TF-IDF Sublinear yang digunakan adalah:
-$$	ext{TF-IDF}(t, d, D) = ig(1 + \log(	ext{TF}(t, d))ig) 	imes \left(\lograc{1 + |D|}{1 + 	ext{DF}(t, D)} + 1ight)$$
+$$	ext{TF-IDF}(t, d, D) = ig(1 + \log(	ext{TF}(t, d))ig) 	imes \left(\lograc{1 + |D|}{1 + 	ext{DF}(t, D)} + 1
+ight)$$
 
 Berdasarkan luaran Cell 54 notebook `SIREKTA.ipynb`, ekstraksi ini menghasilkan lonjakan leksikon yang luar biasa:
 - Ukuran matriks dokumen training: **$(1.204 	imes 12.364)$**
@@ -470,9 +471,12 @@ Skema basis data `sirekta_db` dirancang memenuhi kaidah 3NF untuk memastikan tid
 | Nama Tabel | Jumlah Kolom | Primary Key | Foreign Key Relasi | Fungsi dan Entitas Data |
 |---|---|---|---|---|
 | `kelompok_keahlian` | 3 | `id_kk` | - | Master 4 Kelompok Keahlian DSI (RD-BI, SE, SD, TK-ITI) |
-| `dosen` | 4 | `id_dosen` | `id_kk` $ightarrow$ `kelompok_keahlian` | Data 17 Dosen Tetap Aktif DSI Unand |
-| `profil_dosen` | 5 | `id_profil` | `id_dosen` $ightarrow$ `dosen` (Unique) | Statistik jumlah bimbingan, publikasi, & flag is_publikasi_only |
-| `kata_kunci_dosen` | 4 | `id_kata_kunci` | `id_dosen` $ightarrow$ `dosen` | 136 kata kunci representasi kepakaran dosen hasil TF-IDF |
+| `dosen` | 4 | `id_dosen` | `id_kk` $
+ightarrow$ `kelompok_keahlian` | Data 17 Dosen Tetap Aktif DSI Unand |
+| `profil_dosen` | 5 | `id_profil` | `id_dosen` $
+ightarrow$ `dosen` (Unique) | Statistik jumlah bimbingan, publikasi, & flag is_publikasi_only |
+| `kata_kunci_dosen` | 4 | `id_kata_kunci` | `id_dosen` $
+ightarrow$ `dosen` | 136 kata kunci representasi kepakaran dosen hasil TF-IDF |
 | `tugas_akhir` | 5 | `id_ta` | - | 625 riwayat judul tugas akhir alumni DSI |
 | `bimbingan_ta` | 4 | `id_bimbingan` | `id_ta`, `id_dosen` | Relasi bimbingan tugas akhir (Pembimbing 1 & 2) |
 | `publikasi` | 3 | `id_publikasi` | - | 643 judul artikel publikasi ilmiah resmi dosen |
@@ -620,10 +624,20 @@ Kontribusi setiap anggota dibuktikan secara transparan melalui artefak kode prog
 ---
 
 ### 3.3 Alur Koordinasi Tim, Alur Kerja Git, dan Integrasi Sistem
-Untuk menjamin kualitas perangkat lunak dan mencegah konflik kode program (*merge conflict*), tim menerapkan pola kerja kolaboratif terstruktur:
-1. **Pusat Repositori GitHub (`https://github.com/accfd/SI-REKTA.git`)**: Menjadi sumber kebenaran tunggal (*single source of truth*) untuk seluruh kode program backend, frontend, database, dan artefak model pembelajaran mesin.
-2. **Sinkronisasi Modular Antar-Anggota**: Pengerjaan dilakukan secara terisolasi pada modul masing-masing. Begitu eksperimen notebook dan serialisasi model diselesaikan oleh Rafa dan Farrel, Fuadi langsung mengintegrasikannya ke endpoint FastAPI, sementara Farrel mengonsumsi payload JSON tersebut ke dalam komponen antarmuka React.
-3. **Pengujian Mandiri Satu-Klik (`run_system.bat`)**: Disusun skrip otomasi batch script untuk menyalakan database Laragon, server backend FastAPI (port 8000), dan frontend Vite (port 5173) secara serempak guna pengujian lokal mandiri.
+Untuk menjamin kualitas perangkat lunak, keutuhan arsitektur, dan mencegah konflik kode program (*merge conflict*), tim menerapkan pola kerja kolaboratif terstruktur:
+
+1. **Pusat Repositori GitHub (`https://github.com/accfd/SI-REKTA.git`)**:
+   Menjadi sumber kebenaran tunggal (*single source of truth*) untuk seluruh kode program backend, frontend, skema database, buku kerja eksperimen, dan artefak model pembelajaran mesin. Seluruh anggota bekerja dengan cabang utama (*main branch*) yang tersinkronisasi secara teratur.
+2. **Pola Koordinasi Terintegrasi pada Pekerjaan yang Saling Berkaitan**:
+   Ketika menemui kendala teknis atau kebutuhan yang bersinggungan antarlapisan arsitektur, tim menyelesaikan koordinasi secara cepat dan modular:
+   - **Kasus Penyelarasan Aturan Bisnis Zero Score Exposure**:
+     Ketika Rafa dan Farrel menyepakati hasil evaluasi IR `ranx` dan perumusan aturan etika *Zero Score Exposure*, Fuadi langsung memperbarui kontrak skema Pydantic backend di `endpoints.py` agar tidak mengirimkan persentase angka skor numerik ke frontend. Farrel selanjutnya mengadaptasi komponen `RecommendationCard.tsx` di React untuk menampilkan lencana ranking (#1, #2, #3), badge *"Profil dari publikasi"*, serta kata kunci pendukung tanpa menampilkan angka persentase.
+   - **Kasus Validasi Masukan Judul Minimal 6 Kata**:
+     Untuk mengatasi masukan kueri yang ambigu, Fuadi mengimplementasikan validasi HTTP 400 Bad Request pada endpoint `/api/recommend` backend, sementara Farrel menyematkan *dynamic live word counter* pada formulir pencarian React (`SearchForm.tsx`) sehingga tombol pencarian terkunci otomatis jika teks kurang dari 6 kata.
+   - **Kasus Standardisasi Desain UI dan Palet Warna Logo**:
+     Setelah tim menyepakati logo resmi SI-REKTA dengan tema Marun (`#6D302D`) dan Tembaga (`#C5694B`), Farrel menyelaraskan seluruh token warna Tailwind CSS pada antarmuka web, sementara Fuadi menyusun skrip otomasi pengujian mandiri satu-klik `run_system.bat`.
+3. **Pengujian Mandiri Otomatis Satu-Klik (`run_system.bat`)**:
+   Fuadi menyusun skrip otomasi lokal (*Windows Batch Script*) untuk memastikan Apache & MySQL Laragon, server FastAPI (port 8000), dan server Vite React (port 5173) dapat dijalankan secara serempak hanya dengan mengeklik satu berkas di komputer penguji.
 
 ---
 
@@ -637,11 +651,21 @@ Berdasarkan seluruh tahapan perancangan, eksperimen sistematis, dan implementasi
 3. **Solusi Nyata Masalah Cold-Start**: Pemanfaatan korpus publikasi riset terbukti 100% sukses memetakan dan merekomendasikan dosen-dosen baru yang belum memiliki riwayat bimbingan tugas akhir ke peringkat Top-3 secara kompetitif dan transparan.
 4. **Implementasi Nyata End-to-End**: Seluruh rancangan sistem telah berhasil diwujudkan menjadi aplikasi web fungsional penuh (Live), mencakup basis data relasional 3NF MySQL Laragon (10 tabel), backend RESTful FastAPI berlatensi sangat rendah (< 5 ms), dan antarmuka web modern React Vite bertema warna resmi logo yang siap digunakan oleh mahasiswa Departemen Sistem Informasi.
 
-### 4.2 Rencana Tindak Lanjut Menuju Final Report
-Meskipun sistem telah berhasil dibangun dan diintegrasikan secara penuh dari backend hingga frontend, beberapa rencana penyempurnaan akan dilaksanakan menuju Final Report:
-1. **User Acceptance Testing (UAT)**: Melakukan pengujian kegunaan (*usability test*) menggunakan kuesioner System Usability Scale (SUS) kepada minimal 30 mahasiswa tingkat akhir DSI Unand.
-2. **Pembaruan Korpus Semester Berjalan**: Mengumpulkan dan menambahkan data riwayat tugas akhir lulusan semester ganjil 2025/2026 yang baru saja menyelesaikan yudisium.
-3. **Deployment Cloud / Server Universitas**: Memaketkan sistem ke dalam wadah Docker (*containerization*) untuk di-deploy pada server laboratorium sistem informasi Universitas Andalas.
+### 4.2 Bagian Pengembangan Model yang Belum Selesai dan Rencana Tindak Lanjut
+Sesuai arahan evaluasi pada Progress Report 2, laporan ini tidak hanya menyajikan capaian yang telah berhasil diselesaikan, tetapi juga memetakan secara kritis aspek pengembangan model pembelajaran mesin yang masih memiliki ruang penyempurnaan serta rencana aksi nyata menuju *Final Report*:
+
+1. **Bagian Pengembangan Model yang Masih Berjalan / Belum Selesai**:
+   - **Eksplorasi Model Hibrida (*Hybrid Sparse-Dense Semantic Retrieval*)**:
+     Saat ini model SI-REKTA mengandalkan representasi leksikal terpadu TF-IDF N-gram (1,2) dengan pembobotan sublinear. Meskipun terbukti mencatatkan Hit Rate@3 sangat tinggi (79.66%), representasi leksikal murni memiliki keterbatasan alami dalam menangani variasi sinonim (*vocabulary mismatch problem*), seperti padanan kata *"pariwisata"* dengan *"destinasi wisata"* atau *"e-commerce"* dengan *"toko daring"*. Pada tahap menuju *Final Report*, tim merencanakan eksperimen lanjutan memadukan representasi leksikal TF-IDF dengan model *Dense Semantic Embedding* bahasa Indonesia (misalnya IndoBERT atau IndoSentence-BERT) menggunakan skema fusi peringkat *Reciprocal Rank Fusion* (RRF).
+   - **Pemanfaatan Ekstrak Abstrak Dokumen**:
+     Saat ini korpus yang diolah terbatas pada teks judul tugas akhir dan judul artikel publikasi ilmiah. Penambahan teks abstrak publikasi dan ringkasan proposal tugas akhir sedang dipersiapkan untuk memperkaya konteks semantik kepakaran dosen.
+   - **Pembobotan Temporal Riset (*Time-Decay Weighting*)**:
+     Arah kepakaran dosen dapat berevolusi seiring waktu. Tim sedang merancang fungsi peluruhan waktu (*time-decay function*) pada publikasi ilmiah agar publikasi riset dalam 3–5 tahun terakhir memperoleh bobot relevansi yang lebih tinggi dibandingkan publikasi di atas 10 tahun lalu.
+
+2. **Rencana Implementasi dan Validasi Pengguna Menuju Final Report**:
+   - **User Acceptance Testing (UAT)**: Melakukan pengujian kegunaan (*usability test*) menggunakan kuesioner baku *System Usability Scale* (SUS) kepada minimal 30 mahasiswa tingkat akhir Departemen Sistem Informasi Universitas Andalas.
+   - **Pembaruan Korpus Semester Berjalan**: Mengumpulkan dan menambahkan data riwayat tugas akhir lulusan semester ganjil 2025/2026 yang baru saja menyelesaikan sidang yudisium untuk memperbarui matriks profil dosen secara berkala.
+   - **Deployment Cloud & Kontainerisasi**: Memaketkan seluruh ekosistem (Frontend React, Backend FastAPI, dan Database MySQL) ke dalam wadah *Docker Compose* untuk di-deploy secara terpusat pada server laboratorium komputasi Fakultas Teknologi Informasi Universitas Andalas.
 
 ---
 
@@ -668,7 +692,8 @@ Untuk menjalankan ekosistem SI-REKTA secara mandiri pada komputer penguji:
 1. Pastikan Laragon aktif (Apache & MySQL port 3306).
 2. Jalankan berkas skrip otomatis di root proyek:
    ```cmd
-   d:\SEMESTER 5\MLun_system.bat
+   d:\SEMESTER 5\ML
+un_system.bat
    ```
 3. Akses antarmuka web melalui browser pada alamat:
    - **Frontend Web UI**: `http://localhost:5173`
