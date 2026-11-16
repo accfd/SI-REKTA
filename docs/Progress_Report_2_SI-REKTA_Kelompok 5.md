@@ -13,11 +13,11 @@
 ---
 
 ### **Disusun Oleh (Kelompok 5):**
-| No | Nama Anggota | NIM | Peran Utama |
+| No | Nama Anggota | NIM | Pembagian Tanggung Jawab 12 Tahapan Resmi |
 |---|---|---|---|
-| 1 | **Fuadi Dhiyaulhaq** | 2411522001 | *Project Manager, System Architect, Database Engineer (3NF MySQL), & Backend API Engineer (FastAPI)* |
-| 2 | **Rafa Gian Atthari** | 2411522014 | *Core Machine Learning Engineer, NLP Preprocessor Specialist, & Unified Feature Engineering Specialist* |
-| 3 | **Farrel Ghufran Rahman** | 2411521009 | *Evaluation Benchmarking Specialist (`ranx`), MLOps Pipeline Serializer, & Frontend UI Specialist (React Vite)* |
+| 1 | **Fuadi Dhiyaulhaq** | 2411522001 | Tahap 1, Tahap 2, Tahap 3, Tahap 4, dan Tahap 11 |
+| 2 | **Rafa Gian Atthari** | 2411522014 | Tahap 5, Tahap 6, Tahap 7, dan Tahap 10 |
+| 3 | **Farrel Ghufran Rahman** | 2411521009 | Tahap 8, Tahap 9, dan Tahap 12 |
 
 ---
 
@@ -30,7 +30,7 @@
 
 ## KATA PENGANTAR
 
-Puji dan syukur ke hadirat Allah Subhanahu Wa Ta'ala atas rahmat dan karunia-Nya sehingga Kelompok 5 dapat menyelesaikan dokumen **Laporan Progress Report 2 Proyek Machine Learning** dengan judul **"SI-REKTA: Sistem Rekomendasi Dosen Pembimbing Tugas Akhir Berbasis Dual-Source Dataset, Unified Profile Matching, dan Explainable AI"** secara tuntas, empiris, dan tepat waktu.
+Puji dan syukur ke hadirat Allah Subhanahu Wa Ta'ala atas limpahan rahmat dan karunia-Nya sehingga Kelompok 5 dapat menyelesaikan dokumen **Laporan Progress Report 2 Proyek Machine Learning** dengan judul **"SI-REKTA: Sistem Rekomendasi Dosen Pembimbing Tugas Akhir Berbasis Dual-Source Dataset, Unified Profile Matching, dan Explainable AI"** secara tuntas, empiris, dan tepat waktu.
 
 Laporan kemajuan kedua ini disusun sebagai bentuk dokumentasi pertanggungjawaban akademis dan teknis terhadap progres nyata yang telah dicapai dalam mata kuliah Machine Learning (DSI61133) di Departemen Sistem Informasi, Fakultas Teknologi Informasi, Universitas Andalas. Berbeda dengan Progress Report 1 yang masih berfokus pada eksplorasi data awal, pembuktian konsep late-fusion, dan rancangan rencana di buku kerja Google Colab, Progress Report 2 ini menyajikan lompatan besar: **penyempurnaan arsitektur model machine learning leksikal terpadu (12.364 fitur), evaluasi baku Information Retrieval menggunakan library `ranx` bebas kebocoran data, pembuktian keunggulan performa terhadap kajian Systematic Literature Review (SLR), serta realisasi penuh sistem aplikasi web end-to-end yang berjalan aktif (live)** mencakup basis data relasional 3NF MySQL Laragon, backend API performa tinggi FastAPI, dan antarmuka modern React Vite.
 
@@ -65,32 +65,31 @@ Pada fase Progress Report 2, tim melakukan evolusi dan penyempurnaan fundamental
 - **DAFTAR ISI**
 - **DAFTAR TABEL**
 - **DAFTAR GAMBAR**
-- **BAB 1 PENGEMBANGAN DAN EKSPERIMEN MODEL MACHINE LEARNING (12 TAHAPAN PROYEK)**
-  - 1.1 Identifikasi Masalah / Problem Identification (Tahap 1)
-  - 1.2 Analisis Kebutuhan Sistem / System Requirements Analysis (Tahap 2)
-  - 1.3 Analisis Data & Karakteristik Data (Tahap 3)
-  - 1.4 Pembersihan Data / Data Preprocessing (Tahap 4)
-  - 1.5 Prosedur Pemrosesan Data & Feature Engineering (Tahap 5)
-  - 1.6 Pemilihan Algoritma Machine Learning (Tahap 6)
-  - 1.7 Pengembangan Model / Model Development (Tahap 7)
-  - 1.8 Evaluasi Model & Benchmarking Pustaka `ranx` (Tahap 8)
-  - 1.9 Validasi Ilmiah Terhadap Kajian Systematic Literature Review (SLR)
-  - 1.10 Contoh Proses Pemodelan & Hasil Keluaran Nyata
-  - 1.11 Penyimpanan Model / Model Storage & MLOps (Tahap 9)
-  - 1.12 Perancangan Sistem Informasi / Information System Design (Tahap 10)
-  - 1.13 Integrasi Model ke dalam Sistem / Model Integration (Tahap 11)
-  - 1.14 Implementasi Antarmuka Pengguna / User Interface Implementation (Tahap 12)
-  - 1.15 Evaluasi Bagian yang Belum Selesai & Rencana Tindak Lanjut
+- **BAB 1 PENGEMBANGAN MODEL MACHINE LEARNING (12 TAHAPAN RESMI)**
+  - 1.1 Problem Identification (Tahap 1 — Fuadi Dhiyaulhaq)
+  - 1.2 System Requirements Analysis (Tahap 2 — Fuadi Dhiyaulhaq)
+  - 1.3 Data Analysis (Tahap 3 — Fuadi Dhiyaulhaq)
+  - 1.4 Data Preprocessing (Tahap 4 — Fuadi Dhiyaulhaq)
+  - 1.5 Data Processing Procedures (Tahap 5 — Rafa Gian Atthari)
+  - 1.6 Machine Learning Algorithm Selection (Tahap 6 — Rafa Gian Atthari)
+  - 1.7 Model Development (Tahap 7 — Rafa Gian Atthari)
+  - 1.8 Model Evaluation (Tahap 8 — Farrel Ghufran Rahman)
+  - 1.9 Model Storage (Tahap 9 — Farrel Ghufran Rahman)
+  - 1.10 Information System Design (Tahap 10 — Rafa Gian Atthari)
+  - 1.11 Model Integration into the System (Tahap 11 — Fuadi Dhiyaulhaq)
+  - 1.12 User Interface Implementation (Tahap 12 — Farrel Ghufran Rahman)
 - **BAB 2 KENDALA DAN SOLUSI (ANALISIS MASALAH & PENYEBABNYA)**
   - 2.1 Kendala 1: Keterbatasan Skema Bobot Manual ($\alpha$) Late-Fusion pada Progress 1
   - 2.2 Kendala 2: Risiko Kesalahpahaman Terhadap Tampilan Skor Persentase (%)
   - 2.3 Kendala 3: Masukan Judul Kueri yang Terlalu Singkat dan Ambigu
   - 2.4 Kendala 4: Potensi Kebocoran Data (*Data Leakage*) pada Evaluasi Model
 - **BAB 3 KOORDINASI TIM DAN KONTRIBUSI ANGGOTA**
-  - 3.1 Pembagian Peran dan Matriks Tanggung Jawab Anggota
-  - 3.2 Progres Nyata dan Kontribusi Spesifik Masing-Masing Anggota
-  - 3.3 Alur Koordinasi Tim dan Manajemen Ketergantungan Tugas
-- **BAB 4 KESIMPULAN PROGRESS REPORT 2**
+  - 3.1 Pembagian Peran dan Matriks Tanggung Jawab 12 Tahapan
+  - 3.2 Progres Nyata dan Kontribusi Spesifik Berbasis Bukti Kode/Artefak
+  - 3.3 Alur Koordinasi Tim dan Kolaborasi GitHub
+- **BAB 4 KESIMPULAN PROGRESS REPORT 2 DAN RENCANA TINDAK LANJUT**
+  - 4.1 Kesimpulan Capaian Progress Report 2
+  - 4.2 Rencana Tindak Lanjut Menuju Final Report
 - **LAMPIRAN**
   - Lampiran 1: Direktori Tautan Repositori Resmi GitHub & Live Notebook
   - Lampiran 2: Matriks Komparasi Kinerja terhadap Literatur Kajian SLR
@@ -100,23 +99,23 @@ Pada fase Progress Report 2, tim melakukan evolusi dan penyempurnaan fundamental
 
 ## DAFTAR TABEL
 
-- **Tabel 1.1**: Matriks Penyelarasan 12 Tahapan Proyek Pembelajaran Mesin 2026
+- **Tabel 1.1**: Matriks Pemetaan 12 Tahapan Proyek Pembelajaran Mesin 2026 dan Penanggung Jawab
 - **Tabel 1.2**: Sebaran Distribusi Bimbingan Skripsi dan Publikasi Riset 17 Dosen Tetap Aktif DSI
 - **Tabel 1.3**: Contoh Transformasi Teks Judul Mentah Menjadi Teks Bersih (*Clean Text*)
 - **Tabel 1.4**: Konfigurasi Parameter `TfidfVectorizer` Terkini SI-REKTA
 - **Tabel 1.5**: Perbandingan Alternatif Algoritma yang Dipertimbangkan untuk SI-REKTA
-- **Tabel 1.6**: Rincian Partisi Dataset Eksperimen Bebas *Data Leakage*
-- **Tabel 1.7**: Matriks Komparasi Kinerja Evaluasi: Progress Report 1 vs Progress Report 2
-- **Tabel 1.8**: Tabel Benchmarking Hasil SI-REKTA terhadap Literatur Kajian SLR
-- **Tabel 1.9**: Hasil Perankingan Top-3 Rekomendasi untuk Kueri Topik Umum
-- **Tabel 1.10**: Hasil Perankingan Top-3 Rekomendasi untuk Kueri Dosen Cold-Start
+- **Tabel 1.6**: Hasil Perankingan Top-3 Rekomendasi untuk Kueri Topik Umum
+- **Tabel 1.7**: Hasil Perankingan Top-3 Rekomendasi untuk Kueri Dosen Cold-Start
+- **Tabel 1.8**: Rincian Partisi Dataset Eksperimen Bebas *Data Leakage*
+- **Tabel 1.9**: Matriks Komparasi Kinerja Evaluasi: Progress Report 1 vs Progress Report 2
+- **Tabel 1.10**: Tabel Benchmarking Hasil SI-REKTA terhadap Literatur Kajian SLR
 - **Tabel 1.11**: Spesifikasi Struktur 10 Tabel Ternormalisasi (3NF) Basis Data `sirekta_db`
 - **Tabel 1.12**: Spesifikasi Kontrak Antarmuka Endpoint RESTful API SI-REKTA
 - **Tabel 2.1**: Analisis Kendala 1: Keterbatasan Bobot Manual Late-Fusion
 - **Tabel 2.2**: Analisis Kendala 2: Kebijakan Integritas Tampilan Zero Score Exposure
 - **Tabel 2.3**: Analisis Kendala 3: Validasi Masukan Judul Minimal 6 Kata
 - **Tabel 2.4**: Analisis Kendala 4: Partisi Terisolasi Bebas Data Leakage
-- **Tabel 3.1**: Matriks Pembagian Tanggung Jawab dan Beban Kerja Kelompok 5
+- **Tabel 3.1**: Matriks Pembagian Tanggung Jawab 12 Tahapan Kelompok 5
 - **Tabel 3.2**: Rincian Kontribusi Spesifik dan Artefak Nyata yang Dihasilkan per Anggota
 
 ---
@@ -126,8 +125,8 @@ Pada fase Progress Report 2, tim melakukan evolusi dan penyempurnaan fundamental
 - **Gambar 1.1**: Grafik Perbandingan Riwayat Bimbingan Skripsi vs Publikasi Ilmiah 17 Dosen
 - **Gambar 1.2**: Tangkapan Layar Pengujian Fungsi Preprocessing NLP Akademik pada Notebook
 - **Gambar 1.3**: Ringkasan Ekstraksi Fitur 12.364 Dimensi Vektor TF-IDF di Notebook `SIREKTA.ipynb`
-- **Gambar 1.4**: Eksekusi Evaluasi Temu Balik Informasi `ranx` pada 118 Kueri Uji Testing
-- **Gambar 1.5**: Hasil Inferensi Nyata Rekomendasi Top-3 dan Kartu Penjelasan Explainable AI
+- **Gambar 1.4**: Hasil Inferensi Nyata Rekomendasi Top-3 dan Kartu Penjelasan Explainable AI
+- **Gambar 1.5**: Eksekusi Evaluasi Temu Balik Informasi `ranx` pada 118 Kueri Uji Testing
 - **Gambar 1.6**: Struktur Skema Relasi Basis Data `sirekta_db` (3NF) di phpMyAdmin Laragon
 - **Gambar 1.7**: Dokumentasi Interaktif REST API (Swagger UI) Backend FastAPI
 - **Gambar 1.8**: Antarmuka Halaman Utama (Beranda) SI-REKTA dengan Palet Warna Resmi
@@ -137,36 +136,36 @@ Pada fase Progress Report 2, tim melakukan evolusi dan penyempurnaan fundamental
 
 ---
 
-# BAB 1: PENGEMBANGAN DAN EKSPERIMEN MODEL MACHINE LEARNING (12 TAHAPAN PROYEK)
+# BAB 1: PENGEMBANGAN MODEL MACHINE LEARNING (12 TAHAPAN RESMI)
 
-Pengembangan model pembelajaran mesin pada proyek SI-REKTA mengikuti kerangka kerja baku **12 Tahapan Proyek Pembelajaran Mesin 2026** yang diselaraskan dengan metodologi CRISP-ML(Q) (*Cross-Industry Standard Process for the Development of Machine Learning Applications with Quality Assurance*). Penyelarasan tahapan disajikan pada Tabel 1.1.
+Pengembangan model pembelajaran mesin pada proyek SI-REKTA mengikuti kerangka kerja baku **12 Tahapan Proyek Pembelajaran Mesin 2026** yang diselaraskan dengan metodologi CRISP-ML(Q). Setiap tahapan dikerjakan secara bertanggung jawab oleh anggota tim yang telah ditetapkan, sebagaimana disajikan pada Tabel 1.1.
 
-**Tabel 1.1 Matriks Penyelarasan 12 Tahapan Proyek Pembelajaran Mesin 2026**
-| No | Tahapan Standar Proyek ML 2026 | Status pada Progress Report 1 | Status Terkini pada Progress Report 2 |
-|---|---|---|---|
-| 1 | Problem Identification | Selesai | Selesai (Divalidasi) |
-| 2 | System Requirements Analysis | Selesai | Selesai (Diperbarui dengan Aturan Zero-Score & Min 6 Kata) |
-| 3 | Data Analysis & Karakteristik Data | Selesai | Selesai (Divalidasi) |
-| 4 | Data Preprocessing | Selesai | Selesai (Diperkaya dengan DSI_ACADEMIC_STOPWORDS) |
-| 5 | Data Processing Procedures & Feature Engineering | Selesai (3.947 Fitur) | **Selesai (Evolusi Fitur Lonjak ke 12.364 N-gram)** |
-| 6 | Machine Learning Algorithm Selection | Selesai (Late-Fusion $\alpha$) | **Selesai (Pivot ke Unified Profile Aggregation)** |
-| 7 | Model Development & Late-Fusion | Selesai (Dual-Matrix) | **Selesai (Unified Matrix 17 × 12.364 + XAI)** |
-| 8 | Model Evaluation | Selesai (5-Fold CV) | **Selesai (IR Benchmarking `ranx` Bebas Leakage: Hit@3=79.66%)** |
-| 9 | Model Storage & Serialization | Selesai (Joblib) | Selesai (Joblib + JSON Metadata + Latensi < 5 ms) |
-| 10 | Information System Design | *Rencana* | **Selesai Penuh (Database MySQL 3NF 10 Tabel & REST API)** |
-| 11 | Model Integration into the System | *Rencana* | **Selesai Penuh (Integrasi Lifespan Startup FastAPI In-Memory)** |
-| 12 | User Interface Implementation | *Rencana* | **Selesai Penuh (Aplikasi Web React Vite Tailwind Live)** |
+**Tabel 1.1 Matriks Pemetaan 12 Tahapan Proyek Pembelajaran Mesin 2026 dan Penanggung Jawab**
+| No | Tahapan Standar Proyek ML 2026 | Penanggung Jawab Utama | Status Progress 1 | Status Terkini Progress 2 |
+|---|---|---|---|---|
+| 1 | Problem Identification | **Fuadi Dhiyaulhaq** | Selesai | Selesai (Divalidasi) |
+| 2 | System Requirements Analysis | **Fuadi Dhiyaulhaq** | Selesai | Selesai (Diperbarui Aturan Bisnis) |
+| 3 | Data Analysis | **Fuadi Dhiyaulhaq** | Selesai | Selesai (Divalidasi) |
+| 4 | Data Preprocessing | **Fuadi Dhiyaulhaq** | Selesai | Selesai (Kamus DSI Stopwords) |
+| 5 | Data Processing Procedures | **Rafa Gian Atthari** | Selesai (3.947 Fitur) | **Selesai (Lonjak 12.364 Fitur)** |
+| 6 | Machine Learning Algorithm Selection | **Rafa Gian Atthari** | Selesai (Late-Fusion $\alpha$) | **Selesai (Pivot ke Unified Profile)** |
+| 7 | Model Development | **Rafa Gian Atthari** | Selesai (Dual-Matrix) | **Selesai (Matriks Tunggal 17x12364)** |
+| 8 | Model Evaluation | **Farrel Ghufran Rahman** | Selesai (5-Fold CV) | **Selesai (IR `ranx`: Hit@3=79.66%)** |
+| 9 | Model Storage | **Farrel Ghufran Rahman** | Selesai (Joblib) | Selesai (Joblib, JSON, Latensi < 5ms) |
+| 10 | Information System Design | **Rafa Gian Atthari** | *Rencana* | **Selesai Penuh (DB 3NF MySQL Laragon)** |
+| 11 | Model Integration into the System | **Fuadi Dhiyaulhaq** | *Rencana* | **Selesai Penuh (FastAPI In-Memory)** |
+| 12 | User Interface Implementation | **Farrel Ghufran Rahman** | *Rencana* | **Selesai Penuh (React Vite Tailwind)** |
 
 ---
 
-### 1.1 Identifikasi Masalah / Problem Identification (Tahap 1)
+### 1.1 Problem Identification (Tahap 1 — Fuadi Dhiyaulhaq)
 Proses penentuan dosen pembimbing tugas akhir pada program studi sarjana sering kali menghadapi distorsi informasi antara mahasiswa dan departemen. Di Departemen Sistem Informasi (DSI) Universitas Andalas, mahasiswa tingkat akhir diwajibkan menyusun draf proposal atau judul tugas akhir untuk diajukan kepada calon dosen pembimbing. Namun, mahasiswa kerap mengalami kesulitan dalam mengidentifikasi dosen yang kepakarannya benar-benar beririsan dengan topik yang diminati. Akibatnya, terjadi penumpukan usulan bimbingan hanya pada dosen-dosen senior yang populer (*topic congestion*), sementara keahlian dosen lain tidak terutilisasi secara merata.
 
 Tantangan kedua adalah adanya fenomena **Cold-Start Problem**. Dalam korpus historis skripsi alumni DSI Unand tahun 2014–2026, tercatat terdapat dosen-dosen tetap baru yang belum pernah ditugaskan menjadi Pembimbing 1. Apabila sistem perekomendasi hanya mengandalkan data masa lalu bimbingan skripsi alumni, peluang keterpilihan dosen baru tersebut adalah nol (0%), sehingga sistem menjadi diskriminatif dan tidak mampu memetakan kompetensi dosen baru.
 
 ---
 
-### 1.2 Analisis Kebutuhan Sistem / System Requirements Analysis (Tahap 2)
+### 1.2 System Requirements Analysis (Tahap 2 — Fuadi Dhiyaulhaq)
 Untuk menjawab permasalahan di atas, kebutuhan sistem dirumuskan ke dalam kebutuhan fungsional (FR) dan non-fungsional (NFR), yang mengalami pembaruan signifikan pada Progress Report 2:
 
 1. **Batasan Korpus Dosen**: Sistem mengunci rekomendasi tepat kepada **17 Dosen Tetap Aktif DSI Unand**. Dosen luar departemen atau dosen purna tugas wajib dieliminasi dari sistem.
@@ -182,7 +181,7 @@ Untuk menjawab permasalahan di atas, kebutuhan sistem dirumuskan ke dalam kebutu
 
 ---
 
-### 1.3 Analisis Data & Karakteristik Data (Tahap 3)
+### 1.3 Data Analysis (Tahap 3 — Fuadi Dhiyaulhaq)
 Sistem memanfaatkan pendekatan korpus ganda (*Dual-Source Dataset*):
 
 1. **Dataset 1: Riwayat Skripsi Alumni (`Judul_TA.csv`)**:
@@ -220,7 +219,7 @@ Distribusi sebaran bimbingan skripsi dan publikasi riset dari 17 dosen tetap akt
 
 ---
 
-### 1.4 Pembersihan Data / Data Preprocessing (Tahap 4)
+### 1.4 Data Preprocessing (Tahap 4 — Fuadi Dhiyaulhaq)
 Teks judul tugas akhir dan artikel publikasi memiliki karakteristik formalitas akademik yang tinggi. Judul kerap disisipi dengan istilah baku seperti *"Rancang Bangun"*, *"Sistem Informasi Berbasis Web"*, atau *"Studi Kasus pada PT/Dinas"*. Jika dibersihkan menggunakan daftar stopword umum bahasa Indonesia (seperti Sastrawi), kata-kata tersebut tidak akan terbuang karena dianggap kata bermakna.
 
 Untuk itu, tim membangun pipeline pembersihan teks yang terdiri dari:
@@ -242,7 +241,7 @@ Tabel 1.3 menunjukkan contoh efektivitas sanitasi teks.
 
 ---
 
-### 1.5 Prosedur Pemrosesan Data & Feature Engineering (Tahap 5)
+### 1.5 Data Processing Procedures (Tahap 5 — Rafa Gian Atthari)
 Pada Progress Report 1, ekstraksi fitur dilakukan secara terpisah untuk skripsi dan publikasi sehingga hanya menghasilkan 3.947 fitur. Pada Progress Report 2, tim melakukan terobosan dengan menyatukan seluruh korpus teks terverifikasi (skripsi + publikasi) per dosen ke dalam satu dokumen terpadu sebelum proses pembobotan.
 
 Langkah ini menghasilkan **lonjakan fitur leksikal hingga mencapai 12.364 fitur** unik. Konfigurasi `TfidfVectorizer` yang diterapkan disajikan pada Tabel 1.4.
@@ -265,7 +264,7 @@ $$\text{TF-IDF}(t, d, D) = \big(1 + \log(\text{TF}(t, d))\big) \times \left(\log
 
 ---
 
-### 1.6 Pemilihan Algoritma Machine Learning (Tahap 6)
+### 1.6 Machine Learning Algorithm Selection (Tahap 6 — Rafa Gian Atthari)
 Pemilihan algoritma didasarkan pada perbandingan komprehensif terhadap alternatif model rekomendasi untuk korpus terbatas (*low-resource corpus*), sebagaimana disajikan pada Tabel 1.5.
 
 **Tabel 1.5 Perbandingan Alternatif Algoritma yang Dipertimbangkan untuk SI-REKTA**
@@ -279,7 +278,7 @@ Pemilihan algoritma didasarkan pada perbandingan komprehensif terhadap alternati
 
 ---
 
-### 1.7 Pengembangan Model / Model Development (Tahap 7)
+### 1.7 Model Development (Tahap 7 — Rafa Gian Atthari)
 Pada metode *Unified Profile Aggregation*, seluruh teks riwayat bimbingan skripsi dan publikasi riset milik dosen ke-$i$ diagregasikan menjadi satu dokumen representasi profil kepakaran $D_i$. Matriks profil kepakaran yang terbentuk berdimensi tunggal **$(17 \times 12.364)$**.
 
 Ketika mahasiswa memasukkan usulan draf judul tugas akhir $Q$, kueri tersebut ditransformasikan ke ruang vektor 12.364 dimensi menggunakan vectorizer yang sama: $\vec{Q} = \text{TF-IDF}(Q)$. Derajat kesesuaian dihitung menggunakan formula **Cosine Similarity**:
@@ -289,9 +288,35 @@ Sistem kemudian mengurutkan nilai $\text{Sim}(Q, D_i)$ secara menurun (*descendi
 
 Selain perankingan, sistem mengintegrasikan modul **Explainable AI (XAI)** yang mengekstraksi kata kunci persekutuan (*matched keywords*) melalui operasi perkalian elemen vektor ($w_{Q, j} \times w_{D_i, j}$) untuk memberikan alasan transparan mengapa dosen tersebut direkomendasikan.
 
+#### Contoh Proses Pemodelan & Hasil Keluaran Nyata
+1. **Pengujian Kasus Kueri Umum (Dosen Senior)**:
+   Kueri uji: *"Penerapan Algoritma K-Means Clustering untuk Segmentasi Pelanggan pada Data Penjualan Retail"*. Hasil perankingan disajikan pada Tabel 1.6.
+
+**Tabel 1.6 Hasil Perankingan Top-3 Rekomendasi untuk Kueri Topik Umum**
+| Peringkat | Nama Dosen Rekomendasi | Kategori Dosen | Kata Kunci Relevan yang Beririsan |
+|---|---|---|---|
+| **#1** | **Ricky Akbar, M.Kom.** | Dosen Senior (SE) | `clustering`, `penjualan retail`, `pelanggan` |
+| **#2** | **Rahmatika Pratama Santi, M.T.** | Dosen Senior (RD-BI) | `clustering`, `data penjualan` |
+| **#3** | **Dwi Welly Sukma Nirad, M.T.** | Dosen Senior (RD-BI) | `kmeans clustering`, `data penjualan` |
+
+2. **Pengujian Kasus Kritis Dosen Cold-Start (*Stress-Test*)**:
+   Kueri uji: *"Deteksi Ujaran Kebencian pada Media Sosial Twitter Menggunakan Algoritma FastText dan LSTM"*. Hasil perankingan disajikan pada Tabel 1.7.
+
+**Tabel 1.7 Hasil Perankingan Top-3 Rekomendasi untuk Kueri Dosen Cold-Start**
+| Peringkat | Nama Dosen Rekomendasi | Kategori & Lencana | Kata Kunci Relevan yang Beririsan |
+|---|---|---|---|
+| **#1** | **Febby Apri Wenando, M.Eng., Ph.D.** | *Profil dari publikasi* (SD) | `fasttext`, `ujaran kebencian`, `lstm`, `twitter` |
+| **#2** | **Ullya Mega Wahyuni, M.Kom.** | Dosen Senior (SD) | `media sosial`, `deteksi` |
+| **#3** | **Haris Suryamen, M.Sc.** | Dosen Senior (TK-ITI) | `media sosial`, `algoritma` |
+
+Hasil Tabel 1.7 membuktikan secara empiris bahwa dosen *cold-start* sukses menempati peringkat #1 ketika topik penelitian mahasiswa selaras dengan publikasi riset beliau.
+
+> **[SCREENSHOT: Gambar 1.4 - Hasil Output Rekomendasi Top-3 dan Kartu Penjelasan XAI]**  
+> *Panduan Bukti Visual: Tangkapan layar terminal / notebook yang menampilkan hasil perankingan Top-3 lengkap dengan list kata kunci dan judul paper pendukung.*
+
 ---
 
-### 1.8 Evaluasi Model & Benchmarking Pustaka `ranx` (Tahap 8)
+### 1.8 Model Evaluation (Tahap 8 — Farrel Ghufran Rahman)
 Pada Progress Report 2, evaluasi model ditingkatkan menggunakan metodologi baku temu balik informasi (*Information Retrieval*) dengan library resmi `ranx` yang dirancang untuk pengujian sistem perankingan.
 
 #### Prosedur Partisi Bebas Kebocoran Data (*Data Leakage Prevention*)
@@ -300,9 +325,9 @@ Untuk memastikan evaluasi benar-benar mencerminkan performa pada data baru yang 
 2. **Data Judul Skripsi**: Dipisahkan secara acak terkontrol menjadi **475 judul skripsi untuk training set** dan **118 judul skripsi untuk testing set** (rasio 80:20).
 3. **Penyaringan Kueri Uji**: Judul skripsi yang memiliki kemiripan leksikal identik dengan publikasi dievaluasi secara ketat agar tidak menimbulkan bias optimis semu.
 
-Rincian partisi disajikan pada Tabel 1.6.
+Rincian partisi disajikan pada Tabel 1.8.
 
-**Tabel 1.6 Rincian Partisi Dataset Eksperimen Bebas *Data Leakage***
+**Tabel 1.8 Rincian Partisi Dataset Eksperimen Bebas *Data Leakage***
 | Komponen Data | Jumlah Training Set | Jumlah Testing Set | Total Dokumen |
 |---|---|---|---|
 | Publikasi Dosen | 642 | 0 | 642 |
@@ -320,9 +345,9 @@ Pengujian dilakukan terhadap 118 kueri testing independen menggunakan metrik bak
 #### Justifikasi Ilmiah Peniadaan Metrik Precision
 Pada Progress Report 1, metrik Precision@3 sempat tercatat sebesar 30.51%. Pada Progress Report 2, metrik Precision ditiadakan dari pelaporan evaluasi utama karena dalam domain penugasan skripsi, jumlah dosen pembimbing utama relevan umumnya hanya 1 orang (maksimal 2). Ketika sistem mengembalikan 3 rekomendasi, nilai presisi teoretis maksimal memang hanya $\frac{1}{3} \approx 33.3\%$. Oleh karena itu, metrik Hit Rate@3 dan Recall@3 jauh lebih representatif dan adil secara metodologis.
 
-Tabel 1.7 merangkum komparasi metrik Progress 1 vs Progress 2.
+Tabel 1.9 merangkum komparasi metrik Progress 1 vs Progress 2.
 
-**Tabel 1.7 Matriks Komparasi Kinerja Evaluasi: Progress Report 1 vs Progress Report 2**
+**Tabel 1.9 Matriks Komparasi Kinerja Evaluasi: Progress Report 1 vs Progress Report 2**
 | Indikator Metrik | Progress Report 1 (5-Fold CV) | Progress Report 2 (`ranx` Unseen Test) | Selisih / Analisis Peningkatan |
 |---|---|---|---|
 | **Hit Rate@3** | 76.41% | **79.66%** | **+3.25% (Peningkatan Signifikan)** |
@@ -330,17 +355,10 @@ Tabel 1.7 merangkum komparasi metrik Progress 1 vs Progress 2.
 | **MRR@3** | 0.5912 | **0.6031** | **+0.0119 (Perankingan Lebih Presisi)** |
 | **Metrik Precision** | 30.51% | *Ditiadakan* | Dieliminasi karena tidak sesuai konteks IR |
 
-> **[SCREENSHOT: Gambar 1.4 - Eksekusi Evaluasi ranx pada 118 Kueri Uji di Notebook]**  
-> *Panduan Bukti Visual: Tangkapan layar cell evaluasi notebook yang memuat eksekusi fungsi `evaluate(Qrels, Run, metrics=['hit_rate@3', 'recall@3', 'mrr@3'])` beserta luaran angka 0.7966, 0.7542, dan 0.6031.*
+#### Validasi Ilmiah Terhadap Kajian Systematic Literature Review (SLR)
+Untuk membuktikan bahwa capaian model SI-REKTA berada pada taraf yang sangat baik, hasil empiris di atas disandingkan dengan temuan sintesis dokumen kajian riset **`docs/SIREKTA_SLR.docx`**. Rata-rata penelitian terdahulu yang menggunakan korpus judul pendek berbasis TF-IDF atau BM25 mencatatkan Hit Rate@3 pada rentang 68%–74% dan MRR pada rentang 0.48–0.55. Komparasi disajikan pada Tabel 1.10.
 
----
-
-### 1.9 Validasi Ilmiah Terhadap Kajian Systematic Literature Review (SLR)
-Untuk membuktikan bahwa capaian model SI-REKTA berada pada taraf yang sangat baik, tim menyandingkan hasil empiris di atas dengan temuan sintesis dari dokumen kajian riset **`docs/SIREKTA_SLR.docx`**. 
-
-Kajian SLR mengkaji puluhan artikel jurnal internasional (IEEE Transactions, Springer, Elsevier) terkait *Academic Advisor Recommender Systems*. Rata-rata penelitian terdahulu yang menggunakan korpus judul pendek berbasis TF-IDF atau BM25 mencatatkan Hit Rate@3 pada rentang 68%–74% dan MRR pada rentang 0.48–0.55. Komparasi disajikan pada Tabel 1.8.
-
-**Tabel 1.8 Tabel Benchmarking Hasil SI-REKTA terhadap Literatur Kajian SLR**
+**Tabel 1.10 Tabel Benchmarking Hasil SI-REKTA terhadap Literatur Kajian SLR**
 | Model / Penelitian Literatur | Pendekatan Arsitektur | Hit Rate@3 | MRR@3 | Penanganan Cold-Start | Kebutuhan Infrastruktur |
 |---|---|---|---|---|---|
 | **Baseline TF-IDF Klasik (Literatur)** | Single Corpus TF-IDF | 68.20% | 0.4850 | Gagal (0% pada dosen baru) | Ringan (CPU) |
@@ -349,40 +367,14 @@ Kajian SLR mengkaji puluhan artikel jurnal internasional (IEEE Transactions, Spr
 | **Dense Retrieval / BERT (Literatur)** | Semantic Embedding | 77.80% | 0.5890 | Rentan Overfitting | Berat (Wajib GPU) |
 | **SI-REKTA (Model Tim Kelompok 5)** | **Unified Corpus Profile + Sublinear TF-IDF N-gram** | **79.66%** | **0.6031** | **Berhasil 100% via Publikasi** | **Sangat Ringan (< 5 ms di CPU)** |
 
-Tabel 1.8 membuktikan bahwa **performa model SI-REKTA terbukti sangat unggul (*superior*)**, tidak hanya melampaui metode TF-IDF konvensional, tetapi bahkan kompetitif terhadap model berbasis dense embedding sembari mempertahankan efisiensi komputasi yang luar biasa tanpa GPU.
+Tabel 1.10 membuktikan bahwa **performa model SI-REKTA terbukti sangat unggul (*superior*)**, tidak hanya melampaui metode TF-IDF konvensional, tetapi bahkan kompetitif terhadap model berbasis dense embedding sembari mempertahankan efisiensi komputasi yang luar biasa tanpa GPU.
+
+> **[SCREENSHOT: Gambar 1.5 - Eksekusi Evaluasi ranx pada 118 Kueri Uji di Notebook]**  
+> *Panduan Bukti Visual: Tangkapan layar cell evaluasi notebook yang memuat eksekusi fungsi `evaluate(Qrels, Run, metrics=['hit_rate@3', 'recall@3', 'mrr@3'])` beserta luaran angka 0.7966, 0.7542, dan 0.6031.*
 
 ---
 
-### 1.10 Contoh Proses Pemodelan & Hasil Keluaran Nyata
-
-#### Pengujian Kasus Kueri Umum (Dosen Senior)
-Kueri uji: *"Penerapan Algoritma K-Means Clustering untuk Segmentasi Pelanggan pada Data Penjualan Retail"* (Topik Kelompok Keahlian RD-BI/SE). Hasil perankingan disajikan pada Tabel 1.9.
-
-**Tabel 1.9 Hasil Perankingan Top-3 Rekomendasi untuk Kueri Topik Umum**
-| Peringkat | Nama Dosen Rekomendasi | Kategori Dosen | Kata Kunci Relevan yang Beririsan |
-|---|---|---|---|
-| **#1** | **Ricky Akbar, M.Kom.** | Dosen Senior (SE) | `clustering`, `penjualan retail`, `pelanggan` |
-| **#2** | **Rahmatika Pratama Santi, M.T.** | Dosen Senior (RD-BI) | `clustering`, `data penjualan` |
-| **#3** | **Dwi Welly Sukma Nirad, M.T.** | Dosen Senior (RD-BI) | `kmeans clustering`, `data penjualan` |
-
-#### Pengujian Kasus Kritis Dosen Cold-Start (*Stress-Test*)
-Kueri uji: *"Deteksi Ujaran Kebencian pada Media Sosial Twitter Menggunakan Algoritma FastText dan LSTM"* (Topik kepakaran Pak Febby Apri Wenando). Hasil perankingan disajikan pada Tabel 1.10.
-
-**Tabel 1.10 Hasil Perankingan Top-3 Rekomendasi untuk Kueri Dosen Cold-Start**
-| Peringkat | Nama Dosen Rekomendasi | Kategori & Lencana | Kata Kunci Relevan yang Beririsan |
-|---|---|---|---|
-| **#1** | **Febby Apri Wenando, M.Eng., Ph.D.** | *Profil dari publikasi* (SD) | `fasttext`, `ujaran kebencian`, `lstm`, `twitter` |
-| **#2** | **Ullya Mega Wahyuni, M.Kom.** | Dosen Senior (SD) | `media sosial`, `deteksi` |
-| **#3** | **Haris Suryamen, M.Sc.** | Dosen Senior (TK-ITI) | `media sosial`, `algoritma` |
-
-Hasil Tabel 1.10 membuktikan secara empiris bahwa dosen *cold-start* sukses menempati peringkat #1 ketika topik penelitian mahasiswa selaras dengan publikasi riset beliau.
-
-> **[SCREENSHOT: Gambar 1.5 - Hasil Output Rekomendasi Top-3 dan Kartu Penjelasan XAI]**  
-> *Panduan Bukti Visual: Tangkapan layar terminal / notebook yang menampilkan hasil perankingan Top-3 lengkap dengan list kata kunci dan judul paper pendukung.*
-
----
-
-### 1.11 Penyimpanan Model / Model Storage & MLOps (Tahap 9)
+### 1.9 Model Storage (Tahap 9 — Farrel Ghufran Rahman)
 Model yang telah dilatih diserialisasikan ke dalam berkas biner ringkas menggunakan pustaka `joblib` ke dalam folder `model/`:
 - `si_rekta_pipeline.joblib` (132 KB): Memuat vectorizer TF-IDF terlatih dan matriks profil kepakaran.
 - `metadata_model.json` (2.4 KB): Memuat konfigurasi parameter, daftar urutan dosen, dan metrik evaluasi resmi.
@@ -392,7 +384,7 @@ Pengujian uji muat (*reload benchmark*) menunjukkan bahwa waktu yang dibutuhkan 
 
 ---
 
-### 1.12 Perancangan Sistem Informasi / Information System Design (Tahap 10)
+### 1.10 Information System Design (Tahap 10 — Rafa Gian Atthari)
 Tahap 10 yang pada Progress Report 1 masih berstatus rencana, pada Progress Report 2 telah selesai dirancang dan diimplementasikan secara penuh.
 
 #### Perancangan Basis Data Relasional (3NF MySQL Laragon)
@@ -417,7 +409,7 @@ Basis data dirancang memenuhi kaidah bentuk normal ketiga (Third Normal Form / 3
 
 ---
 
-### 1.13 Integrasi Model ke dalam Sistem / Model Integration (Tahap 11)
+### 1.11 Model Integration into the System (Tahap 11 — Fuadi Dhiyaulhaq)
 Integrasi model dilakukan pada lapisan backend menggunakan framework **FastAPI (Python 3.10+)**. Model diserialisasikan ke dalam memori aplikasi saat *lifespan startup*, sehingga saat ada panggilan HTTP request, tidak terjadi latensi pembacaan berkas dari hard drive.
 
 Spesifikasi kontrak endpoint REST API disajikan pada Tabel 1.12.
@@ -437,7 +429,7 @@ Spesifikasi kontrak endpoint REST API disajikan pada Tabel 1.12.
 
 ---
 
-### 1.14 Implementasi Antarmuka Pengguna / User Interface Implementation (Tahap 12)
+### 1.12 User Interface Implementation (Tahap 12 — Farrel Ghufran Rahman)
 Antarmuka pengguna dibangun menggunakan **React 19, TypeScript, Vite, dan Tailwind CSS**. Selaras dengan masukan dosen dan identitas resmi, tata letak menggunakan **Sidebar Navigation** di sebelah kiri serta mengadopsi palet warna logo resmi SI-REKTA: **Deep Maroon (`#6D302D`)** dan **Warm Copper/Terracotta (`#C5694B`)**.
 
 Fitur utama antarmuka web mencakup:
@@ -458,14 +450,6 @@ Fitur utama antarmuka web mencakup:
 
 > **[SCREENSHOT: Gambar 1.11 - Fitur Pratinjau PDF Buku Panduan Tugas Akhir di Web]**  
 > *Panduan Bukti Visual: Tangkapan layar halaman Dokumen Pedoman yang menampilkan berkas PDF resmi tersemat langsung di dalam layar web.*
-
----
-
-### 1.15 Evaluasi Bagian yang Belum Selesai & Rencana Tindak Lanjut
-Meskipun sistem telah berhasil dibangun dan diintegrasikan secara penuh dari backend hingga frontend, terdapat beberapa rencana penyempurnaan menuju Final Report:
-1. **User Acceptance Testing (UAT)**: Melakukan pengujian kegunaan (*usability test*) menggunakan kuesioner System Usability Scale (SUS) kepada minimal 30 mahasiswa tingkat akhir DSI Unand.
-2. **Pembaruan Korpus Semester Berjalan**: Mengumpulkan dan menambahkan data riwayat skripsi lulusan semester ganjil 2025/2026 yang baru saja menyelesaikan yudisium.
-3. **Deployment Cloud / Server Universitas**: Memaketkan sistem ke dalam wadah Docker (*containerization*) untuk di-deploy pada server laboratorium sistem informasi Universitas Andalas.
 
 ---
 
@@ -533,31 +517,31 @@ Pengembangan proyek SI-REKTA dilaksanakan secara kolaboratif menggunakan pembagi
 
 ---
 
-### 3.1 Pembagian Peran dan Matriks Tanggung Jawab Anggota
-Setiap anggota memiliki spesialisasi peran utama sebagaimana disajikan pada Tabel 3.1.
+### 3.1 Pembagian Peran dan Matriks Tanggung Jawab 12 Tahapan
+Setiap anggota memiliki spesialisasi peran utama yang memetakan tanggung jawab pada 12 tahapan resmi, sebagaimana disajikan pada Tabel 3.1.
 
-**Tabel 3.1 Matriks Pembagian Tanggung Jawab dan Beban Kerja Kelompok 5**
-| Nama Anggota Tim | NIM | Peran Utama | Domain Tanggung Jawab Teknis |
+**Tabel 3.1 Matriks Pembagian Tanggung Jawab 12 Tahapan Kelompok 5**
+| Nama Anggota Tim | NIM | Peran Utama | Pemetaan 12 Tahapan Resmi yang Dikelola |
 |---|---|---|---|
-| **Fuadi Dhiyaulhaq** | 2411522001 | Project Manager & System Architect | Manajemen proyek, desain arsitektur 3NF database MySQL, perancangan REST API FastAPI, dan integrasi streaming berkas PDF. |
-| **Rafa Gian Atthari** | 2411522014 | Machine Learning & NLP Specialist | Preprocessing teks, ekstraksi fitur TF-IDF N-gram (12.364 fitur), pengembangan model Cosine Similarity terpadu, dan modul Explainable AI. |
-| **Farrel Ghufran Rahman** | 2411521009 | Evaluation Specialist & Frontend UI Developer | Evaluasi benchmarking library `ranx` (Hit@3, Recall, MRR), MLOps serialisasi model, dan pembangunan antarmuka web React Vite Tailwind CSS. |
+| **Fuadi Dhiyaulhaq** | 2411522001 | Project Manager & System Architect | **Tahap 1, Tahap 2, Tahap 3, Tahap 4, dan Tahap 11** |
+| **Rafa Gian Atthari** | 2411522014 | Machine Learning & NLP Specialist | **Tahap 5, Tahap 6, Tahap 7, dan Tahap 10** |
+| **Farrel Ghufran Rahman** | 2411521009 | Evaluation Specialist & Frontend UI Developer | **Tahap 8, Tahap 9, dan Tahap 12** |
 
 ---
 
-### 3.2 Progres Nyata dan Kontribusi Spesifik Masing-Masing Anggota
+### 3.2 Progres Nyata dan Kontribusi Spesifik Berbasis Bukti Kode/Artefak
 Setiap anggota tim membuktikan kontribusi nyata yang terukur berbasis artefak kode program pada repositori resmi GitHub, sebagaimana dirinci pada Tabel 3.2.
 
 **Tabel 3.2 Rincian Kontribusi Spesifik dan Artefak Nyata yang Dihasilkan per Anggota**
 | Nama Anggota | Bukti Artefak Kode Program | Rincian Kontribusi Nyata yang Diselesaikan |
 |---|---|---|
-| **Fuadi Dhiyaulhaq** | - `sirekta.sql` (DDL & DML)<br>- `backend/app/main.py`<br>- `backend/app/database.py`<br>- `backend/app/models.py`<br>- `backend/app/config.py` | 1. Merancang skema relasi basis data 3NF (10 tabel) dan mengeksekusi migrasi data di MySQL Laragon.<br>2. Membangun seluruh endpoint RESTful API pada FastAPI lengkap dengan dokumentasi OpenAPI/Swagger.<br>3. Mengimplementasikan fitur streaming PDF inline (`content-disposition: inline`) agar buku panduan dapat dibaca di web.<br>4. Memimpin koordinasi tim dan menyelaraskan integrasi backend dengan antarmuka frontend. |
-| **Rafa Gian Atthari** | - `docs/SIREKTA.ipynb`<br>- `backend/app/preprocessor.py`<br>- `backend/app/recommender.py`<br>- `backend/app/schemas.py` | 1. Membangun fungsi sanitasi regex dan kamus 120+ kata `DSI_ACADEMIC_STOPWORDS`.<br>2. Merancang ekstraksi fitur TF-IDF N-gram sublinear yang menghasilkan 12.364 fitur leksikal.<br>3. Mengembangkan algoritma *Unified Corpus Profile Aggregation* berbasis Cosine Similarity.<br>4. Membangun modul *Explainable AI (XAI)* untuk ekstraksi otomatis kata kunci relevan dan paper pendukung. |
-| **Farrel Ghufran Rahman** | - `frontend/src/App.tsx`<br>- `frontend/src/components/*`<br>- `frontend/src/pages/*`<br>- `model/metadata_model.json`<br>- `model/si_rekta_pipeline.joblib` | 1. Merancang dan mengeksekusi kerangka evaluasi baku IR menggunakan pustaka `ranx` pada 118 kueri testing.<br>2. Menserialisasikan pipeline model ke berkas biner `.joblib` dan menguji latensi inferensi (< 5 ms).<br>3. Membangun antarmuka web interaktif React Vite (Sidebar, Form Kueri, Kartu Top-3, Modal Riwayat Dosen).<br>4. Menyelaraskan tema warna antarmuka web ke palet resmi logo: Marun (`#6D302D`) dan Tembaga (`#C5694B`). |
+| **Fuadi Dhiyaulhaq** | - `sirekta.sql` (DDL & DML)<br>- `backend/app/main.py`<br>- `backend/app/database.py`<br>- `backend/app/models.py`<br>- `backend/app/config.py` | 1. Merancang dan mengeksekusi Tahap 1, 2, 3, dan 4 (Problem Identification, System Requirements, Data Analysis, Preprocessing).<br>2. Merancang skema relasi basis data 3NF (10 tabel) dan mengeksekusi migrasi data di MySQL Laragon.<br>3. Bertanggung jawab penuh pada **Tahap 11 (Model Integration into the System)**: membangun seluruh endpoint RESTful API pada FastAPI lengkap dengan dokumentasi OpenAPI/Swagger.<br>4. Mengimplementasikan fitur streaming PDF inline (`content-disposition: inline`) agar buku panduan dapat dibaca langsung di browser.<br>5. Memimpin koordinasi tim dan menyelaraskan integrasi backend dengan antarmuka frontend. |
+| **Rafa Gian Atthari** | - `docs/SIREKTA.ipynb`<br>- `backend/app/preprocessor.py`<br>- `backend/app/recommender.py`<br>- `backend/app/schemas.py` | 1. Bertanggung jawab penuh pada **Tahap 5, 6, dan 7 (Data Processing Procedures, Algorithm Selection, Model Development)**.<br>2. Merancang ekstraksi fitur TF-IDF N-gram sublinear yang melesat menjadi 12.364 fitur leksikal.<br>3. Mengembangkan algoritma *Unified Corpus Profile Aggregation* berbasis Cosine Similarity.<br>4. Membangun modul *Explainable AI (XAI)* untuk ekstraksi otomatis kata kunci relevan dan paper pendukung.<br>5. Bertanggung jawab pada **Tahap 10 (Information System Design)**: merancang arsitektur data 3-tier dan spesifikasi DDL relasi tabel. |
+| **Farrel Ghufran Rahman** | - `frontend/src/App.tsx`<br>- `frontend/src/components/*`<br>- `frontend/src/pages/*`<br>- `model/metadata_model.json`<br>- `model/si_rekta_pipeline.joblib` | 1. Bertanggung jawab penuh pada **Tahap 8 (Model Evaluation)**: merancang dan mengeksekusi kerangka evaluasi baku IR menggunakan pustaka `ranx` pada 118 kueri testing.<br>2. Bertanggung jawab pada **Tahap 9 (Model Storage)**: menserialisasikan pipeline model ke berkas biner `.joblib` dan menguji latensi inferensi (< 5 ms).<br>3. Bertanggung jawab penuh pada **Tahap 12 (User Interface Implementation)**: membangun antarmuka web interaktif React Vite (Sidebar, Form Kueri, Kartu Top-3, Modal Riwayat Dosen, In-Page PDF Viewer).<br>4. Menyelaraskan tema warna antarmuka web ke palet resmi logo: Marun (`#6D302D`) dan Tembaga (`#C5694B`). |
 
 ---
 
-### 3.3 Alur Koordinasi Tim dan Manajemen Ketergantungan Tugas
+### 3.3 Alur Koordinasi Tim dan Kolaborasi GitHub
 Untuk menjaga kelancaran pengembangan dan menghindari konflik kode (*merge conflict*), tim menerapkan alur koordinasi berbasis Git:
 1. **Pusat Repositori GitHub (`https://github.com/accfd/SI-REKTA.git`)**: Menjadi *single source of truth* untuk seluruh kode program backend, frontend, database, dan artefak model.
 2. **Sinkronisasi Antar-Anggota**: Pengerjaan fitur dilakukan secara terisolasi pada modul masing-masing. Ketika modul inferensi ML (`recommender.py`) selesai dibangun oleh Rafa, Fuadi langsung mengintegrasikannya ke endpoint FastAPI, sementara Farrel mengonsumsi payload JSON tersebut ke dalam antarmuka React.
@@ -565,14 +549,21 @@ Untuk menjaga kelancaran pengembangan dan menghindari konflik kode (*merge confl
 
 ---
 
-# BAB 4: KESIMPULAN PROGRESS REPORT 2
+# BAB 4: KESIMPULAN PROGRESS REPORT 2 DAN RENCANA TINDAK LANJUT
 
+### 4.1 Kesimpulan Capaian Progress Report 2
 Berdasarkan seluruh tahapan perancangan, eksperimen, dan implementasi yang telah dilaksanakan hingga Progress Report 2, dapat disimpulkan bahwa:
 
 1. **Evolusi Model yang Sukses**: Transisi dari *Late-Fusion* berbobot manual ke **Unified Corpus Profile Aggregation** dengan ekstraksi **12.364 fitur TF-IDF N-gram** terbukti meningkatkan kualitas representasi kepakaran dosen secara signifikan tanpa menimbulkan fragmentasi vektor.
 2. **Kinerja Model Sangat Tinggi**: Evaluasi baku Information Retrieval menggunakan pustaka `ranx` pada 118 data testing independen mencatatkan **Hit Rate@3 sebesar 79.66%**, **Recall@3 sebesar 75.42%**, dan **MRR@3 sebesar 0.6031**. Capaian ini terbukti **sangat unggul (*superior*)** jika dibandingkan dengan tolok ukur literatur pada kajian SLR.
 3. **Solusi Nyata Masalah Cold-Start**: Pemanfaatan korpus publikasi riset terbukti 100% sukses memetakan dan merekomendasikan dosen-dosen baru yang belum memiliki riwayat bimbingan skripsi ke peringkat Top-3 secara kompetitif.
 4. **Implementasi Nyata End-to-End**: Seluruh rancangan sistem telah berhasil diwujudkan menjadi aplikasi web fungsional penuh (Live), mencakup basis data relasional 3NF MySQL Laragon (10 tabel), backend RESTful FastAPI dengan latensi < 5 ms, dan antarmuka web modern React Vite bertema warna resmi logo yang siap digunakan oleh mahasiswa Departemen Sistem Informasi.
+
+### 4.2 Rencana Tindak Lanjut Menuju Final Report
+Meskipun sistem telah berhasil dibangun dan diintegrasikan secara penuh dari backend hingga frontend, beberapa rencana penyempurnaan akan dilaksanakan menuju Final Report:
+1. **User Acceptance Testing (UAT)**: Melakukan pengujian kegunaan (*usability test*) menggunakan kuesioner System Usability Scale (SUS) kepada minimal 30 mahasiswa tingkat akhir DSI Unand.
+2. **Pembaruan Korpus Semester Berjalan**: Mengumpulkan dan menambahkan data riwayat skripsi lulusan semester ganjil 2025/2026 yang baru saja menyelesaikan yudisium.
+3. **Deployment Cloud / Server Universitas**: Memaketkan sistem ke dalam wadah Docker (*containerization*) untuk di-deploy pada server laboratorium sistem informasi Universitas Andalas.
 
 ---
 
@@ -581,7 +572,7 @@ Berdasarkan seluruh tahapan perancangan, eksperimen, dan implementasi yang telah
 ### Lampiran 1: Direktori Tautan Repositori Resmi GitHub & Live Notebook
 - **Repositori Utama GitHub**: [https://github.com/accfd/SI-REKTA.git](https://github.com/accfd/SI-REKTA.git)
 - **Buku Kerja Eksperimen Resmi**: Berkas `docs/SIREKTA.ipynb` pada repositori.
-- **Branch Aktif**: `main` (Komit terverifikasi: `306035c`).
+- **Branch Aktif**: `main` (Komit terverifikasi: `c4012f6`).
 
 ---
 
