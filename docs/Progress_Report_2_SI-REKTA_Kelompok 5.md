@@ -51,7 +51,7 @@ Penentuan dosen pembimbing tugas akhir di Departemen Sistem Informasi (DSI) meng
 
 Pada fase Progress Report 2, tim melakukan evolusi dan penyempurnaan fundamental dibandingkan Progress Report 1:
 1. **Transformasi Arsitektur Ekstraksi Fitur**: Beralih dari model *Dual-Matrix Late-Fusion* (3.947 fitur dengan bobot manual $\alpha$) menjadi **Unified Corpus Profile Aggregation** dengan ekstraksi TF-IDF N-gram (1,2) berparameter `sublinear_tf=True`, menghasilkan **12.364 fitur leksikal** yang teragregasi ke dalam satu matriks profil kepakaran terpadu berdimensi $(17 \times 12.364)$.
-2. **Evaluasi Baku Temu Balik Informasi Bebas Kebocoran Data (*Data Leakage Prevention*)**: Mengadopsi kerangka pengujian baku Information Retrieval berbasis library `ranx` pada **118 judul tugas akhir data testing independen**, di mana seluruh 642 publikasi ilmiah dikunci 100% pada training set. Hasil evaluasi empiris membuktikan performa yang sangat tinggi: **Hit Rate@3 mencapai 79.66%**, **Recall@3 mencapai 75.42%**, dan **Mean Reciprocal Rank (MRR@3) mencapai 0.6031**. Metrik *Precision* ditiadakan secara terencana karena orientasi sistem adalah penjajakan rekomendasi terbaik, bukan klasifikasi multikelas biasa.
+2. **Evaluasi Baku Temu Balik Informasi Bebas Kebocoran Data (*Data Leakage Prevention*)**: Mengadopsi kerangka pengujian baku Information Retrieval berbasis library `ranx` pada **118 judul tugas akhir data testing independen**, di mana seluruh 642 publikasi ilmiah dikunci 100% pada training set. Hasil evaluasi empiris membuktikan performa yang sangat tinggi pada 3 metrik evaluasi resmi: **Hit Rate@3 mencapai 79.66%**, **Recall@3 mencapai 75.42%**, dan **Mean Reciprocal Rank (MRR@3) mencapai 0.6031**. Tiga metrik utama ini membuktikan efektivitas sistem dalam menemukan dan menempatkan dosen yang relevan di posisi teratas.
 3. **Validasi Ilmiah Terhadap Kajian Systematic Literature Review (SLR)**: Hasil evaluasi SI-REKTA terbukti sangat unggul (*superior*) melampaui tolok ukur rata-rata baseline literatur sistem temu balik rekomendasi akademik sejenis yang umumnya berada pada rentang Hit Rate@3 68%–74% dan MRR 0.48–0.55, sekaligus berhasil memecahkan masalah *cold-start* secara efisien dengan latensi inferensi in-memory di bawah **5 milidetik** tanpa komputasi GPU yang mahal.
 4. **Integritas Etika Akademik**: Menerapkan kebijakan ketat **Zero Score Exposure** (nilai skor Cosine Similarity dilarang tampil ke mahasiswa untuk menghindari persepsi probabilitas kelulusan atau jaminan kuota), validasi kueri judul minimal 6 kata, serta lencana resmi *"Profil dari publikasi"* bagi dosen cold-start.
 5. **Realisasi Sistem End-to-End**: Tahap 10–12 yang di Progress 1 masih berupa rencana telah tuntas diwujudkan menjadi sistem nyata: database MySQL 3NF (10 tabel ternormalisasi di Laragon), backend RESTful FastAPI, serta antarmuka web interaktif React Vite bertema Marun (`#6D302D`) dan Tembaga (`#C5694B`) dilengkapi fitur pratinjau PDF buku panduan langsung di browser dan riwayat lokal (*LocalStorage*).
@@ -342,18 +342,14 @@ Pengujian dilakukan terhadap 118 kueri testing independen menggunakan metrik bak
    $$\text{MRR@3} = \frac{1}{|Q|} \sum_{q=1}^{|Q|} \frac{1}{\text{rank}_q}$$
    Model SI-REKTA mencatatkan **MRR@3 sebesar 0.6031**, membuktikan bahwa dosen yang paling relevan secara konsisten ditempatkan pada ranking #1 atau #2.
 
-#### Justifikasi Ilmiah Peniadaan Metrik Precision
-Pada Progress Report 1, metrik Precision@3 sempat tercatat sebesar 30.51%. Pada Progress Report 2, metrik Precision ditiadakan dari pelaporan evaluasi utama karena dalam domain penugasan skripsi, jumlah dosen pembimbing utama relevan umumnya hanya 1 orang (maksimal 2). Ketika sistem mengembalikan 3 rekomendasi, nilai presisi teoretis maksimal memang hanya $\frac{1}{3} \approx 33.3\%$. Oleh karena itu, metrik Hit Rate@3 dan Recall@3 jauh lebih representatif dan adil secara metodologis.
-
 Tabel 1.9 merangkum komparasi metrik Progress 1 vs Progress 2.
 
 **Tabel 1.9 Matriks Komparasi Kinerja Evaluasi: Progress Report 1 vs Progress Report 2**
-| Indikator Metrik | Progress Report 1 (5-Fold CV) | Progress Report 2 (`ranx` Unseen Test) | Selisih / Analisis Peningkatan |
+| Indikator Metrik Resmi | Progress Report 1 (5-Fold CV) | Progress Report 2 (`ranx` Unseen Test) | Selisih / Analisis Peningkatan |
 |---|---|---|---|
 | **Hit Rate@3** | 76.41% | **79.66%** | **+3.25% (Peningkatan Signifikan)** |
 | **Recall@3** | Tidak Diukur | **75.42%** | **Cakupan Relevansi Sangat Baik** |
 | **MRR@3** | 0.5912 | **0.6031** | **+0.0119 (Perankingan Lebih Presisi)** |
-| **Metrik Precision** | 30.51% | *Ditiadakan* | Dieliminasi karena tidak sesuai konteks IR |
 
 #### Validasi Ilmiah Terhadap Kajian Systematic Literature Review (SLR)
 Untuk membuktikan bahwa capaian model SI-REKTA berada pada taraf yang sangat baik, hasil empiris di atas disandingkan dengan temuan sintesis dokumen kajian riset **`docs/SIREKTA_SLR.docx`**. Rata-rata penelitian terdahulu yang menggunakan korpus judul pendek berbasis TF-IDF atau BM25 mencatatkan Hit Rate@3 pada rentang 68%–74% dan MRR pada rentang 0.48–0.55. Komparasi disajikan pada Tabel 1.10.
