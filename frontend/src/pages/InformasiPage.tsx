@@ -105,7 +105,7 @@ export const InformasiPage: React.FC = () => {
           <div className="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-100">
             <div className="text-2xl font-black text-emerald-900">17 Dosen</div>
             <p className="text-xs font-semibold text-emerald-700 mt-0.5">Departemen Sistem Informasi</p>
-            <p className="text-xs text-slate-500 mt-2">Mencakup kelompok keahlian RD-BI, SE, SD, dan TK-ITI.</p>
+            <p className="text-xs text-slate-500 mt-2">Mencakup kelompok keahlian RDBI, SD, SE, dan TKITI.</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-brand-50/60 border border-brand-100">

@@ -25,10 +25,10 @@ CREATE TABLE `kelompok_keahlian` (
   `nama_kk` VARCHAR(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `kelompok_keahlian` (`id_kk`, `kode_kk`, `nama_kk`) VALUES (1, 'TK-ITI', 'Tata Kelola & Infrastruktur Teknologi Informasi');
-INSERT INTO `kelompok_keahlian` (`id_kk`, `kode_kk`, `nama_kk`) VALUES (2, 'SD', 'Sistem Digital');
-INSERT INTO `kelompok_keahlian` (`id_kk`, `kode_kk`, `nama_kk`) VALUES (3, 'RD-BI', 'Rekayasa Data & Business Intelligence');
-INSERT INTO `kelompok_keahlian` (`id_kk`, `kode_kk`, `nama_kk`) VALUES (4, 'SE', 'Software Engineering');
+INSERT INTO `kelompok_keahlian` (`id_kk`, `kode_kk`, `nama_kk`) VALUES (1, 'TKITI', 'Tata Kelola Infrastruktur Teknologi Informasi');
+INSERT INTO `kelompok_keahlian` (`id_kk`, `kode_kk`, `nama_kk`) VALUES (2, 'SD', 'System Development');
+INSERT INTO `kelompok_keahlian` (`id_kk`, `kode_kk`, `nama_kk`) VALUES (3, 'RDBI', 'Rekayasa Data dan Business Intelligence');
+INSERT INTO `kelompok_keahlian` (`id_kk`, `kode_kk`, `nama_kk`) VALUES (4, 'SE', 'System Enterprise');
 
 CREATE TABLE `dosen` (
   `id_dosen` INT AUTO_INCREMENT PRIMARY KEY,

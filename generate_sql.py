@@ -68,10 +68,10 @@ def main():
 
     # Dosen -> Kelompok Keahlian mapping dari Publikasi_Dosen.csv
     kk_map = {
-        "TK-ITI": (1, "Tata Kelola & Infrastruktur Teknologi Informasi"),
-        "SD": (2, "Sistem Digital"),
-        "RD-BI": (3, "Rekayasa Data & Business Intelligence"),
-        "SE": (4, "Software Engineering")
+        "TK-ITI": (1, "TKITI", "Tata Kelola Infrastruktur Teknologi Informasi"),
+        "SD": (2, "SD", "System Development"),
+        "RD-BI": (3, "RDBI", "Rekayasa Data dan Business Intelligence"),
+        "SE": (4, "SE", "System Enterprise")
     }
 
     dosen_kk_code = {}
@@ -191,8 +191,8 @@ CREATE TABLE `kelompok_keahlian` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 """)
 
-    for kode, (id_k, nama_k) in kk_map.items():
-        sql_lines.append(f"INSERT INTO `kelompok_keahlian` (`id_kk`, `kode_kk`, `nama_kk`) VALUES ({id_k}, {escape_sql(kode)}, {escape_sql(nama_k)});")
+    for raw_code, (id_k, kode_k, nama_k) in kk_map.items():
+        sql_lines.append(f"INSERT INTO `kelompok_keahlian` (`id_kk`, `kode_kk`, `nama_kk`) VALUES ({id_k}, {escape_sql(kode_k)}, {escape_sql(nama_k)});")
 
     # 2. dosen
     sql_lines.append("""

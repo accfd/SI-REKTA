@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
               <li>• 17 Dosen Pembimbing DSI</li>
               <li>• 706 Riwayat Bimbingan Tugas Akhir</li>
               <li>• 643 Publikasi Ilmiah Dosen</li>
-              <li>• 4 Kelompok Keahlian (RD-BI, SE, SD, TK-ITI)</li>
+              <li>• 4 Kelompok Keahlian (RDBI, SD, SE, TKITI)</li>
             </ul>
           </div>
 

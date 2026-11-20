@@ -139,10 +139,10 @@ export const DaftarDosenPage: React.FC<DaftarDosenPageProps> = ({
               className="px-2.5 py-1.5 rounded-xl border border-stone-200 text-xs font-medium bg-stone-50 focus:border-brand-500"
             >
               <option value="all">Semua KK</option>
-              <option value="RD-BI">RD-BI (Data & BI)</option>
-              <option value="SE">SE (Software Eng)</option>
-              <option value="SD">SD (Sistem Digital)</option>
-              <option value="TK-ITI">TK-ITI (Tata Kelola)</option>
+              <option value="RDBI">RDBI (Rekayasa Data dan BI)</option>
+              <option value="SD">SD (System Development)</option>
+              <option value="SE">SE (System Enterprise)</option>
+              <option value="TKITI">TKITI (Tata Kelola ITI)</option>
             </select>
           </div>
 
