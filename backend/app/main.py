@@ -130,7 +130,7 @@ def get_all_dosen(db: Session = Depends(get_db)):
         
         kw_objs = db.query(models.KataKunciDosen).filter(
             models.KataKunciDosen.id_dosen == d.id_dosen
-        ).order_by(models.KataKunciDosen.bobot_tfidf.desc()).limit(6).all()
+        ).order_by(models.KataKunciDosen.bobot_tfidf.desc()).limit(8).all()
         
         output.append(schemas.DosenItem(
             id_dosen=d.id_dosen,
