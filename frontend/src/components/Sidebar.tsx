@@ -8,7 +8,6 @@ import {
   Info,
   Menu,
   X,
-  Database,
   ArrowRight
 } from 'lucide-react';
 
@@ -26,7 +25,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
     { id: 'dosen', label: 'Daftar Dosen', icon: Users, desc: '17 Dosen & karya ilmiah' },
     { id: 'pedoman', label: 'Dokumen Pedoman', icon: FileText, desc: 'Buku panduan PDF' },
     { id: 'history', label: 'History', icon: History, desc: 'Riwayat pencarian lokal' },
-    { id: 'informasi', label: 'Informasi', icon: Info, desc: 'Metodologi & kinerja' },
   ];
 
   const handleSelectTab = (id: string) => {
@@ -48,9 +46,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
             className="w-8 h-8 object-contain rounded-lg"
           />
           <span className="font-extrabold text-lg tracking-tight text-stone-900">SI-REKTA</span>
-          <span className="text-[10px] font-bold px-2 py-0.5 bg-brand-50 text-brand-700 rounded-md border border-brand-200">
-            DSI
-          </span>
         </div>
 
         <button
@@ -92,9 +87,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-extrabold text-xl tracking-tight text-stone-900">SI-REKTA</span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 bg-brand-50 text-brand-700 rounded border border-brand-200">
-                  DSI 2025
-                </span>
               </div>
               <p className="text-[11px] text-stone-400 leading-tight mt-0.5">Rekomendasi Dosen TA</p>
             </div>
@@ -150,13 +142,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
         </div>
 
         {/* Footer Info Box */}
-        <div className="p-4 border-t border-stone-100 bg-stone-50 m-3 rounded-2xl">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-stone-700">
-            <Database className="w-3.5 h-3.5 text-copper-600" />
-            <span>MySQL (Laragon) Online</span>
+        <div
+          onClick={() => handleSelectTab('informasi')}
+          className={`p-3.5 border m-3 rounded-2xl cursor-pointer transition-all ${
+            activeTab === 'informasi'
+              ? 'bg-brand-50 border-brand-300 shadow-xs'
+              : 'bg-stone-50 border-stone-200/80 hover:bg-stone-100/90'
+          }`}
+        >
+          <div className="flex items-center space-x-2 text-xs font-bold text-stone-800">
+            <Info className={`w-4 h-4 shrink-0 ${activeTab === 'informasi' ? 'text-brand-600' : 'text-stone-500'}`} />
+            <span>Informasi</span>
           </div>
-          <p className="text-[11px] text-stone-400 mt-1 leading-snug">
-            17 Dosen • 706 Bimbingan • 643 Publikasi
+          <p className="text-[11px] text-stone-500 mt-0.5 leading-snug font-medium">
+            Metodologi & kinerja
           </p>
         </div>
       </aside>
