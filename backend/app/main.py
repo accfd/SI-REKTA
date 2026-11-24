@@ -223,12 +223,14 @@ def get_model_info(db: Session = Depends(get_db)):
     tot_pub = db.query(func.count(models.Publikasi.id_publikasi)).scalar() or 0
     tot_dosen = db.query(func.count(models.Dosen.id_dosen)).filter(models.Dosen.termasuk_model == True).scalar() or 0
 
+    total_fitur = len(recommender_engine.feature_names) if recommender_engine.feature_names is not None else 10130
+
     return schemas.ModelInfoResponse(
         nama_model=versi.nama_model,
         metode_pembobotan=versi.metode_pembobotan,
         metode_pemeringkatan=versi.metode_pemeringkatan,
         jumlah_dosen=tot_dosen,
-        jumlah_fitur_tfidf=12364,
+        jumlah_fitur_tfidf=total_fitur,
         total_riwayat_ta=tot_ta,
         total_publikasi=tot_pub,
         hit_rate_at_3=round(versi.hit_rate_at_3 * 100, 2),

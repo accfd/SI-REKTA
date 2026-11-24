@@ -1,26 +1,33 @@
 import re
 from typing import Tuple
 
-# Daftar Stop Words Tambahan (English & Academic Noise, serta Indonesian Prepositions & Noise)
+# Kamus Hybrid Domain-Specific Academic Stopwords (Identik dengan Cell 33 SIREKTA.ipynb)
 STOPWORDS = {
-    # English Prepositions & Conjunctions
-    "of", "in", "the", "and", "for", "on", "with", "by", "at", "to", "from",
-    "as", "an", "a", "is", "are", "was", "were", "into", "through", "about",
-    "between", "after", "before", "above", "under", "than", "this", "that",
-    "it", "its", "their", "or", "be", "been", "being", "have", "has", "had",
-    # English Academic & Neutral Noise
-    "using", "based", "study", "case", "analysis", "approach", "implementation",
-    "development", "evaluation", "via", "towards", "review",
-    # Indonesian Prepositions, Conjunctions & Generic Noise
-    "bagi", "pada", "untuk", "dengan", "dalam", "dan", "dari", "yang",
-    "terhadap", "tentang", "kota", "kabupaten", "provinsi", "di", "ke",
-    "atau", "oleh", "sebagai", "ini", "itu"
+    # 1. Preposisi, Konjungsi & Kata Hubung (ID & EN)
+    "dan", "di", "ke", "dari", "pada", "untuk", "dengan", "dalam", "yang", 
+    "terhadap", "tentang", "atau", "oleh", "sebagai", "ini", "itu", "bagi",
+    "of", "in", "the", "and", "for", "on", "with", "by", "at", "to", "from", 
+    "as", "an", "a", "is", "are", "into", "through", "about", "via", "towards",
+
+    # 2. Templat Prosedural & Kata Kerja Skripsi (ID & EN)
+    "pembangunan", "rancang", "bangun", "pengembangan", "pembuatan", "perancangan",
+    "penerapan", "implementasi", "analisis", "analisa", "evaluasi", "pemodelan",
+    "menggunakan", "metode", "berbasis", "studi", "kasus", "fitur", "aplikasi",
+    "using", "based", "study", "case", "analysis", "approach", "implementation", 
+    "development", "evaluation", "design", "review",
+
+    # 3. Entitas Institusi, Lokasi, dan Istilah Umum Jurusan
+    "sistem", "informasi", "system", "information",
+    "universitas", "andalas", "unand", "fakultas", "teknologi", "jurusan", "departemen",
+    "padang", "kota", "provinsi", "sumatera", "barat", "indonesia",
+    "dinas", "pt", "cv", "kantor", "instansi"
 }
 
 def bersihkan_teks(teks: str) -> str:
     """
     Membersihkan teks dan menyaring kata-kata stopword bilingual (Indonesia & Inggris)
-    agar kueri pencarian hanya memuat istilah keahlian/domain yang relevan.
+    serta entitas umum kampus/administratif agar kueri pencarian hanya memuat
+    istilah keahlian/domain yang relevan.
     """
     if not teks:
         return ""

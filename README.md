@@ -25,7 +25,7 @@ Seluruh proses pengembangan model Machine Learning (Tahap 1 hingga 9) terdokumen
 3. **Daftar Dosen**: Direktori 17 dosen DSI, filter kelompok keahlian (RDBI, SD, SE, TKITI), pengurutan, dan tombol rincian dokumen bimbingan & publikasi.
 4. **Dokumen Pedoman**: Penampil PDF resmi terintegrasi (Pedoman Tugas Akhir & Pedoman Topik TA DSI 2025).
 5. **History**: Penyimpanan riwayat lokal di browser (**Local Storage**) tanpa akun/database server, snapshot hasil, fitur hapus satuan dan hapus semua.
-6. **Informasi**: Transparansi alur kerja NLP/IR, rincian dataset, metrik evaluasi model (Hit Rate@3: 79.66%, Recall@3: 75.42%, MRR@3: 0.60), serta batasan akademik sistem.
+6. **Informasi**: Transparansi alur kerja NLP/IR, rincian dataset, metrik evaluasi model (Hit Rate@3: 76.92%, Recall@3: 72.22%, MRR@3: 0.60, 10.130 fitur TF-IDF), serta batasan akademik sistem.
 
 ---
 

@@ -340,7 +340,7 @@ CREATE TABLE `model_versi` (
 """)
 
     metrik = meta.get("metrik_evaluasi", {})
-    sql_lines.append(f"INSERT INTO `model_versi` (`nama_model`, `metode_pembobotan`, `metode_pemeringkatan`, `hit_rate_at_3`, `recall_at_3`, `mrr_at_3`, `precision_at_3`) VALUES ({escape_sql(meta.get('nama_model', 'SI-REKTA'))}, {escape_sql(meta.get('metode_pembobotan', 'TF-IDF'))}, {escape_sql(meta.get('metode_pemeringkatan', 'Cosine Similarity'))}, {metrik.get('Hit Rate@3', 0.7966)}, {metrik.get('Recall@3', 0.7542)}, {metrik.get('MRR@3', 0.6031)}, {metrik.get('Precision@3', 0.3051)});")
+    sql_lines.append(f"INSERT INTO `model_versi` (`nama_model`, `metode_pembobotan`, `metode_pemeringkatan`, `hit_rate_at_3`, `recall_at_3`, `mrr_at_3`, `precision_at_3`) VALUES ({escape_sql(meta.get('nama_model', 'SI-REKTA'))}, {escape_sql(meta.get('metode_pembobotan', 'TF-IDF'))}, {escape_sql(meta.get('metode_pemeringkatan', 'Cosine Similarity'))}, {metrik.get('Hit Rate@3', 0.7692)}, {metrik.get('Recall@3', 0.7222)}, {metrik.get('MRR@3', 0.5954)}, {metrik.get('Precision@3', 0.30)});\n")
 
     with open(SQL_OUTPUT, "w", encoding="utf-8") as f:
         f.write("\n".join(sql_lines) + "\n")
