@@ -11,22 +11,22 @@ Aplikasi web berbasis Text Mining (**TF-IDF & Cosine Similarity**) untuk merekom
    - Form input textarea dengan word counter (validasi minimal 6 kata).
    - Kartu rekomendasi Top-3 (#1, #2, #3), lencana peringkat, inisial, kata kunci cocok, dan tag keahlian.
    - Peringatan banner jika hasil kurang meyakinkan (*low confidence*).
-   - Tabel komparasi 3 dosen.
+   - Tabel komparasi 3 dosen terpilih.
    - **Sesuai Aturan SRS**: Skor/persentase kemiripan, kontak pribadi (NIP/HP/Email/Foto), dan kuota bimbingan dilarang ditampilkan.
-3. **Daftar Dosen**: Direktori 17 dosen DSI, filter kelompok keahlian (RD-BI, SE, SD, TK-ITI), pengurutan, dan tombol "Cari dengan topik dosen ini".
+3. **Daftar Dosen**: Direktori 17 dosen DSI, filter kelompok keahlian (RDBI, SD, SE, TKITI), pengurutan, dan tombol rincian dokumen bimbingan & publikasi.
 4. **Dokumen Pedoman**: Penampil PDF resmi terintegrasi (Pedoman Tugas Akhir & Pedoman Topik TA DSI 2025).
-5. **History**: Penyimpanan riwayat lokal di browser (**Local Storage**) tanpa akun/database server, snapshot hasil, fitur hapus satuan dan hapus semua (dengan modal konfirmasi).
-6. **Informasi**: Transparansi alur kerja NLP, rincian dataset, metrik evaluasi model (Hit Rate@3: 79.66%, Recall@3: 75.42%, MRR@3: 0.60), serta batasan akademik sistem.
+5. **History**: Penyimpanan riwayat lokal di browser (**Local Storage**) tanpa akun/database server, snapshot hasil, fitur hapus satuan dan hapus semua.
+6. **Informasi**: Transparansi alur kerja NLP/IR, rincian dataset, metrik evaluasi model (Hit Rate@3: 79.66%, Recall@3: 75.42%, MRR@3: 0.60), serta batasan akademik sistem.
 
 ---
 
 ## 🗄️ Arsitektur Basis Data (MySQL - Laragon)
-Database `sirekta_db` telah dirancang dalam bentuk **Normalisasi 3NF** dengan 10 tabel:
-- `kelompok_keahlian` (Master KK: RD-BI, SE, SD, TK-ITI)
+Database `sirekta_db` dirancang dalam bentuk **Normalisasi 3NF** dengan 10 tabel:
+- `kelompok_keahlian` (Master 4 Lab/KK: RDBI, SD, SE, TKITI)
 - `dosen` (Master 17 Dosen DSI)
 - `profil_dosen` (Agregat statistik TA & publikasi)
-- `kata_kunci_dosen` (Kata kunci keahlian per dosen dari bobot TF-IDF)
-- `tugas_akhir` (625 riwayat judul TA)
+- `kata_kunci_dosen` (Kata kunci keahlian per dosen dari bobot TF-IDF bersih)
+- `tugas_akhir` (625 riwayat judul TA terdahulu)
 - `bimbingan_ta` (707 relasi bimbingan many-to-many dosen & TA)
 - `publikasi` (643 judul publikasi ilmiah)
 - `publikasi_dosen` (Relasi many-to-many dosen & publikasi)
@@ -37,30 +37,41 @@ Database `sirekta_db` telah dirancang dalam bentuk **Normalisasi 3NF** dengan 10
 
 ---
 
-## 🛠️ Cara Menjalankan Aplikasi
+## 🛠️ Cara Menjalankan Aplikasi Secara Manual
 
-### 1. Prasyarat
-- **Laragon**: Pastikan service **MySQL** dan **Apache** sudah berjalan (**Start All**).
-- **Python**: 3.10+ (sudah disiapkan di `backend/.venv`).
-- **Node.js**: 18+ & npm (sudah diuji dengan Node 24 & Vite).
+### 1. Prasyarat Lingkungan
+- **Laragon**: Buka Laragon dan klik tombol **Start All** (pastikan modul **MySQL** aktif pada port 3306).
+- Pastikan database `sirekta_db` sudah dibuat dan diimpor dari berkas `sirekta.sql`.
 
-### 2. Jalankan Sistem Otomatis
-Cukup klik dua kali berkas:
-```cmd
-run_system.bat
+---
+
+### 2. Menjalankan Backend API (FastAPI)
+Buka terminal pertama (PowerShell atau Command Prompt), masuk ke direktori `backend`, dan jalankan server uvicorn:
+
+```powershell
+cd "D:\SEMESTER 5\ML\backend"
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-Berkas ini akan membuka dua jendela terminal:
-- **Backend API**: `http://localhost:8000` (Dokumentasi Swagger: `http://localhost:8000/docs`)
-- **Frontend Web**: `http://localhost:5173`
 
-### 3. Menjalankan Manual
-- **Backend**:
-  ```cmd
-  cd backend
-  .\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-  ```
-- **Frontend**:
-  ```cmd
-  cd frontend
-  npm run dev
-  ```
+> **Verifikasi Backend:**
+> - Server berjalan pada port `8000`: [http://localhost:8000](http://localhost:8000)
+> - Dokumentasi Interaktif Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+### 3. Menjalankan Frontend Web (React + Vite)
+Buka terminal kedua (tab/jendela terminal terpisah), masuk ke direktori `frontend`, dan jalankan Vite:
+
+```powershell
+cd "D:\SEMESTER 5\ML\frontend"
+npm run dev
+```
+
+> **Verifikasi Frontend:**
+> - Aplikasi web berjalan pada port `5173`: [http://localhost:5173](http://localhost:5173)
+
+---
+
+### 4. Mengakses Aplikasi di Browser
+Setelah kedua terminal di atas berjalan secara bersamaan, buka peramban (*browser*) Chrome / Edge dan akses:  
+👉 **[http://localhost:5173](http://localhost:5173)**
