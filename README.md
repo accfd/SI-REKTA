@@ -1,7 +1,16 @@
 # SI-REKTA (Sistem Rekomendasi Dosen Pembimbing Tugas Akhir)
 **Departemen Sistem Informasi (DSI) - 2025/2026**
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/accfd/SI-REKTA/blob/main/docs/SIREKTA.ipynb)
+
 Aplikasi web berbasis Text Mining (**TF-IDF & Cosine Similarity**) untuk merekomendasikan maksimal 3 dosen pembimbing tugas akhir bagi mahasiswa Departemen Sistem Informasi berdasarkan kesesuaian judul/topik tugas akhir terhadap riwayat bimbingan TA dan publikasi ilmiah 17 dosen.
+
+---
+
+## 📓 Notebook Eksperimen Model (Tahap 1 - 9)
+Seluruh proses pengembangan model Machine Learning (Tahap 1 hingga 9) terdokumentasi secara lengkap dan dapat dijalankan langsung di Google Colab:
+- **Notebook File**: [`docs/SIREKTA.ipynb`](docs/SIREKTA.ipynb)
+- **Akses Interaktif**: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/accfd/SI-REKTA/blob/main/docs/SIREKTA.ipynb) *(dataset otomatis terunduh dari GitHub)*
 
 ---
 
