@@ -3,10 +3,10 @@
   "metode_pembobotan": "TF-IDF",
   "metode_pemeringkatan": "Cosine Similarity",
   "jumlah_dosen": 17,
-  "jumlah_fitur_tfidf": 12364,
+  "jumlah_fitur_tfidf": 10130,
   "bentuk_matriks_profil": [
     17,
-    12364
+    10130
   ],
   "urutan_nama_dosen": [
     "Adi Arga Arifnur, M.Kom.",
@@ -56,17 +56,16 @@
   "random_state": 42,
   "proporsi_target_testing_judul_ta": 0.2,
   "strategi_pembagian": "Seluruh publikasi pada training; judul TA dibagi menjadi training dan testing; judul TA yang identik dengan publikasi tidak menjadi kueri testing",
-  "jumlah_publikasi_training": 642,
+  "jumlah_publikasi_training": 641,
   "jumlah_publikasi_testing": 0,
-  "jumlah_judul_ta_training": 475,
-  "jumlah_judul_ta_testing": 118,
-  "jumlah_dokumen_training": 993,
-  "jumlah_dokumen_testing": 118,
-  "jumlah_kueri_evaluasi": 118,
+  "jumlah_judul_ta_training": 476,
+  "jumlah_judul_ta_testing": 117,
+  "jumlah_dokumen_training": 989,
+  "jumlah_dokumen_testing": 117,
+  "jumlah_kueri_evaluasi": 117,
   "metrik_evaluasi": {
-    "Hit Rate@3": 0.7966,
-    "Precision@3": 0.3051,
-    "Recall@3": 0.7542,
-    "MRR@3": 0.6031
+    "Hit Rate@3": 0.7692,
+    "Recall@3": 0.7222,
+    "MRR@3": 0.5954
   }
 }
