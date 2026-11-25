@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, AlertCircle, RotateCcw, History, CheckCircle2, AlertTriangle, Layers } from 'lucide-react';
 import { LecturerCard } from '../components/LecturerCard';
 import type { RecommendationResponse } from '../types';
@@ -19,6 +19,13 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [result, setResult] = useState<RecommendationResponse | null>(null);
+  const resultsRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToResults = () => {
+    requestAnimationFrame(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
 
   useEffect(() => {
     if (initialTitle) {
@@ -50,10 +57,12 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
     }
 
     setLoading(true);
+    setTimeout(scrollToResults, 60);
     try {
       const data = await api.getRecommendations(judul.trim());
       setResult(data);
       onSaveToHistory(data);
+      setTimeout(scrollToResults, 80);
     } catch (err: any) {
       const detail = err.response?.data?.detail || 'Layanan rekomendasi sedang tidak tersedia. Pastikan server backend dan database berjalan.';
       setErrorMsg(detail);
@@ -82,7 +91,7 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="relative">
             <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
-              Judul Tugas Akhir (Minimal 6 Kata)
+              JUDUL TUGAS AKHIr
             </label>
             <textarea
               rows={4}
@@ -90,6 +99,14 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
               onChange={(e) => {
                 setJudul(e.target.value);
                 if (errorMsg) setErrorMsg(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  if (!loading) {
+                    handleSearch();
+                  }
+                }
               }}
               placeholder="Contoh: Pembangunan Aplikasi Web GIS Pemetaan Sejarah Minangkabau Berbasis Leaflet..."
               className="w-full px-4 py-3.5 rounded-2xl border border-stone-200 focus:ring-4 focus:ring-brand-100 focus:border-brand-500 text-stone-800 placeholder-stone-400 text-base leading-relaxed transition-all resize-y"
@@ -122,8 +139,12 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
               >
                 {loading ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Menganalisis judul...</span>
+                    <span>Menganalisis judul</span>
+                    <span className="inline-flex items-center space-x-1 ml-1" aria-hidden="true">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-white/90 animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </span>
                   </>
                 ) : (
                   <>
@@ -177,9 +198,26 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
         </div>
       </div>
 
-      {/* HASIL REKOMENDASI SECTION */}
-      {result && (
-        <div className="space-y-6 pt-4 animate-in fade-in duration-500">
+      {/* HASIL REKOMENDASI & LOADING SECTION */}
+      <div ref={resultsRef} className="scroll-mt-6">
+        {loading && (
+          <div className="bg-white rounded-3xl border border-stone-200/90 shadow-md p-10 flex flex-col items-center justify-center text-center space-y-4">
+            <div className="flex items-center space-x-2.5" aria-label="Memuat rekomendasi">
+              <span className="w-3.5 h-3.5 rounded-full bg-brand-600 animate-bounce shadow-xs" style={{ animationDelay: '0ms' }} />
+              <span className="w-3.5 h-3.5 rounded-full bg-copper-500 animate-bounce shadow-xs" style={{ animationDelay: '160ms' }} />
+              <span className="w-3.5 h-3.5 rounded-full bg-brand-400 animate-bounce shadow-xs" style={{ animationDelay: '320ms' }} />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-bold text-stone-800">Sedang Mencocokkan Topik Penelitian...</p>
+              <p className="text-xs text-stone-500">
+                Membandingkan judul Anda dengan 17 profil dosen, 706 riwayat TA, dan 643 publikasi ilmiah.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {!loading && result && (
+          <div className="space-y-6 pt-4 animate-in fade-in duration-500">
           {/* Banner Status */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-white border border-stone-200 shadow-xs">
             <div>
@@ -273,7 +311,8 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
             </table>
           </div>
         </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

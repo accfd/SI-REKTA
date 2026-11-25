@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Footer } from './components/Footer';
 import { BerandaPage } from './pages/BerandaPage';
@@ -13,6 +13,17 @@ import type { RecommendationResponse } from './types';
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('beranda');
   const [selectedTitle, setSelectedTitle] = useState<string>('');
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sidebarOpen');
+      return saved ? saved === 'true' : true;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sidebarOpen', String(sidebarOpen));
+  }, [sidebarOpen]);
 
   const { history, addHistory, deleteHistory, clearAllHistory } = useHistoryStorage();
 
@@ -28,10 +39,19 @@ export const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-stone-50 text-stone-800 flex">
       {/* Sidebar Navigasi */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isOpen={sidebarOpen}
+        setIsOpen={setSidebarOpen}
+      />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-72">
+      <div
+        className={`flex-1 flex flex-col min-w-0 transition-[padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          sidebarOpen ? 'md:pl-64' : 'md:pl-0'
+        }`}
+      >
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 sm:py-10">
           {activeTab === 'beranda' && (
             <BerandaPage

@@ -47,7 +47,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
       <div className="flex items-start space-x-3 p-4 rounded-2xl bg-brand-50/70 border border-brand-200/80 text-brand-900 text-xs">
         <ShieldCheck className="w-5 h-5 text-brand-600 shrink-0 mt-0.5" />
         <div className="leading-relaxed">
-          <span className="font-bold">Privasi Penyimpanan:</span> Riwayat pencarian ini hanya disimpan pada Local Storage di browser perangkat Anda, tanpa akun dan tanpa database cloud. Menghapus data/cache browser atau menggunakan jendela penyamaran (Incognito) akan menghapus riwayat ini.
+          <span className="font-bold"></span> Riwayat pencarian ini hanya disimpan pada Local Storage di browser perangkat Anda, tanpa akun dan database cloud. 
         </div>
       </div>
 
@@ -115,7 +115,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                 className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Hapus Semua Riwayat</span>
+                <span></span>
               </button>
             )}
           </div>

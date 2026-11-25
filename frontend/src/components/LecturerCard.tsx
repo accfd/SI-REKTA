@@ -1,6 +1,7 @@
 import React from 'react';
 import { Award, BookOpen, GraduationCap, Tag, CheckCircle2 } from 'lucide-react';
 import type { LecturerRecommendation } from '../types';
+import { LecturerAvatar } from './LecturerAvatar';
 
 interface LecturerCardProps {
   lecturer: LecturerRecommendation;
@@ -44,10 +45,13 @@ export const LecturerCard: React.FC<LecturerCardProps> = ({ lecturer }) => {
       {/* Header Kartu: Peringkat & Inisial */}
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="flex items-center space-x-3.5">
-          {/* Avatar Inisial */}
-          <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-brand-700 to-copper-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md shrink-0">
-            {lecturer.inisial}
-          </div>
+          {/* Avatar / Foto Dosen */}
+          <LecturerAvatar
+            idDosen={lecturer.id_dosen}
+            nama={lecturer.nama_dosen}
+            inisial={lecturer.inisial}
+            className="w-13 h-13 rounded-2xl bg-gradient-to-br from-brand-700 to-copper-600 text-white font-extrabold text-lg shadow-md"
+          />
           <div>
             <div className="flex items-center space-x-2">
               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shadow-sm ${badgeStyle.bg}`}>

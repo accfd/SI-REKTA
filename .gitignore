@@ -23,3 +23,7 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 *.log
+
+# Environment variables
+.env
+backend/.env
