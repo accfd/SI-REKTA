@@ -72,7 +72,7 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
           </div>
           <div>
             <div className="text-[11px] font-bold text-stone-800">TF-IDF N-Gram</div>
-            <div className="text-[10px] text-stone-400">10.130 Fitur Teks</div>
+            <div className="text-[10px] text-stone-400">8.332 Fitur Teks</div>
           </div>
         </div>
 
@@ -133,25 +133,25 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
         <div className="hidden xl:block absolute -bottom-5 right-6 z-10 w-60 rotate-3 bg-white rounded-2xl border border-stone-200/90 shadow-lg p-3.5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Evaluasi Model</span>
-            <span className="px-1.5 py-0.5 rounded-md bg-copper-50 text-copper-700 text-[10px] font-bold">76.92%</span>
+            <span className="px-1.5 py-0.5 rounded-md bg-copper-50 text-copper-700 text-[10px] font-bold">79.65%</span>
           </div>
           <div className="space-y-2">
             <div>
               <div className="flex justify-between text-[10px] text-stone-600 mb-1">
                 <span>Hit Rate@3</span>
-                <span className="font-bold text-brand-700">76.92%</span>
+                <span className="font-bold text-brand-700">79.65%</span>
               </div>
               <div className="h-1.5 rounded-full bg-stone-100 overflow-hidden">
-                <div className="h-full w-[77%] rounded-full bg-brand-600" />
+                <div className="h-full w-[80%] rounded-full bg-brand-600" />
               </div>
             </div>
             <div>
               <div className="flex justify-between text-[10px] text-stone-600 mb-1">
                 <span>Recall@3</span>
-                <span className="font-bold text-copper-600">72.22%</span>
+                <span className="font-bold text-copper-600">75.22%</span>
               </div>
               <div className="h-1.5 rounded-full bg-stone-100 overflow-hidden">
-                <div className="h-full w-[72%] rounded-full bg-copper-500" />
+                <div className="h-full w-[75%] rounded-full bg-copper-500" />
               </div>
             </div>
           </div>

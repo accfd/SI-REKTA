@@ -223,7 +223,7 @@ def get_model_info(db: Session = Depends(get_db)):
     tot_pub = db.query(func.count(models.Publikasi.id_publikasi)).scalar() or 0
     tot_dosen = db.query(func.count(models.Dosen.id_dosen)).filter(models.Dosen.termasuk_model == True).scalar() or 0
 
-    total_fitur = len(recommender_engine.feature_names) if recommender_engine.feature_names is not None else 10130
+    total_fitur = len(recommender_engine.feature_names) if recommender_engine.feature_names is not None else 8332
 
     return schemas.ModelInfoResponse(
         nama_model=versi.nama_model,

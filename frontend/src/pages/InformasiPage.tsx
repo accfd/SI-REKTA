@@ -99,7 +99,7 @@ export const InformasiPage: React.FC = () => {
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
             <span className="text-xs font-bold text-copper-600">Langkah 3</span>
             <h4 className="font-bold text-slate-800 text-sm mt-1">TF-IDF N-Gram</h4>
-            <p className="text-xs text-slate-500 mt-1">Transformasi ke 10.130 fitur kata &amp; frasa (unigram + bigram, sublinear_tf, hybrid stopwords).</p>
+            <p className="text-xs text-slate-500 mt-1">Transformasi ke {info?.jumlah_fitur_tfidf ? info.jumlah_fitur_tfidf.toLocaleString("id-ID") : "8.332"} fitur kata &amp; frasa (unigram + bigram, sublinear_tf, hybrid stopwords).</p>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
@@ -169,34 +169,34 @@ export const InformasiPage: React.FC = () => {
         </div>
 
         <h2 className="text-xl font-bold text-slate-900">
-          Hasil Pengujian Kinerja (Uji Independen 118 Judul TA)
+          Hasil Pengujian Kinerja (Uji Independen 113 Judul TA)
         </h2>
         <p className="text-sm text-slate-600 leading-relaxed">
-          Evaluasi resmi dilakukan menggunakan pustaka <code>arx</code> pada 118 judul tugas akhir data testing yang disisihkan secara independen dari proses pelatihan model. Tiga metrik evaluasi utama yang digunakan:
+          Evaluasi resmi dilakukan menggunakan pustaka <code>ranx</code> pada 113 judul tugas akhir data testing yang disisihkan secara independen dari proses pelatihan model. Tiga metrik evaluasi utama yang digunakan:
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="p-6 rounded-3xl bg-brand-50/70 border border-brand-200 text-center">
-            <div className="text-4xl font-extrabold text-brand-700">{info?.hit_rate_at_3 ?? 76.92}%</div>
+            <div className="text-4xl font-extrabold text-brand-700">{info?.hit_rate_at_3 ?? 79.65}%</div>
             <div className="text-sm font-bold text-slate-800 mt-2">Hit Rate@3</div>
             <p className="text-xs text-slate-500 mt-1">
-              Sebanyak <strong>{info?.hit_rate_at_3 ?? 76.92}%</strong> judul uji berhasil mendapatkan minimal satu dosen pembimbing yang tepat di dalam Top 3 rekomendasi.
+              Sebanyak <strong>{info?.hit_rate_at_3 ?? 79.65}%</strong> judul uji berhasil mendapatkan minimal satu dosen pembimbing yang tepat di dalam Top 3 rekomendasi.
             </p>
           </div>
 
           <div className="p-6 rounded-3xl bg-copper-50/70 border border-copper-200 text-center">
-            <div className="text-4xl font-extrabold text-copper-700">{info?.recall_at_3 ?? 72.22}%</div>
+            <div className="text-4xl font-extrabold text-copper-700">{info?.recall_at_3 ?? 75.22}%</div>
             <div className="text-sm font-bold text-slate-800 mt-2">Recall@3</div>
             <p className="text-xs text-slate-500 mt-1">
-              Sebanyak <strong>{info?.recall_at_3 ?? 72.22}%</strong> dari seluruh dosen relevan berhasil ditangkap oleh sistem pada Top 3 rekomendasi.
+              Sebanyak <strong>{info?.recall_at_3 ?? 75.22}%</strong> dari seluruh dosen relevan berhasil ditangkap oleh sistem pada Top 3 rekomendasi.
             </p>
           </div>
 
           <div className="p-6 rounded-3xl bg-emerald-50/70 border border-emerald-200 text-center">
-            <div className="text-4xl font-extrabold text-emerald-700">{info?.mrr_at_3 ?? 0.6}</div>
+            <div className="text-4xl font-extrabold text-emerald-700">{info?.mrr_at_3 ?? 0.61}</div>
             <div className="text-sm font-bold text-slate-800 mt-2">MRR@3 (Mean Reciprocal Rank)</div>
             <p className="text-xs text-slate-500 mt-1">
-              Skor <strong>{info?.mrr_at_3 ?? 0.6}</strong> menunjukkan dosen relevan konsisten berada pada posisi ranking teratas (#1 atau #2).
+              Skor <strong>{info?.mrr_at_3 ?? 0.61}</strong> menunjukkan dosen relevan konsisten berada pada posisi ranking teratas (#1 atau #2).
             </p>
           </div>
         </div>
