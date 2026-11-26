@@ -1,5 +1,4 @@
 import React from 'react';
-import { Icon } from 'lucide-react';
 
 interface StatsCardProps {
   icon: React.ElementType;
