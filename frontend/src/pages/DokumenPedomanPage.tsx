@@ -36,14 +36,14 @@ export const DokumenPedomanPage: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="max-w-3xl">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Dokumen Pedoman Tugas Akhir</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Dokumen Pedoman Tugas Akhir</h1>
         <p className="text-sm text-slate-500 mt-1.5">
           Baca langsung buku panduan pelaksanaan dan daftar bidang minat topik tugas akhir DSI tahun 2025 langsung di dalam aplikasi web.
         </p>
       </div>
 
       {errorMsg ? (
-        <div className="p-6 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex items-center justify-between">
+        <div className="p-5 sm:p-6 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-3">
             <AlertCircle className="w-6 h-6 text-red-500 shrink-0" />
             <div>
@@ -94,12 +94,12 @@ export const DokumenPedomanPage: React.FC = () => {
 
             {/* Quick Document Actions */}
             {currentDoc && (
-              <div className="flex items-center space-x-2 shrink-0">
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto shrink-0">
                 <a
                   href={api.getDocumentStreamUrl(currentDoc.id_dokumen)}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>Buka di Tab Baru</span>
@@ -107,7 +107,7 @@ export const DokumenPedomanPage: React.FC = () => {
 
                 <a
                   href={api.getDocumentDownloadUrl(currentDoc.id_dokumen)}
-                  className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 transition-colors"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 transition-colors"
                   title="Unduh Berkas PDF"
                 >
                   <Download className="w-3.5 h-3.5" />
@@ -119,7 +119,7 @@ export const DokumenPedomanPage: React.FC = () => {
 
           {/* Inline Document Info Banner */}
           {currentDoc && (
-            <div className="bg-brand-50/70 p-4 rounded-2xl border border-brand-200/60 flex items-center justify-between text-xs text-brand-900">
+            <div className="bg-brand-50/70 p-4 rounded-2xl border border-brand-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-brand-900">
               <div className="flex items-center space-x-2">
                 <FileText className="w-4 h-4 text-brand-600 shrink-0" />
                 <span>
@@ -134,7 +134,7 @@ export const DokumenPedomanPage: React.FC = () => {
 
           {/* Interactive In-Page PDF Viewer */}
           {currentDoc && (
-            <div className="bg-slate-900 rounded-3xl overflow-hidden shadow-xl border border-slate-800 relative h-[820px]">
+            <div className="bg-slate-900 rounded-3xl overflow-hidden shadow-xl border border-slate-800 relative h-[65vh] min-h-[440px] sm:h-[780px]">
               <object
                 data={`${api.getDocumentStreamUrl(currentDoc.id_dokumen)}#toolbar=1&navpanes=0&view=FitH`}
                 type="application/pdf"

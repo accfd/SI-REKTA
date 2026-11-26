@@ -20,13 +20,13 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
     },
     {
       id: 'bimbingan',
-      title: '706 Riwayat Bimbingan TA',
+      title: '707 Riwayat Bimbingan TA',
       description: 'Dataset tugas akhir terdahulu sebagai referensi pencocokan topik penelitian.',
       image: '/assets/dataset.jpg',
     },
     {
       id: 'publikasi',
-      title: '643 Publikasi Ilmiah',
+      title: '610 Publikasi Ilmiah',
       description: 'Karya ilmiah dosen terindeks untuk memperkaya akurasi rekomendasi pembimbing.',
       image: '/assets/publikasi.jpg',
     },
@@ -41,7 +41,7 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
   return (
     <div className="space-y-16">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl bg-white border border-stone-200/90 shadow-xl px-6 py-14 sm:px-12 sm:py-20">
+      <section className="relative overflow-hidden rounded-3xl bg-white border border-stone-200/90 shadow-xl px-5 py-10 sm:px-12 sm:py-20">
         {/* Subtle Dot-Grid Background */}
         <div
           className="absolute inset-0 opacity-45 pointer-events-none"
@@ -182,10 +182,10 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
           </p>
 
           {/* CTA Buttons */}
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-7 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 w-full sm:w-auto">
             <button
               onClick={() => setActiveTab('cari')}
-              className="inline-flex items-center space-x-2.5 px-7 py-3.5 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-600/25 active:scale-95 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center space-x-2.5 px-6 sm:px-7 py-3.5 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-600/25 active:scale-95 transition-all cursor-pointer"
             >
               <Search className="w-4 h-4 shrink-0" />
               <span>Cari Dosen Sekarang</span>
@@ -193,7 +193,7 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
             </button>
             <button
               onClick={() => setActiveTab('pedoman')}
-              className="inline-flex items-center space-x-2 px-5 py-3.5 rounded-xl font-semibold text-stone-700 bg-white hover:bg-stone-50 border border-stone-200 shadow-xs active:scale-95 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center space-x-2 px-5 py-3.5 rounded-xl font-semibold text-stone-700 bg-white hover:bg-stone-50 border border-stone-200 shadow-xs active:scale-95 transition-all cursor-pointer"
             >
               <FileText className="w-4 h-4 text-brand-600 shrink-0" />
               <span>Lihat Dokumen Pedoman</span>
@@ -244,7 +244,7 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
                 <div className="w-full h-full bg-white/65 backdrop-blur-xs rounded-xl border border-white/80 p-3 flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
-                      <div className="text-lg font-extrabold text-brand-900 leading-none">706</div>
+                      <div className="text-lg font-extrabold text-brand-900 leading-none">707</div>
                       <div className="text-[10px] font-medium text-stone-500 mt-0.5">Riwayat TA</div>
                     </div>
                     <span className="px-2 py-0.5 rounded-full bg-copper-100 text-copper-800 text-[10px] font-bold">

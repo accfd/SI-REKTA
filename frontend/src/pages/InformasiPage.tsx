@@ -24,10 +24,10 @@ export const InformasiPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-10">
       {/* Header */}
       <div className="max-w-3xl">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
           Transparansi &amp; Metodologi Model
         </h1>
         <p className="text-sm text-slate-500 mt-1.5">
@@ -43,13 +43,13 @@ export const InformasiPage: React.FC = () => {
       )}
 
       {/* Bagian 1: Tujuan Sistem */}
-      <section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-3">
-        <div className="flex items-center space-x-2 text-brand-600 font-bold text-sm uppercase tracking-wider">
-          <Info className="w-4 h-4" />
+      <section className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+        <div className="flex items-center space-x-2 text-brand-600 font-bold text-xs sm:text-sm uppercase tracking-wider">
+          <Info className="w-4 h-4 shrink-0" />
           <span>Bagian 1 • Tujuan Sistem</span>
         </div>
 
-        <h2 className="text-xl font-bold text-slate-900">
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900">
           Membantu Penjajakan Topik &amp; Rekomendasi Dosen Pembimbing
         </h2>
         <p className="text-sm text-slate-600 leading-relaxed">
@@ -57,33 +57,18 @@ export const InformasiPage: React.FC = () => {
         </p>
       </section>
 
-{/* Alur Sistem – Bagaimana SI-REKTA Bekerja? */}
-<section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
-  <div className="flex items-center space-x-2 text-brand-600 font-bold text-sm uppercase tracking-wider">
-    <Info className="w-4 h-4" />
-    <span>Alur Sistem – Bagaimana SI-REKTA Bekerja?</span>
-  </div>
-  <h2 className="text-xl font-bold text-slate-900">Empat langkah mudah dari penulisan ide judul hingga rekomendasi siap pakai</h2>
-  <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
-    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir (6–30 kata) dengan topik yang spesifik.</li>
-    <li><strong>Pembersihan Teks</strong> – Sistem melakukan lowercase, pembersihan tanda baca, URL, dan ekstraksi n‑gram frasa.</li>
-    <li><strong>TF‑IDF & Cosine Similarity</strong> – Vektor judul dibandingkan dengan matriks profil gabungan seluruh 17 dosen DSI.</li>
-    <li><strong>Top‑3 Rekomendasi</strong> – Sistem menampilkan 3 dosen paling relevan, kata kunci cocok, dan menyimpannya di riapan lokal.</li>
-  </ol>
-</section>
-
       {/* Bagian 2: Cara Kerja Model NLP */}
-      <section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
-        <div className="flex items-center space-x-2 text-copper-600 font-bold text-sm uppercase tracking-wider">
-          <Cpu className="w-4 h-4" />
+      <section className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
+        <div className="flex items-center space-x-2 text-copper-600 font-bold text-xs sm:text-sm uppercase tracking-wider">
+          <Cpu className="w-4 h-4 shrink-0" />
           <span>Bagian 2 • Cara Kerja Model Rekomendasi</span>
         </div>
 
-        <h2 className="text-xl font-bold text-slate-900">
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900">
           Alur Pemrosesan Teks (Text Mining Pipeline)
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
             <span className="text-xs font-bold text-copper-600">Langkah 1</span>
             <h4 className="font-bold text-slate-800 text-sm mt-1">Input Judul</h4>
@@ -108,7 +93,7 @@ export const InformasiPage: React.FC = () => {
             <p className="text-xs text-slate-500 mt-1">Perhitungan sudut kosinus terhadap 17 vektor profil dosen.</p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 sm:col-span-2 lg:col-span-1">
             <span className="text-xs font-bold text-copper-600">Langkah 5</span>
             <h4 className="font-bold text-slate-800 text-sm mt-1">Top-3 Ranking</h4>
             <p className="text-xs text-slate-500 mt-1">Perangkingan urutan #1, #2, #3 serta pencocokan kata kunci.</p>
@@ -116,84 +101,69 @@ export const InformasiPage: React.FC = () => {
         </div>
       </section>
 
-{/* Alur Sistem – Bagaimana SI-REKTA Bekerja? */}
-<section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
-  <div className="flex items-center space-x-2 text-brand-600 font-bold text-sm uppercase tracking-wider">
-    <Info className="w-4 h-4" />
-    <span>Alur Sistem – Bagaimana SI-REKTA Bekerja?</span>
-  </div>
-  <h2 className="text-xl font-bold text-slate-900">Empat langkah mudah dari penulisan ide judul hingga rekomendasi siap pakai</h2>
-  <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
-    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir (6–30 kata) dengan topik yang spesifik.</li>
-    <li><strong>Pembersihan Teks</strong> – Sistem melakukan lowercase, pembersihan tanda baca, URL, dan ekstraksi n‑gram frasa.</li>
-    <li><strong>TF‑IDF & Cosine Similarity</strong> – Vektor judul dibandingkan dengan matriks profil gabungan seluruh 17 dosen DSI.</li>
-    <li><strong>Top‑3 Rekomendasi</strong> – Sistem menampilkan 3 dosen paling relevan, kata kunci cocok, dan menyimpannya di riapan lokal.</li>
-  </ol>
-</section>
-
       {/* Bagian 3: Dataset Referensi */}
-      <section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
-        <div className="flex items-center space-x-2 text-emerald-600 font-bold text-sm uppercase tracking-wider">
-          <Database className="w-4 h-4" />
+      <section className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+        <div className="flex items-center space-x-2 text-emerald-600 font-bold text-xs sm:text-sm uppercase tracking-wider">
+          <Database className="w-4 h-4 shrink-0" />
           <span>Bagian 3 • Dataset Referensi Akademik</span>
         </div>
 
-        <h2 className="text-xl font-bold text-slate-900">Komposisi Data Pelatihan Model</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900">Komposisi Data Pelatihan Model</h2>
 
-        {/* Updated Stats Card – visual from design */}
-        <div className="my-8">
-          <img src="/assets/stats-card.png" alt="Statistik SI‑REKTA" className="w-full max-w-3xl mx-auto rounded-lg shadow" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-2">
+          <div className="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-100">
+            <div className="text-2xl font-black text-emerald-900">{info?.jumlah_dosen ?? 17} Dosen</div>
+            <p className="text-xs font-semibold text-emerald-700 mt-0.5">Departemen Sistem Informasi</p>
+            <p className="text-xs text-slate-500 mt-2">Mencakup kelompok keahlian RDBI, SD, SE, dan TKITI.</p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-brand-50/60 border border-brand-100">
+            <div className="text-2xl font-black text-brand-900">707 Relasi Bimbingan</div>
+            <p className="text-xs font-semibold text-brand-700 mt-0.5">{info?.total_riwayat_ta ?? 623} Judul Tugas Akhir Terdahulu</p>
+            <p className="text-xs text-slate-500 mt-2">Data bimbingan pembimbing 1 dan 2 lulusan DSI.</p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-copper-50/60 border border-copper-100">
+            <div className="text-2xl font-black text-copper-900">{info?.total_publikasi ?? 610} Publikasi Ilmiah</div>
+            <p className="text-xs font-semibold text-copper-700 mt-0.5">Jurnal &amp; Konferensi Dosen</p>
+            <p className="text-xs text-slate-500 mt-2">Publikasi penelitian resmi dosen yang terindeks &amp; bersih.</p>
+          </div>
         </div>
       </section>
 
-{/* Alur Sistem – Bagaimana SI-REKTA Bekerja? */}
-<section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
-  <div className="flex items-center space-x-2 text-brand-600 font-bold text-sm uppercase tracking-wider">
-    <Info className="w-4 h-4" />
-    <span>Alur Sistem – Bagaimana SI-REKTA Bekerja?</span>
-  </div>
-  <h2 className="text-xl font-bold text-slate-900">Empat langkah mudah dari penulisan ide judul hingga rekomendasi siap pakai</h2>
-  <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
-    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir (6–30 kata) dengan topik yang spesifik.</li>
-    <li><strong>Pembersihan Teks</strong> – Sistem melakukan lowercase, pembersihan tanda baca, URL, dan ekstraksi n‑gram frasa.</li>
-    <li><strong>TF‑IDF & Cosine Similarity</strong> – Vektor judul dibandingkan dengan matriks profil gabungan seluruh 17 dosen DSI.</li>
-    <li><strong>Top‑3 Rekomendasi</strong> – Sistem menampilkan 3 dosen paling relevan, kata kunci cocok, dan menyimpannya di riapan lokal.</li>
-  </ol>
-</section>
-
       {/* Bagian 4: Kinerja Model & Evaluasi */}
-      <section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
-        <div className="flex items-center space-x-2 text-copper-600 font-bold text-sm uppercase tracking-wider">
-          <BarChart3 className="w-4 h-4" />
+      <section className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
+        <div className="flex items-center space-x-2 text-copper-600 font-bold text-xs sm:text-sm uppercase tracking-wider">
+          <BarChart3 className="w-4 h-4 shrink-0" />
           <span>Bagian 4 • Metrik Evaluasi Resmi Model</span>
         </div>
 
-        <h2 className="text-xl font-bold text-slate-900">
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900">
           Hasil Pengujian Kinerja (Uji Independen 113 Judul TA)
         </h2>
         <p className="text-sm text-slate-600 leading-relaxed">
           Evaluasi resmi dilakukan menggunakan pustaka <code>ranx</code> pada 113 judul tugas akhir data testing yang disisihkan secara independen dari proses pelatihan model. Tiga metrik evaluasi utama yang digunakan:
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="p-6 rounded-3xl bg-brand-50/70 border border-brand-200 text-center">
-            <div className="text-4xl font-extrabold text-brand-700">{info?.hit_rate_at_3 ?? 79.65}%</div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <div className="p-5 sm:p-6 rounded-3xl bg-brand-50/70 border border-brand-200 text-center">
+            <div className="text-3xl sm:text-4xl font-extrabold text-brand-700">{info?.hit_rate_at_3 ?? 79.65}%</div>
             <div className="text-sm font-bold text-slate-800 mt-2">Hit Rate@3</div>
             <p className="text-xs text-slate-500 mt-1">
               Sebanyak <strong>{info?.hit_rate_at_3 ?? 79.65}%</strong> judul uji berhasil mendapatkan minimal satu dosen pembimbing yang tepat di dalam Top 3 rekomendasi.
             </p>
           </div>
 
-          <div className="p-6 rounded-3xl bg-copper-50/70 border border-copper-200 text-center">
-            <div className="text-4xl font-extrabold text-copper-700">{info?.recall_at_3 ?? 75.22}%</div>
+          <div className="p-5 sm:p-6 rounded-3xl bg-copper-50/70 border border-copper-200 text-center">
+            <div className="text-3xl sm:text-4xl font-extrabold text-copper-700">{info?.recall_at_3 ?? 75.22}%</div>
             <div className="text-sm font-bold text-slate-800 mt-2">Recall@3</div>
             <p className="text-xs text-slate-500 mt-1">
               Sebanyak <strong>{info?.recall_at_3 ?? 75.22}%</strong> dari seluruh dosen relevan berhasil ditangkap oleh sistem pada Top 3 rekomendasi.
             </p>
           </div>
 
-          <div className="p-6 rounded-3xl bg-emerald-50/70 border border-emerald-200 text-center">
-            <div className="text-4xl font-extrabold text-emerald-700">{info?.mrr_at_3 ?? 0.61}</div>
+          <div className="p-5 sm:p-6 rounded-3xl bg-emerald-50/70 border border-emerald-200 text-center">
+            <div className="text-3xl sm:text-4xl font-extrabold text-emerald-700">{info?.mrr_at_3 ?? 0.61}</div>
             <div className="text-sm font-bold text-slate-800 mt-2">MRR@3 (Mean Reciprocal Rank)</div>
             <p className="text-xs text-slate-500 mt-1">
               Skor <strong>{info?.mrr_at_3 ?? 0.61}</strong> menunjukkan dosen relevan konsisten berada pada posisi ranking teratas (#1 atau #2).
@@ -202,29 +172,14 @@ export const InformasiPage: React.FC = () => {
         </div>
       </section>
 
-{/* Alur Sistem – Bagaimana SI-REKTA Bekerja? */}
-<section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
-  <div className="flex items-center space-x-2 text-brand-600 font-bold text-sm uppercase tracking-wider">
-    <Info className="w-4 h-4" />
-    <span>Alur Sistem – Bagaimana SI-REKTA Bekerja?</span>
-  </div>
-  <h2 className="text-xl font-bold text-slate-900">Empat langkah mudah dari penulisan ide judul hingga rekomendasi siap pakai</h2>
-  <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
-    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir (6–30 kata) dengan topik yang spesifik.</li>
-    <li><strong>Pembersihan Teks</strong> – Sistem melakukan lowercase, pembersihan tanda baca, URL, dan ekstraksi n‑gram frasa.</li>
-    <li><strong>TF‑IDF & Cosine Similarity</strong> – Vektor judul dibandingkan dengan matriks profil gabungan seluruh 17 dosen DSI.</li>
-    <li><strong>Top‑3 Rekomendasi</strong> – Sistem menampilkan 3 dosen paling relevan, kata kunci cocok, dan menyimpannya di riapan lokal.</li>
-  </ol>
-</section>
-
       {/* Bagian 5: Batasan Sistem */}
-      <section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
-        <div className="flex items-center space-x-2 text-rose-600 font-bold text-sm uppercase tracking-wider">
-          <ShieldAlert className="w-4 h-4" />
+      <section className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+        <div className="flex items-center space-x-2 text-rose-600 font-bold text-xs sm:text-sm uppercase tracking-wider">
+          <ShieldAlert className="w-4 h-4 shrink-0" />
           <span>Bagian 5 • Batasan Sistem (SRS Bab 10)</span>
         </div>
 
-        <h2 className="text-xl font-bold text-slate-900">Batasan Ruang Lingkup dan Integritas Sistem</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900">Batasan Ruang Lingkup dan Integritas Sistem</h2>
 
         <ul className="text-xs sm:text-sm text-slate-600 space-y-2.5">
           <li className="flex items-start space-x-2.5">
@@ -245,21 +200,6 @@ export const InformasiPage: React.FC = () => {
           </li>
         </ul>
       </section>
-
-{/* Alur Sistem – Bagaimana SI-REKTA Bekerja? */}
-<section className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
-  <div className="flex items-center space-x-2 text-brand-600 font-bold text-sm uppercase tracking-wider">
-    <Info className="w-4 h-4" />
-    <span>Alur Sistem – Bagaimana SI-REKTA Bekerja?</span>
-  </div>
-  <h2 className="text-xl font-bold text-slate-900">Empat langkah mudah dari penulisan ide judul hingga rekomendasi siap pakai</h2>
-  <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
-    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir (6–30 kata) dengan topik yang spesifik.</li>
-    <li><strong>Pembersihan Teks</strong> – Sistem melakukan lowercase, pembersihan tanda baca, URL, dan ekstraksi n‑gram frasa.</li>
-    <li><strong>TF‑IDF & Cosine Similarity</strong> – Vektor judul dibandingkan dengan matriks profil gabungan seluruh 17 dosen DSI.</li>
-    <li><strong>Top‑3 Rekomendasi</strong> – Sistem menampilkan 3 dosen paling relevan, kata kunci cocok, dan menyimpannya di riapan lokal.</li>
-  </ol>
-</section>
     </div>
   );
 };

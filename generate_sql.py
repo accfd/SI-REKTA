@@ -75,39 +75,73 @@ def main():
     }
 
     dosen_kk_code = {}
-    publikasi_records = []
+    raw_pub_rows = []
     with open(DOCS_DIR / "Publikasi_Dosen.csv", "r", encoding="utf-8-sig") as f:
         header = f.readline()
         f.seek(0)
         delim = ";" if header.count(";") > header.count(",") else ","
         reader = csv.DictReader(f, delimiter=delim)
         for r in reader:
-            d = r["nama_dosen"].strip()
-            kk = r.get("kelompok_keahlian", "").strip()
+            d = (r.get("nama_dosen") or "").strip()
+            kk = (r.get("kelompok_keahlian") or "").strip()
             if d and kk and d not in dosen_kk_code:
                 dosen_kk_code[d] = kk
-            
-            judul_pub = r.get("judul_publikasi", "").strip()
-            tahun_pub = r.get("tahun", "").strip()
-            try:
-                tahun_pub = int(tahun_pub)
-            except:
-                tahun_pub = None
-            if judul_pub:
-                publikasi_records.append({
+
+            judul_pub = (r.get("judul_publikasi") or "").strip()
+            tahun_raw = (r.get("tahun") or "").strip()
+            tahun_pub = None if tahun_raw in ("", "-") else tahun_raw
+            if tahun_pub is not None:
+                try:
+                    tahun_pub = int(tahun_pub)
+                except ValueError:
+                    tahun_pub = None
+            if judul_pub and d:
+                raw_pub_rows.append({
                     "judul": judul_pub,
                     "tahun": tahun_pub,
                     "nama_dosen": d
                 })
 
-    # Ekstraksi kata kunci dosen dari TF-IDF profil
-    stopwords_id = {
-        "dan", "di", "ke", "dari", "pada", "yang", "untuk", "dengan", "dalam",
-        "atau", "oleh", "sebagai", "studi", "kasus", "berbasis", "sistem", "informasi",
-        "aplikasi", "pembangunan", "analisis", "perancangan", "implementasi", "menggunakan",
-        "metode", "model", "pengembangan", "pada", "ini", "itu", "terhadap", "web", "website"
-    }
+    # Import STOPWORDS lengkap & bersihkan_teks dari backend/app/preprocessor.py (identik dengan Cell 33 SIREKTA.ipynb)
+    sys.path.append(str(BASE_DIR / "backend"))
+    from app.preprocessor import STOPWORDS as stopwords_id
 
+    def bersihkan_token_topik(teks: str) -> str:
+        teks_clean = re.sub(r"https?://\S+|www\.\S+", " ", str(teks).lower())
+        teks_clean = re.sub(r"[^\w\s]", " ", teks_clean, flags=re.UNICODE).replace("_", " ")
+        tokens = [t for t in teks_clean.split() if t not in stopwords_id and len(t) > 1]
+        return " ".join(tokens)
+
+    # Terapkan Data Cleaning & Preprocessing publikasi identik dengan Cell 28 & Cell 33 SIREKTA.ipynb:
+    # 1) Bersihkan ekor sitasi jurnal/halaman (misal ". Dinamisia..., 6 (2), 294-304")
+    pola_sitasi = re.compile(r"\.\s+[^.]+,\s*\d+\s*\(\d+\),\s*\d+\s*[-–]\s*\d+\s*$")
+    ekor_sitasi_teks_list = []
+    for row in raw_pub_rows:
+        m = pola_sitasi.search(row["judul"])
+        if m:
+            ekor_sitasi_teks_list.append(m.group(0).lower())
+            row["judul"] = pola_sitasi.sub("", row["judul"]).strip()
+    ekor_sitasi_teks = " ".join(ekor_sitasi_teks_list)
+
+    # 2) Buang artefak singkatan nama jurnal (1 kata, tahun kosong, muncul di ekor sitasi), pertahankan topik sah ('GIS')
+    # 3) Deduplikasi judul publikasi (case-insensitive) per dosen pasca-pembersihan sitasi
+    # 4) Buang judul generik tanpa token topik bermakna setelah filter STOPWORDS ('Perancangan Sistem', 'Implementasi Sistem')
+    publikasi_records = []
+    seen_pub_keys = set()
+    for row in raw_pub_rows:
+        words = row["judul"].split()
+        if len(words) == 1 and row["tahun"] is None and row["judul"].lower() in ekor_sitasi_teks:
+            continue
+        judul_norm = re.sub(r"\s+", " ", row["judul"].lower()).strip()
+        dedup_key = (row["nama_dosen"], judul_norm)
+        if dedup_key in seen_pub_keys:
+            continue
+        seen_pub_keys.add(dedup_key)
+        if not bersihkan_token_topik(row["judul"]):
+            continue
+        publikasi_records.append(row)
+
+    # Ekstraksi kata kunci dosen dari TF-IDF profil menggunakan STOPWORDS lengkap
     vec = joblib.load(MODEL_DIR / "vectorizer.joblib")
     mat = load_npz(MODEL_DIR / "matriks_tfidf_profil_dosen.npz")
     feature_names = np.array(vec.get_feature_names_out())
@@ -119,7 +153,6 @@ def main():
         cur_kw = []
         for idx in top_indices:
             word = feature_names[idx]
-            # filter jika hanya stopword murni
             tokens = word.split()
             if all(t in stopwords_id for t in tokens):
                 continue
@@ -128,22 +161,31 @@ def main():
                 break
         keywords_per_dosen[nama] = cur_kw
 
-    # Membaca data TA dari Judul_TA.csv
+    # Membaca data TA dari Judul_TA.csv dengan pembersihan identik Cell 28 SIREKTA.ipynb
     ta_records = []
     ta_bimbingan = [] # (id_ta, id_dosen, posisi)
-    with open(DOCS_DIR / "Judul_TA.csv", "r", encoding="utf-8") as f:
+    with open(DOCS_DIR / "Judul_TA.csv", "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f, delimiter=";")
         for r in reader:
-            judul = r.get("judul_ta", "").strip()
+            judul = (r.get("judul_ta") or "").strip()
             if not judul:
                 continue
-            tahun = r.get("tahun", "").strip()
+
+            p1 = standardisasi_nama(r.get("pembimbing_1", ""))
+            p2 = standardisasi_nama(r.get("pembimbing_2", ""))
+            # Keluarkan baris TA tanpa pembimbing 1 maupun pembimbing 2 sama sekali
+            if p1 is None and p2 is None:
+                continue
+
+            tahun_raw = (r.get("tahun") or "").strip()
             try:
-                tahun = int(tahun)
-            except:
+                tahun = int(tahun_raw) if tahun_raw not in ("", "-") else None
+            except ValueError:
                 tahun = None
-            mhs = r.get("nama_mahasiswa", "").strip() or None
-            nim = r.get("nim", "").strip() or None
+            mhs = (r.get("nama_mahasiswa") or "").strip()
+            mhs = None if mhs in ("", "-") else mhs
+            nim = (r.get("nim") or "").strip()
+            nim = None if nim in ("", "-") else nim
 
             id_ta = len(ta_records) + 1
             ta_records.append({
@@ -155,14 +197,10 @@ def main():
             })
 
             # Pembimbing 1
-            p1_raw = r.get("pembimbing_1", "")
-            p1 = standardisasi_nama(p1_raw)
             if p1 in dosen_id_map:
                 ta_bimbingan.append((id_ta, dosen_id_map[p1], 1))
 
             # Pembimbing 2
-            p2_raw = r.get("pembimbing_2", "")
-            p2 = standardisasi_nama(p2_raw)
             if p2 in dosen_id_map:
                 ta_bimbingan.append((id_ta, dosen_id_map[p2], 2))
 

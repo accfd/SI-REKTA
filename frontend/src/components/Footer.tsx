@@ -25,8 +25,8 @@ export const Footer: React.FC = () => {
             <h4 className="text-sm font-semibold text-white tracking-wider uppercase">Cakupan Data</h4>
             <ul className="text-sm text-stone-400 space-y-1.5">
               <li>• 17 Dosen Pembimbing DSI</li>
-              <li>• 706 Riwayat Bimbingan Tugas Akhir</li>
-              <li>• 643 Publikasi Ilmiah Dosen</li>
+              <li>• 707 Riwayat Bimbingan Tugas Akhir</li>
+              <li>• 610 Publikasi Ilmiah Dosen</li>
               <li>• 4 Kelompok Keahlian (RDBI, SD, SE, TKITI)</li>
             </ul>
           </div>

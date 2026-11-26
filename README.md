@@ -15,7 +15,7 @@ Seluruh proses pengembangan model Machine Learning (Tahap 1 hingga 9) terdokumen
 ---
 
 ## 🚀 Fitur Utama (6 Menu Sistem)
-1. **Beranda**: Statistik ringkasan (17 Dosen, 706 Riwayat TA, 643 Publikasi), lencana metode, alur sistem, dan contoh judul cepat.
+1. **Beranda**: Statistik ringkasan (17 Dosen, 707 Riwayat Bimbingan TA, 610 Publikasi Ilmiah), lencana metode, alur sistem, dan contoh judul cepat.
 2. **Cari Dosen & Hasil Rekomendasi**:
    - Form input textarea dengan word counter (validasi panjang 6–30 kata).
    - Kartu rekomendasi Top-3 (#1, #2, #3), lencana peringkat, inisial, kata kunci cocok, dan tag keahlian.
@@ -25,7 +25,7 @@ Seluruh proses pengembangan model Machine Learning (Tahap 1 hingga 9) terdokumen
 3. **Daftar Dosen**: Direktori 17 dosen DSI, filter kelompok keahlian (RDBI, SD, SE, TKITI), pengurutan, dan tombol rincian dokumen bimbingan & publikasi.
 4. **Dokumen Pedoman**: Penampil PDF resmi terintegrasi (Pedoman Tugas Akhir & Pedoman Topik TA DSI 2025).
 5. **History**: Penyimpanan riwayat lokal di browser (**Local Storage**) tanpa akun/database server, snapshot hasil, fitur hapus satuan dan hapus semua.
-6. **Informasi**: Transparansi alur kerja NLP/IR, rincian dataset, metrik evaluasi model (Hit Rate@3: 76.92%, Recall@3: 72.22%, MRR@3: 0.60, 10.130 fitur TF-IDF), serta batasan akademik sistem.
+6. **Informasi**: Transparansi alur kerja NLP/IR, rincian dataset, metrik evaluasi model (Hit Rate@3: 79.65%, Recall@3: 75.22%, MRR@3: 0.61, 8.332 fitur TF-IDF), serta batasan akademik sistem.
 
 ---
 
@@ -35,9 +35,9 @@ Database `sirekta_db` dirancang dalam bentuk **Normalisasi 3NF** dengan 10 tabel
 - `dosen` (Master 17 Dosen DSI)
 - `profil_dosen` (Agregat statistik TA & publikasi)
 - `kata_kunci_dosen` (Kata kunci keahlian per dosen dari bobot TF-IDF bersih)
-- `tugas_akhir` (625 riwayat judul TA terdahulu)
+- `tugas_akhir` (623 riwayat judul TA bersih)
 - `bimbingan_ta` (707 relasi bimbingan many-to-many dosen & TA)
-- `publikasi` (643 judul publikasi ilmiah)
+- `publikasi` (610 judul publikasi ilmiah bersih)
 - `publikasi_dosen` (Relasi many-to-many dosen & publikasi)
 - `dokumen_pedoman` (Master daftar berkas PDF panduan akademik)
 - `model_versi` (Metadata & metrik performa model)

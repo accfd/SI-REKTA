@@ -85,18 +85,18 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
     <div className="space-y-8">
       {/* Title & Header */}
       <div className="max-w-3xl">
-        <h1 className="text-3xl font-extrabold text-stone-900 tracking-tight">Cari Rekomendasi Dosen Pembimbing</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">Cari Rekomendasi Dosen Pembimbing</h1>
         <p className="text-sm text-stone-500 mt-1.5">
           Tuliskan rencana judul atau ide tugas akhir Anda. Sistem akan membandingkan konteks kata dan topik dengan riwayat bimbingan serta publikasi dosen.
         </p>
       </div>
 
       {/* Input Form Box */}
-      <div className="bg-white rounded-3xl border border-stone-200/90 shadow-md p-6 sm:p-8">
+      <div className="bg-white rounded-3xl border border-stone-200/90 shadow-md p-4 sm:p-6 md:p-8">
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="relative">
             <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
-              JUDUL TUGAS AKHIr
+              JUDUL TUGAS AKHIR
             </label>
             <textarea
               rows={4}
@@ -118,7 +118,7 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
             />
 
             {/* Word Counter & Status */}
-            <div className="flex items-center justify-between mt-2 px-1 text-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mt-2 px-1 text-xs">
               <span
                 className={`font-semibold ${
                   wordCount > 30
@@ -148,12 +148,12 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-            <div className="flex items-center space-x-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               <button
                 type="submit"
                 disabled={loading || wordCount < 6 || wordCount > 30}
-                className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl font-bold text-white bg-brand-600 hover:bg-brand-700 disabled:bg-stone-300 disabled:cursor-not-allowed shadow-md shadow-brand-600/25 active:scale-95 transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-2xl font-bold text-white bg-brand-600 hover:bg-brand-700 disabled:bg-stone-300 disabled:cursor-not-allowed shadow-md shadow-brand-600/25 active:scale-95 transition-all"
               >
                 {loading ? (
                   <>
@@ -207,7 +207,7 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
                   setJudul(t);
                   setErrorMsg(null);
                 }}
-                className="text-left px-3.5 py-2 rounded-xl text-xs font-medium bg-stone-100 text-stone-700 hover:bg-brand-50 hover:text-brand-800 hover:border-brand-200 border border-transparent transition-all"
+                className="w-full sm:w-auto text-left px-3.5 py-2.5 rounded-xl text-xs font-medium bg-stone-100 text-stone-700 hover:bg-brand-50 hover:text-brand-800 hover:border-brand-200 border border-transparent transition-all break-words"
               >
                 "{t}"
               </button>
@@ -228,7 +228,7 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
             <div className="space-y-1">
               <p className="text-sm font-bold text-stone-800">Sedang Mencocokkan Topik Penelitian...</p>
               <p className="text-xs text-stone-500">
-                Membandingkan judul Anda dengan 17 profil dosen, 706 riwayat TA, dan 643 publikasi ilmiah.
+                Membandingkan judul Anda dengan 17 profil dosen, 707 riwayat TA, dan 610 publikasi ilmiah.
               </p>
             </div>
           </div>
@@ -286,12 +286,12 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
           </div>
 
           {/* Tabel Perbandingan Ringkas */}
-          <div className="bg-white rounded-3xl border border-stone-200 shadow-xs p-6 overflow-x-auto">
+          <div className="bg-white rounded-3xl border border-stone-200 shadow-xs p-4 sm:p-6 overflow-x-auto">
             <h3 className="text-sm font-bold uppercase tracking-wider text-stone-700 mb-4 flex items-center space-x-2">
-              <Layers className="w-4 h-4 text-brand-600" />
+              <Layers className="w-4 h-4 text-brand-600 shrink-0" />
               <span>Tabel Perbandingan 3 Rekomendasi Dosen</span>
             </h3>
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full min-w-[640px] text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-stone-200 bg-stone-50 text-stone-600 font-semibold">
                   <th className="py-2.5 px-3">Peringkat</th>

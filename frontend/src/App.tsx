@@ -37,7 +37,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-800 flex">
+    <div className="min-h-screen bg-stone-50 text-stone-800 flex flex-col lg:flex-row">
       {/* Sidebar Navigasi */}
       <Sidebar
         activeTab={activeTab}
@@ -49,10 +49,10 @@ export const App: React.FC = () => {
       {/* Main Content Area */}
       <div
         className={`flex-1 flex flex-col min-w-0 transition-[padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          sidebarOpen ? 'md:pl-64' : 'md:pl-0'
+          sidebarOpen ? 'lg:pl-64' : 'lg:pl-0'
         }`}
       >
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 sm:py-10">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 lg:py-10">
           {activeTab === 'beranda' && (
             <BerandaPage
               setActiveTab={setActiveTab}

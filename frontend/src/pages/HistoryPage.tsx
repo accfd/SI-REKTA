@@ -37,7 +37,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     <div className="space-y-8">
       {/* Header */}
       <div className="max-w-3xl">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Riwayat Pencarian Rekomendasi</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Riwayat Pencarian Rekomendasi</h1>
         <p className="text-sm text-slate-500 mt-1.5">
           Daftar seluruh pencarian judul tugas akhir yang tersimpan secara lokal di browser Anda.
         </p>
@@ -47,34 +47,34 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
       <div className="flex items-start space-x-3 p-4 rounded-2xl bg-brand-50/70 border border-brand-200/80 text-brand-900 text-xs">
         <ShieldCheck className="w-5 h-5 text-brand-600 shrink-0 mt-0.5" />
         <div className="leading-relaxed">
-          <span className="font-bold"></span> Riwayat pencarian ini hanya disimpan pada Local Storage di browser perangkat Anda, tanpa akun dan database cloud. 
+          <span className="font-bold">Privasi Terjaga:</span> Riwayat pencarian ini hanya disimpan pada Local Storage di browser perangkat Anda, tanpa akun dan database cloud. 
         </div>
       </div>
 
       {/* DETAIL SNAPSHOT VIEW */}
       {selectedHistory ? (
         <div className="space-y-6 animate-in fade-in duration-300">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
-            <div className="flex items-center space-x-3">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 min-w-0">
               <button
                 onClick={() => setSelectedHistory(null)}
-                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200"
+                className="self-start inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 shrink-0"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Kembali</span>
               </button>
-              <div>
+              <div className="min-w-0">
                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
                   Snapshot Hasil Tersimpan
                 </span>
-                <h2 className="text-lg font-bold text-slate-900 mt-0.5">"{selectedHistory.search_title}"</h2>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 mt-1 break-words">"{selectedHistory.search_title}"</h2>
                 <p className="text-xs text-slate-400">
                   Waktu: {formatDate(selectedHistory.timestamp).date} pukul {formatDate(selectedHistory.timestamp).time} WIB
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 self-end md:self-center shrink-0">
               <button
                 onClick={() => onSearchAgain(selectedHistory.search_title)}
                 className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 shadow-sm shadow-brand-600/20"
@@ -115,7 +115,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
                 className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span></span>
+                <span>Hapus Semua</span>
               </button>
             )}
           </div>
