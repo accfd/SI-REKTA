@@ -56,6 +56,11 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
       return;
     }
 
+    if (wordCount > 30) {
+      setErrorMsg('Judul terlalu panjang, tulis maksimal 30 kata.');
+      return;
+    }
+
     setLoading(true);
     setTimeout(scrollToResults, 60);
     try {
@@ -114,8 +119,21 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
 
             {/* Word Counter & Status */}
             <div className="flex items-center justify-between mt-2 px-1 text-xs">
-              <span className={`font-semibold ${wordCount >= 6 ? 'text-emerald-700' : 'text-stone-400'}`}>
-                {wordCount} kata {wordCount >= 6 ? '(memenuhi syarat)' : `(butuh minimal 6 kata, kurang ${Math.max(0, 6 - wordCount)})`}
+              <span
+                className={`font-semibold ${
+                  wordCount > 30
+                    ? 'text-red-600'
+                    : wordCount >= 6
+                    ? 'text-emerald-700'
+                    : 'text-stone-400'
+                }`}
+              >
+                {wordCount} / 30 kata{' '}
+                {wordCount > 30
+                  ? `(melebihi batas maksimal 30 kata, kelebihan ${wordCount - 30})`
+                  : wordCount >= 6
+                  ? '(memenuhi syarat)'
+                  : `(butuh minimal 6 kata, kurang ${Math.max(0, 6 - wordCount)})`}
               </span>
               <span className="text-stone-400 text-[11px]">Format: Bahasa Indonesia / Inggris</span>
             </div>
@@ -134,7 +152,7 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
             <div className="flex items-center space-x-3">
               <button
                 type="submit"
-                disabled={loading || wordCount < 6}
+                disabled={loading || wordCount < 6 || wordCount > 30}
                 className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl font-bold text-white bg-brand-600 hover:bg-brand-700 disabled:bg-stone-300 disabled:cursor-not-allowed shadow-md shadow-brand-600/25 active:scale-95 transition-all"
               >
                 {loading ? (

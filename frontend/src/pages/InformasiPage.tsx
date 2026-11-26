@@ -65,7 +65,7 @@ export const InformasiPage: React.FC = () => {
   </div>
   <h2 className="text-xl font-bold text-slate-900">Empat langkah mudah dari penulisan ide judul hingga rekomendasi siap pakai</h2>
   <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
-    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir minimal 6 kata dengan topik yang spesifik.</li>
+    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir (6–30 kata) dengan topik yang spesifik.</li>
     <li><strong>Pembersihan Teks</strong> – Sistem melakukan lowercase, pembersihan tanda baca, URL, dan ekstraksi n‑gram frasa.</li>
     <li><strong>TF‑IDF & Cosine Similarity</strong> – Vektor judul dibandingkan dengan matriks profil gabungan seluruh 17 dosen DSI.</li>
     <li><strong>Top‑3 Rekomendasi</strong> – Sistem menampilkan 3 dosen paling relevan, kata kunci cocok, dan menyimpannya di riapan lokal.</li>
@@ -87,7 +87,7 @@ export const InformasiPage: React.FC = () => {
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
             <span className="text-xs font-bold text-copper-600">Langkah 1</span>
             <h4 className="font-bold text-slate-800 text-sm mt-1">Input Judul</h4>
-            <p className="text-xs text-slate-500 mt-1">Menerima judul tugas akhir (minimal 6 kata).</p>
+            <p className="text-xs text-slate-500 mt-1">Menerima judul tugas akhir (6–30 kata).</p>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
@@ -124,7 +124,7 @@ export const InformasiPage: React.FC = () => {
   </div>
   <h2 className="text-xl font-bold text-slate-900">Empat langkah mudah dari penulisan ide judul hingga rekomendasi siap pakai</h2>
   <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
-    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir minimal 6 kata dengan topik yang spesifik.</li>
+    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir (6–30 kata) dengan topik yang spesifik.</li>
     <li><strong>Pembersihan Teks</strong> – Sistem melakukan lowercase, pembersihan tanda baca, URL, dan ekstraksi n‑gram frasa.</li>
     <li><strong>TF‑IDF & Cosine Similarity</strong> – Vektor judul dibandingkan dengan matriks profil gabungan seluruh 17 dosen DSI.</li>
     <li><strong>Top‑3 Rekomendasi</strong> – Sistem menampilkan 3 dosen paling relevan, kata kunci cocok, dan menyimpannya di riapan lokal.</li>
@@ -154,7 +154,7 @@ export const InformasiPage: React.FC = () => {
   </div>
   <h2 className="text-xl font-bold text-slate-900">Empat langkah mudah dari penulisan ide judul hingga rekomendasi siap pakai</h2>
   <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
-    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir minimal 6 kata dengan topik yang spesifik.</li>
+    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir (6–30 kata) dengan topik yang spesifik.</li>
     <li><strong>Pembersihan Teks</strong> – Sistem melakukan lowercase, pembersihan tanda baca, URL, dan ekstraksi n‑gram frasa.</li>
     <li><strong>TF‑IDF & Cosine Similarity</strong> – Vektor judul dibandingkan dengan matriks profil gabungan seluruh 17 dosen DSI.</li>
     <li><strong>Top‑3 Rekomendasi</strong> – Sistem menampilkan 3 dosen paling relevan, kata kunci cocok, dan menyimpannya di riapan lokal.</li>
@@ -210,7 +210,7 @@ export const InformasiPage: React.FC = () => {
   </div>
   <h2 className="text-xl font-bold text-slate-900">Empat langkah mudah dari penulisan ide judul hingga rekomendasi siap pakai</h2>
   <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
-    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir minimal 6 kata dengan topik yang spesifik.</li>
+    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir (6–30 kata) dengan topik yang spesifik.</li>
     <li><strong>Pembersihan Teks</strong> – Sistem melakukan lowercase, pembersihan tanda baca, URL, dan ekstraksi n‑gram frasa.</li>
     <li><strong>TF‑IDF & Cosine Similarity</strong> – Vektor judul dibandingkan dengan matriks profil gabungan seluruh 17 dosen DSI.</li>
     <li><strong>Top‑3 Rekomendasi</strong> – Sistem menampilkan 3 dosen paling relevan, kata kunci cocok, dan menyimpannya di riapan lokal.</li>
@@ -254,7 +254,7 @@ export const InformasiPage: React.FC = () => {
   </div>
   <h2 className="text-xl font-bold text-slate-900">Empat langkah mudah dari penulisan ide judul hingga rekomendasi siap pakai</h2>
   <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
-    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir minimal 6 kata dengan topik yang spesifik.</li>
+    <li><strong>Tuliskan Judul TA</strong> – Masukkan rencana judul tugas akhir (6–30 kata) dengan topik yang spesifik.</li>
     <li><strong>Pembersihan Teks</strong> – Sistem melakukan lowercase, pembersihan tanda baca, URL, dan ekstraksi n‑gram frasa.</li>
     <li><strong>TF‑IDF & Cosine Similarity</strong> – Vektor judul dibandingkan dengan matriks profil gabungan seluruh 17 dosen DSI.</li>
     <li><strong>Top‑3 Rekomendasi</strong> – Sistem menampilkan 3 dosen paling relevan, kata kunci cocok, dan menyimpannya di riapan lokal.</li>

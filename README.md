@@ -17,7 +17,7 @@ Seluruh proses pengembangan model Machine Learning (Tahap 1 hingga 9) terdokumen
 ## 🚀 Fitur Utama (6 Menu Sistem)
 1. **Beranda**: Statistik ringkasan (17 Dosen, 706 Riwayat TA, 643 Publikasi), lencana metode, alur sistem, dan contoh judul cepat.
 2. **Cari Dosen & Hasil Rekomendasi**:
-   - Form input textarea dengan word counter (validasi minimal 6 kata).
+   - Form input textarea dengan word counter (validasi panjang 6–30 kata).
    - Kartu rekomendasi Top-3 (#1, #2, #3), lencana peringkat, inisial, kata kunci cocok, dan tag keahlian.
    - Peringatan banner jika hasil kurang meyakinkan (*low confidence*).
    - Tabel komparasi 3 dosen terpilih.
