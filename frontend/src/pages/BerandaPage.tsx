@@ -53,16 +53,20 @@ export const BerandaPage: React.FC<BerandaPageProps> = ({ setActiveTab, onSelect
         {/* Soft Center Radial Glow */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0, 0, 0, 0.92)_35%,rgba(250,245,244,0.45)_100%)] pointer-events-none" />
 
-        {/* Subtle Dotted Connecting Lines (Desktop) */}
+        {/* Subtle Dotted Connecting Lines — 4 garis lurus dari logo tengah ke tiap floating card (Desktop) */}
         <svg
           viewBox="0 0 1000 500"
-          className="hidden lg:block absolute inset-0 w-full h-full pointer-events-none opacity-40"
+          className="hidden lg:block absolute inset-0 w-full h-full pointer-events-none opacity-35"
           preserveAspectRatio="none"
         >
-          <path d="M500 95 L230 95 L130 55" fill="none" stroke="#bc8a80" strokeWidth="1.5" strokeDasharray="4 6" />
-          <path d="M230 95 L135 200" fill="none" stroke="#bc8a80" strokeWidth="1.5" strokeDasharray="4 6" />
-          <path d="M500 95 L770 95 L870 55" fill="none" stroke="#bc8a80" strokeWidth="1.5" strokeDasharray="4 6" />
-          <path d="M770 95 L865 200" fill="none" stroke="#bc8a80" strokeWidth="1.5" strokeDasharray="4 6" />
+          {/* Logo center → TF-IDF N-Gram (kiri atas) */}
+          <line x1="500" y1="90" x2="175" y2="55" stroke="#bc8a80" strokeWidth="1.5" strokeDasharray="4 6" vectorEffect="non-scaling-stroke" />
+          {/* Logo center → Pembersihan Teks (kiri tengah) */}
+          <line x1="500" y1="90" x2="190" y2="148" stroke="#bc8a80" strokeWidth="1.5" strokeDasharray="4 6" vectorEffect="non-scaling-stroke" />
+          {/* Logo center → Cosine Similarity (kanan atas) */}
+          <line x1="500" y1="90" x2="825" y2="55" stroke="#bc8a80" strokeWidth="1.5" strokeDasharray="4 6" vectorEffect="non-scaling-stroke" />
+          {/* Logo center → 4 Kelompok Keahlian (kanan tengah) */}
+          <line x1="500" y1="90" x2="810" y2="148" stroke="#bc8a80" strokeWidth="1.5" strokeDasharray="4 6" vectorEffect="non-scaling-stroke" />
         </svg>
 
         {/* Floating Mini Cards - Left Top & Mid (Desktop) */}
