@@ -1,6 +1,15 @@
-from dotenv import load_dotenv; load_dotenv(override=True)
 import os
 from pathlib import Path
+
+try:
+    from dotenv import load_dotenv
+    # Load .env from backend directory or project root
+    env_path = Path(__file__).resolve().parent.parent / ".env"
+    if not env_path.exists():
+        env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+    load_dotenv(dotenv_path=env_path, override=True)
+except ImportError:
+    pass
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 MODEL_DIR = BASE_DIR / "model"
