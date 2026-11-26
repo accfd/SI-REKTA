@@ -1,14 +1,15 @@
 import React from 'react';
-import { Award, BookOpen, GraduationCap, Tag, CheckCircle2 } from 'lucide-react';
+import { Award, BookOpen, GraduationCap, Tag, CheckCircle2, ArrowRight } from 'lucide-react';
 import type { LecturerRecommendation } from '../types';
 import { LecturerAvatar } from './LecturerAvatar';
 
 interface LecturerCardProps {
   lecturer: LecturerRecommendation;
   isDetailed?: boolean;
+  onSelectLecturer?: (lecturer: LecturerRecommendation) => void;
 }
 
-export const LecturerCard: React.FC<LecturerCardProps> = ({ lecturer }) => {
+export const LecturerCard: React.FC<LecturerCardProps> = ({ lecturer, onSelectLecturer }) => {
   const getRankBadge = (rank: number) => {
     switch (rank) {
       case 1:
@@ -41,7 +42,25 @@ export const LecturerCard: React.FC<LecturerCardProps> = ({ lecturer }) => {
   const badgeStyle = getRankBadge(lecturer.peringkat);
 
   return (
-    <div className={`relative bg-white rounded-3xl border transition-all duration-300 hover:shadow-lg ${badgeStyle.border} p-6 overflow-hidden`}>
+    <div
+      onClick={onSelectLecturer ? () => onSelectLecturer(lecturer) : undefined}
+      role={onSelectLecturer ? 'button' : undefined}
+      tabIndex={onSelectLecturer ? 0 : undefined}
+      onKeyDown={
+        onSelectLecturer
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onSelectLecturer(lecturer);
+              }
+            }
+          : undefined
+      }
+      className={`relative bg-white rounded-3xl border transition-all duration-300 hover:shadow-lg ${badgeStyle.border} p-6 overflow-hidden flex flex-col justify-between ${
+        onSelectLecturer ? 'cursor-pointer group hover:-translate-y-0.5' : ''
+      }`}
+    >
+      <div>
       {/* Header Kartu: Peringkat & Inisial */}
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="flex items-center space-x-3.5">
@@ -129,6 +148,14 @@ export const LecturerCard: React.FC<LecturerCardProps> = ({ lecturer }) => {
           ))}
         </div>
       </div>
+      </div>
+
+      {onSelectLecturer && (
+        <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-bold text-brand-700 group-hover:text-brand-900">
+          <span>Lihat Profil &amp; Karya Lengkap</span>
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        </div>
+      )}
     </div>
   );
 };

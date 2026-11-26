@@ -1,25 +1,35 @@
 import React, { useState } from 'react';
 import { History, Trash2, ArrowLeft, RotateCcw, AlertTriangle, Calendar, Clock, Search, ShieldCheck } from 'lucide-react';
-import type { HistoryItem } from '../types';
+import type { HistoryItem, LecturerRecommendation } from '../types';
 import { LecturerCard } from '../components/LecturerCard';
 
 interface HistoryPageProps {
   history: HistoryItem[];
+  selectedHistoryId?: string | null;
+  setSelectedHistoryId?: (id: string | null) => void;
   onDeleteOne: (id: string) => void;
   onClearAll: () => void;
   onSearchAgain: (title: string) => void;
   setActiveTab: (tab: string) => void;
+  onSelectLecturer?: (lecturer: LecturerRecommendation, queryTitle: string) => void;
 }
 
 export const HistoryPage: React.FC<HistoryPageProps> = ({
   history,
+  selectedHistoryId,
+  setSelectedHistoryId,
   onDeleteOne,
   onClearAll,
   onSearchAgain,
   setActiveTab,
+  onSelectLecturer,
 }) => {
-  const [selectedHistory, setSelectedHistory] = useState<HistoryItem | null>(null);
+  const [localSelectedId, setLocalSelectedId] = useState<string | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const activeId = selectedHistoryId !== undefined ? selectedHistoryId : localSelectedId;
+  const setActiveId = setSelectedHistoryId || setLocalSelectedId;
+  const selectedHistory = activeId ? history.find((item) => item.id === activeId) || null : null;
 
   const formatDate = (isoString: string) => {
     try {
@@ -57,7 +67,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 min-w-0">
               <button
-                onClick={() => setSelectedHistory(null)}
+                onClick={() => setActiveId(null)}
                 className="self-start inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 shrink-0"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -85,7 +95,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
               <button
                 onClick={() => {
                   onDeleteOne(selectedHistory.id);
-                  setSelectedHistory(null);
+                  setActiveId(null);
                 }}
                 className="p-2 rounded-xl text-red-600 hover:bg-red-50 border border-red-200"
                 title="Hapus riwayat ini"
@@ -98,7 +108,15 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
           {/* 3 Kartu Dosen Hasil Snapshot */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {selectedHistory.results.map((lecturer) => (
-              <LecturerCard key={lecturer.id_dosen} lecturer={lecturer} />
+              <LecturerCard
+                key={lecturer.id_dosen}
+                lecturer={lecturer}
+                onSelectLecturer={
+                  onSelectLecturer
+                    ? (l) => onSelectLecturer(l, selectedHistory.search_title)
+                    : undefined
+                }
+              />
             ))}
           </div>
         </div>
@@ -181,7 +199,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
 
                     <div className="flex items-center space-x-2 self-end md:self-center shrink-0">
                       <button
-                        onClick={() => setSelectedHistory(item)}
+                        onClick={() => setActiveId(item.id)}
                         className="px-3.5 py-2 rounded-xl text-xs font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 transition-colors"
                       >
                         Lihat Detail

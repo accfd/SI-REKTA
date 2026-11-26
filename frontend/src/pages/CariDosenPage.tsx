@@ -1,25 +1,40 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Sparkles, AlertCircle, RotateCcw, History, CheckCircle2, AlertTriangle, Layers } from 'lucide-react';
+import { Sparkles, AlertCircle, RotateCcw, History, CheckCircle2, AlertTriangle, Layers, ArrowRight } from 'lucide-react';
 import { LecturerCard } from '../components/LecturerCard';
-import type { RecommendationResponse } from '../types';
+import type { RecommendationResponse, LecturerRecommendation } from '../types';
 import { api } from '../services/api';
 
 interface CariDosenPageProps {
   initialTitle: string;
+  judul?: string;
+  setJudul?: (val: string) => void;
+  result?: RecommendationResponse | null;
+  setResult?: (res: RecommendationResponse | null) => void;
   onSaveToHistory: (res: RecommendationResponse) => void;
   setActiveTab: (tab: string) => void;
+  onSelectLecturer?: (lecturer: LecturerRecommendation, queryTitle: string) => void;
 }
 
 export const CariDosenPage: React.FC<CariDosenPageProps> = ({
   initialTitle,
+  judul: controlledJudul,
+  setJudul: setControlledJudul,
+  result: controlledResult,
+  setResult: setControlledResult,
   onSaveToHistory,
   setActiveTab,
+  onSelectLecturer,
 }) => {
-  const [judul, setJudul] = useState(initialTitle || '');
+  const [localJudul, setLocalJudul] = useState(initialTitle || '');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [result, setResult] = useState<RecommendationResponse | null>(null);
+  const [localResult, setLocalResult] = useState<RecommendationResponse | null>(null);
   const resultsRef = useRef<HTMLDivElement | null>(null);
+
+  const judul = controlledJudul !== undefined ? controlledJudul : localJudul;
+  const setJudul = setControlledJudul || setLocalJudul;
+  const result = controlledResult !== undefined ? controlledResult : localResult;
+  const setResult = setControlledResult || setLocalResult;
 
   const scrollToResults = () => {
     requestAnimationFrame(() => {
@@ -28,10 +43,10 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
   };
 
   useEffect(() => {
-    if (initialTitle) {
-      setJudul(initialTitle);
+    if (initialTitle && controlledJudul === undefined) {
+      setLocalJudul(initialTitle);
     }
-  }, [initialTitle]);
+  }, [initialTitle, controlledJudul]);
 
   const words = judul.trim().split(/\s+/).filter(Boolean);
   const wordCount = words.length;
@@ -281,7 +296,13 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
           {/* 3 Kartu Dosen Teratas */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {result.rekomendasi.map((lecturer) => (
-              <LecturerCard key={lecturer.id_dosen} lecturer={lecturer} />
+              <LecturerCard
+                key={lecturer.id_dosen}
+                lecturer={lecturer}
+                onSelectLecturer={
+                  onSelectLecturer ? (l) => onSelectLecturer(l, result.judul_input) : undefined
+                }
+              />
             ))}
           </div>
 
@@ -306,7 +327,20 @@ export const CariDosenPage: React.FC<CariDosenPageProps> = ({
                 {result.rekomendasi.map((lecturer) => (
                   <tr key={lecturer.id_dosen} className="hover:bg-stone-50">
                     <td className="py-3 px-3 font-bold text-stone-900">#{lecturer.peringkat}</td>
-                    <td className="py-3 px-3 font-semibold text-stone-800">{lecturer.nama_dosen}</td>
+                    <td className="py-3 px-3 font-semibold text-stone-800">
+                      {onSelectLecturer ? (
+                        <button
+                          type="button"
+                          onClick={() => onSelectLecturer(lecturer, result.judul_input)}
+                          className="inline-flex items-center space-x-1 text-left text-brand-700 hover:text-brand-900 hover:underline cursor-pointer"
+                        >
+                          <span>{lecturer.nama_dosen}</span>
+                          <ArrowRight className="w-3 h-3 shrink-0" />
+                        </button>
+                      ) : (
+                        lecturer.nama_dosen
+                      )}
+                    </td>
                     <td className="py-3 px-3">
                       <span className="px-2 py-0.5 rounded bg-stone-100 text-stone-700 font-medium">
                         {lecturer.kode_kk || '-'}
